@@ -5,5 +5,5 @@ type H1Props = {
 } & ComponentProps<"h1">;
 
 export const H1 = ({ children }: H1Props) => {
-  return <h1 className="text-3xl font-semibold">{children}</h1>;
+  return <h1 className="text-center text-3xl font-semibold">{children}</h1>;
 };
