@@ -13,7 +13,7 @@ export const login = async ({
   email,
   password,
 }: LoginRequest): Promise<LoginResponse> => {
-  const response = await api.post("auth/login", { email, password });
+  const response = await api.post("auth", { email, password });
 
   return response.data;
 };
