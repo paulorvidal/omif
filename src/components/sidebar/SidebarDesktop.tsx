@@ -1,32 +1,28 @@
-import OmifIcon from "../assets/omif-icon.svg";
+import OmifIcon from "../../assets/omif-icon.svg";
+import { CircleUserRound, type LucideProps } from "lucide-react";
 import {
-  Accessibility,
-  AlignJustify,
-  CircleUserRound,
-  FileSpreadsheet,
-  GraduationCap,
-  IdCard,
-  LogOut,
-  Settings,
-  UsersRound,
-} from "lucide-react";
-import { useState } from "react";
+  useState,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from "react";
 
-export const Sidebar = () => {
+type Link = {
+  title: string;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+};
+
+type SidebarDesktopProps = {
+  linksCenter: Link[];
+  linksBottom: Link[];
+};
+
+export const SidebarDesktop = ({
+  linksCenter,
+  linksBottom,
+}: SidebarDesktopProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const LinksCenter = [
-    { title: "Educadores", icon: IdCard },
-    { title: "Instituições", icon: GraduationCap },
-    { title: "Estudantes", icon: UsersRound },
-    { title: "Estudantes com NEEs", icon: Accessibility },
-    { title: "Relatórios", icon: FileSpreadsheet },
-  ];
-
-  const LinksBottom = [
-    { title: "Configurações", icon: Settings },
-    { title: "Sair", icon: LogOut },
-  ];
 
   return (
     <div
@@ -34,18 +30,13 @@ export const Sidebar = () => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <div className="flex w-full items-center rounded-sm duration-500">
-        <div className="h-10 w-10 shrink-0 rounded-sm">
-          <AlignJustify className="h-10 w-10 p-2" />
-        </div>
-      </div>
       <div className="flex w-full flex-col gap-1">
         <div className="flex w-full">
           <div
-            className={`flex items-center ${isOpen ? "bg-green-500" : "bg-transparent"} w-full rounded-sm duration-500 hover:bg-green-500 active:bg-green-500`}
+            className={`flex items-center ${isOpen ? "bg-green-500" : "bg-transparent"} w-full cursor-pointer rounded-sm duration-500 hover:bg-green-500 active:bg-green-500`}
           >
             <div
-              className={`h-10 w-10 shrink-0 ${isOpen ? "bg-transparent" : "bg-green-500"} rounded-sm duration-500 hover:bg-green-500 active:bg-green-500`}
+              className={`h-10 w-10 shrink-0 ${isOpen ? "bg-transparent" : "bg-green-500"} cursor-pointer rounded-sm duration-500 hover:bg-green-500 active:bg-green-500`}
             >
               <img
                 className="h-full w-full p-2"
@@ -60,7 +51,7 @@ export const Sidebar = () => {
             </p>
           </div>
         </div>
-        <div className="flex w-full items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500">
+        <div className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500">
           <div className="h-10 w-10 shrink-0 rounded-sm">
             <CircleUserRound className="h-10 w-10 p-2" />
           </div>
@@ -71,12 +62,12 @@ export const Sidebar = () => {
           </p>
         </div>
         <div className="h-0.5 w-full bg-white/30"></div>
-        {LinksCenter.map((link, index) => {
+        {linksCenter.map((link, index) => {
           const Icon = link.icon;
           return (
             <div
               key={index}
-              className="flex w-full items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
+              className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
             >
               <div className="h-10 w-10 shrink-0 rounded-sm">
                 <Icon className="h-10 w-10 p-2" />
@@ -91,12 +82,12 @@ export const Sidebar = () => {
         })}
       </div>
       <div className="flex w-full flex-1 flex-col justify-end gap-1">
-        {LinksBottom.map((link, index) => {
+        {linksBottom.map((link, index) => {
           const Icon = link.icon;
           return (
             <div
               key={index}
-              className="flex w-full items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
+              className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
             >
               <div className="h-10 w-10 shrink-0 rounded-sm">
                 <Icon className="h-10 w-10 p-2" />
