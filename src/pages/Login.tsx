@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useForm } from "react-hook-form";
 import { A } from "../components/ui/A";
 import { Button } from "../components/ui/Button";
 import { H1 } from "../components/ui/H1";
@@ -6,23 +6,40 @@ import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
 import { useNavigate } from "react-router";
 import { login } from "../services/authService";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field } from "../components/form/Field";
+
+const loginFormSchema = z.object({
+  email: z
+    .string()
+    .nonempty("O email é obrigatório")
+    .email("Formato de email inválido"),
+  password: z.string().nonempty("A senha é obrigatória"),
+});
 
 export const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginFormSchema),
+  });
   const navigate = useNavigate();
 
-  const handleLogin = async (event: FormEvent) => {
-    event.preventDefault();
-
+  const onSubmit = async (data: any) => {
+    const payload = data;
     try {
-      const { token } = await login({ email, password });
-      localStorage.setItem("token", token);
+      const response = await login(payload);
+
+      localStorage.setItem("token", response.token);
+
+      console.log("Login realizado com sucesso:", response);
 
       navigate("/dashboard");
-    } catch (error) {
-      console.error("Credenciais inválidas.");
+    } catch (err: any) {
+      console.error("Erro ao realizar login:", err.response || err);
     }
   };
 
@@ -31,32 +48,29 @@ export const Login = () => {
       <div className="grid w-full max-w-4xl grid-cols-1 rounded-md bg-slate-50 md:grid-cols-2">
         <div className="hidden rounded-s-md bg-green-600 md:block"></div>
         <form
-          onSubmit={handleLogin}
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col justify-center gap-4 p-4 sm:p-8"
         >
-          <H1>Já possui cadastro?</H1>
-          <p className="text-center">Faça seu login</p>
-          <div>
-            <Label>E-mail:</Label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Digite seu e-mail"
-              required
-            />
-          </div>
-          <div>
-            <Label>Senha:</Label>
-            <Input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Digite sua senha"
-              required
-            />
-          </div>
+          <H1>Login</H1>
+
+          <Field
+            label="E-mail:"
+            type="text"
+            placeholder="Digite seu e-mail"
+            register={register("email")}
+            error={errors.email?.message}
+          />
+
+          <Field
+            label="Senha:"
+            type="password"
+            placeholder="Digite sua senha"
+            register={register("password")}
+            error={errors.password?.message}
+          />
+
           <Button type="submit">Entrar</Button>
+
           <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
             <A className="text-center" href="#">
               Esqueci minha senha

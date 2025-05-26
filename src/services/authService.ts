@@ -9,11 +9,7 @@ type LoginResponse = {
   token: string;
 };
 
-export const login = async ({
-  email,
-  password,
-}: LoginRequest): Promise<LoginResponse> => {
-  const response = await api.post("auth", { email, password });
-
+export const login = async (data: LoginRequest): Promise<LoginResponse> => {
+  const response = await api.post("/auth", data);
   return response.data;
 };
