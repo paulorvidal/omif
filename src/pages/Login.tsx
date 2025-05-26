@@ -2,8 +2,6 @@ import { useForm } from "react-hook-form";
 import { A } from "../components/ui/A";
 import { Button } from "../components/ui/Button";
 import { H1 } from "../components/ui/H1";
-import { Input } from "../components/ui/Input";
-import { Label } from "../components/ui/Label";
 import { useNavigate } from "react-router";
 import { login } from "../services/authService";
 import { z } from "zod";

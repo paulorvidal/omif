@@ -20,7 +20,12 @@ export const Field = ({
   return (
     <div>
       <Label>{label}</Label>
-      <Input type={type} placeholder={placeholder} {...register} />
+      <Input
+        type={type}
+        placeholder={placeholder}
+        error={error}
+        {...register}
+      />
 
       {error && <span className="text-sm text-red-500">{error}</span>}
     </div>
