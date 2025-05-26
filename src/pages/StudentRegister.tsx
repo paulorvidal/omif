@@ -5,6 +5,42 @@ import { Label } from "../components/ui/Label";
 import { Button } from "../components/ui/Button";
 import { createStudent } from "../services/studentService";
 import type { CreateStudentRequest } from "../services/studentService";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field } from "../components/form/Field";
+
+const studentSchema = z
+  .object({
+    name: z.string().nonempty("O nome é obrigatório"),
+    email: z.string().email("Email inválido"),
+    cpf: z.string().min(11, "CPF deve ter pelo menos 11 dígitos"),
+    password: z
+      .string()
+      .min(6, "A senha deve ter no mínimo 6 caracteres")
+      .refine((s) => !/\s/.test(s), "A senha não pode conter espaços"),
+    confirmPassword: z.string(),
+    motherName: z.string().nonempty("O nome da mãe é obrigatório"),
+    birthDate: z
+      .string()
+      .refine((v) => new Date(v) <= new Date(), "Data não pode ser no futuro"),
+    socialName: z.string().optional(),
+    auxilioBrasil: z.string().nonempty("Esse campo é obrigatório"),
+    grade: z.coerce
+      .number()
+      .min(1, "Selecione uma série")
+      .max(4, "Selecione uma série"),
+    ethnicity: z.string().nonempty("Esse campo é obrigatório"),
+    gender: z.string().nonempty("Esse campo é obrigatório"),
+    elementarySchoolCompletionPlace: z
+      .string()
+      .nonempty("Esse campo é obrigatório"),
+    incomeRange: z.string().nonempty("Esse campo é obrigatório"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  });
+
 
 type FormData = CreateStudentRequest & { confirmPassword: string };
 
@@ -12,146 +48,78 @@ export const StudentRegister = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormData>({
+    resolver: zodResolver(studentSchema),
     defaultValues: { socialName: "" },
   });
 
-  const password = watch("password");
-
   const onSubmit = async (data: FormData) => {
-    const { confirmPassword, ...payload } = data;
-    try {
-      const response = await createStudent(payload);
-      console.log("Estudante criado com sucesso:", response);
-      // você pode resetar o form aqui se quiser
-    } catch (err: any) {
-      console.error("Erro ao criar estudante:", err.response || err);
-    }
+    const {...payload } = data;
+    await createStudent(payload);
   };
 
   return (
     <div>
       <H1>Cadastro de Estudante</H1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Label>Nome</Label>
-          <Input
+        <Field
+            label="Nome:"
             type="text"
-            {...register("name", { required: "O nome é obrigatório" })}
+            placeholder="Digite seu nome"
+            register={register("name")}
+            error={errors.name?.message}
           />
-          {errors.name && (
-            <span className="text-sm text-red-500">{errors.name.message}</span>
-          )}
-        </div>
 
-        <div>
-          <Label>Email</Label>
-          <Input
-            type="email"
-            {...register("email", {
-              required: "O email é obrigatório",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "Email inválido",
-              },
-            })}
-          />
-          {errors.email && (
-            <span className="text-sm text-red-500">{errors.email.message}</span>
-          )}
-        </div>
-
-        <div>
-          <Label>Cpf</Label>
-          <Input
-            type="cpf"
-            {...register("cpf", {
-              required: "O cpf é obrigatório",
-            })}
-          />
-          {errors.cpf && (
-            <span className="text-sm text-red-500">{errors.cpf.message}</span>
-          )}
-        </div>
-
-        <div>
-          <Label>Senha</Label>
-          <Input
-            type="password"
-            {...register("password", {
-              required: "A senha é obrigatória",
-              minLength: {
-                value: 6,
-                message: "A senha deve ter no mínimo 6 caracteres",
-              },
-              validate: (value) =>
-                !/\s/.test(value) ||
-                "A senha não pode conter espaços em branco",
-            })}
-          />
-          {errors.password && (
-            <span className="text-sm text-red-500">
-              {errors.password.message}
-            </span>
-          )}
-        </div>
-
-        <div>
-          <Label>Confirmar Senha</Label>
-          <Input
-            type="password"
-            {...register("confirmPassword", {
-              required: "Confirme sua senha",
-              validate: (value) =>
-                value === password || "As senhas não coincidem",
-            })}
-          />
-          {errors.confirmPassword && (
-            <span className="text-sm text-red-500">
-              {errors.confirmPassword.message}
-            </span>
-          )}
-        </div>
-
-        <div>
-          <Label>Nome da mãe</Label>
-          <Input
+        <Field
+            label="E-mail:"
             type="text"
-            {...register("motherName", {
-              required: "O nome da mãe é obrigatório",
-            })}
+            placeholder="Digite seu e-mail"
+            register={register("email")}
+            error={errors.email?.message}
           />
-          {errors.motherName && (
-            <span className="text-sm text-red-500">
-              {errors.motherName.message}
-            </span>
-          )}
-        </div>
+          
+        <Field
+            label="CPF:"
+            type="text"
+            placeholder="Digite seu CPF"
+            register={register("cpf")}
+            error={errors.cpf?.message}
+          />  
 
-        <div>
-          <Label>Data de Nascimento</Label>
-          <Input
+        <Field
+            label="Senha:"
+            type="password"
+            placeholder="Digite sua senha"
+            register={register("password")}
+            error={errors.password?.message}
+          />
+        
+        <Field
+            label="Confirmar Senha:"
+            type="password"
+            placeholder="Digite sua senha novamente"
+            register={register("confirmPassword")}
+            error={errors.confirmPassword?.message}
+          />
+
+        <Field
+            label="Nome da mãe:"
+            type="text"
+            placeholder="Digite o nome da sua mãe"
+            register={register("motherName")}
+            error={errors.motherName?.message}
+          />
+
+        <Field
+            label="Data de Nascimento:"
             type="date"
-            {...register("birthDate", {
-              required: "A data de nascimento é obrigatória",
-              validate: (value) => {
-                const today = new Date();
-                const birthDate = new Date(value);
-                if (birthDate > today) {
-                  return "A data de nascimento não pode ser no futuro";
-                }
-                return true;
-              },
-            })}
+            placeholder="Digite sua data de nascimento"
+            register={register("birthDate")}
+            error={errors.birthDate?.message}
           />
-          {errors.birthDate && (
-            <span className="text-sm text-red-500">
-              {errors.birthDate.message}
-            </span>
-          )}
-        </div>
+
+        
 
         <div>
           <Label>Sua família é beneficiária do Bolsa Família?</Label>
