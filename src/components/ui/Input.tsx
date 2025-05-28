@@ -1,6 +1,8 @@
 import type { ComponentProps } from "react";
 
-type InputProps = { error?: string } & ComponentProps<"input">;
+type InputProps = {
+  error?: string;
+} & ComponentProps<"input">;
 
 export const Input = ({ error, ...props }: InputProps) => {
   return (

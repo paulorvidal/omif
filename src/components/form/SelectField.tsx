@@ -1,31 +1,29 @@
 import type { UseFormRegisterReturn } from "react-hook-form";
-import { Input } from "../ui/Input";
 import { Label } from "../ui/Label";
+import { Select } from "../ui/Select";
 
-type FieldProps = {
+type Option = {
   label: string;
-  type: string;
-  placeholder: string;
+  value: string | number;
+};
+
+type SelectFieldProps = {
+  label: string;
+  options: Option[];
   error?: string;
   register: UseFormRegisterReturn;
 };
 
-export const Field = ({
+export const SelectField = ({
   label,
-  type,
-  placeholder,
+  options,
   error,
   register,
-}: FieldProps) => {
+}: SelectFieldProps) => {
   return (
     <div>
       <Label>{label}</Label>
-      <Input
-        type={type}
-        placeholder={placeholder}
-        error={error}
-        {...register}
-      />
+      <Select options={options} error={error} {...register}></Select>
 
       {error && <span className="text-sm text-red-500">{error}</span>}
     </div>
