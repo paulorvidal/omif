@@ -125,7 +125,7 @@ export const StudentRegister = () => {
   };
 
   return (
-    <div className="flex w-screen flex-col items-center bg-slate-200 p-4 text-zinc-700 sm:p-16">
+    <div className="flex min-h-screen w-screen flex-col items-center bg-slate-200 p-4 text-zinc-700 sm:p-16">
       <div className="flex w-full flex-col justify-center gap-4 rounded-md bg-slate-50 p-4 sm:p-8">
         <H1>Cadastre-se</H1>
         <form
@@ -144,6 +144,7 @@ export const StudentRegister = () => {
               label="CPF:"
               type="text"
               placeholder="Digite seu CPF"
+              mask="999.999.999-99"
               register={register("cpf")}
               error={errors.cpf?.message}
             />
