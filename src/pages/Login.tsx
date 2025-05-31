@@ -42,8 +42,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center bg-slate-200 p-4 text-zinc-700 sm:p-16">
-      <div className="grid w-full max-w-4xl grid-cols-1 rounded-md bg-slate-50 md:grid-cols-2">
+    <div className="flex h-screen w-screen flex-col items-center bg-zinc-200 p-4 text-zinc-700 sm:p-16">
+      <div className="grid w-full max-w-4xl grid-cols-1 rounded-md bg-zinc-50 md:grid-cols-2">
         <div className="hidden rounded-s-md bg-green-600 md:block"></div>
         <form
           onSubmit={handleSubmit(onSubmit)}

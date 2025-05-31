@@ -2,7 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import type { JSX } from "react";
-import { StudentRegister } from "./pages/StudentRegister"
+import { StudentRegister } from "./components/register/StudentRegister";
+import { Register } from "./pages/Register";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
@@ -16,6 +17,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />}></Route>
         <Route path="/login" element={<Login />}></Route>
+        <Route path="/cadastre-se" element={<Register />}></Route>
         <Route
           path="/dashboard"
           element={
