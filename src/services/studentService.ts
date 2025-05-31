@@ -17,12 +17,12 @@ export type CreateStudentRequest = {
 };
 
 export type CreateStudentResponse = {
-  id: string; 
+  id: string;
   message?: string;
 };
 
 export const createStudent = async (
-  data: CreateStudentRequest
+  data: CreateStudentRequest,
 ): Promise<CreateStudentResponse> => {
   const response = await api.post("/students", data);
   return response.data;
