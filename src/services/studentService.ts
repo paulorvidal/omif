@@ -1,4 +1,6 @@
+import type { AxiosError } from "axios";
 import api from "./api";
+import type { ApiError } from "./apiError";
 
 export type CreateStudentRequest = {
   email: string;
@@ -24,6 +26,17 @@ export type CreateStudentResponse = {
 export const createStudent = async (
   data: CreateStudentRequest,
 ): Promise<CreateStudentResponse> => {
-  const response = await api.post("/students", data);
-  return response.data;
+  try {
+    const response = await api.post<CreateStudentResponse>("/students", data);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ApiError>;
+
+    const message =
+      axiosError.response?.data?.message ||
+      axiosError.message ||
+      "Erro inesperado ao tentar fazer login";
+
+    throw new Error(message);
+  }
 };

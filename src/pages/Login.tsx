@@ -18,6 +18,7 @@ const loginFormSchema = z.object({
 });
 
 export const Login = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -25,7 +26,6 @@ export const Login = () => {
   } = useForm({
     resolver: zodResolver(loginFormSchema),
   });
-  const navigate = useNavigate();
 
   const onSubmit = async (data: any) => {
     const payload = data;

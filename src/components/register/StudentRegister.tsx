@@ -8,6 +8,8 @@ import { SelectField } from "../form/SelectField";
 import { createStudent } from "../../services/studentService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const studentRegisterFormSchema = z
   .object({
@@ -112,6 +114,7 @@ const incomeRangeOptions = [
 ];
 
 export const StudentRegister = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -123,7 +126,15 @@ export const StudentRegister = () => {
 
   const onSubmit = async (data: any) => {
     const { ...payload } = data;
-    await createStudent(payload);
+    try {
+      const response = await createStudent(payload);
+
+      toast.success(response.message);
+
+      navigate("/login");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
