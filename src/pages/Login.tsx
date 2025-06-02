@@ -7,6 +7,7 @@ import { login } from "../services/authService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field } from "../components/form/Field";
+import { toast } from "sonner";
 
 const loginFormSchema = z.object({
   email: z
@@ -33,11 +34,11 @@ export const Login = () => {
 
       localStorage.setItem("token", response.token);
 
-      console.log("Login realizado com sucesso:", response);
+      response.token && toast.success("Login realizado com sucesso");
 
       navigate("/dashboard");
-    } catch (err: any) {
-      console.error("Erro ao realizar login:", err.response || err);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -73,7 +74,7 @@ export const Login = () => {
             <A className="text-center" href="#">
               Esqueci minha senha
             </A>
-            <A className="text-center" href="#">
+            <A to="/cadastre-se" className="text-center">
               Criar cadastro
             </A>
           </div>

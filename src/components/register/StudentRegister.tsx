@@ -154,6 +154,8 @@ export const StudentRegister = () => {
           register={register("birthDate")}
           error={errors.birthDate?.message}
         />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Field
           label="E-mail:"
           type="text"
@@ -213,20 +215,18 @@ export const StudentRegister = () => {
           error={errors.auxilioBrasil?.message}
         />
       </div>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <SelectField
-          label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
-          options={elementarySchoolCompletionPlaceOptions}
-          register={register("elementarySchoolCompletionPlace")}
-          error={errors.elementarySchoolCompletionPlace?.message}
-        />
-        <SelectField
-          label="Em qual faixa de renda per capita sua família se encontra?"
-          options={incomeRangeOptions}
-          register={register("incomeRange")}
-          error={errors.incomeRange?.message}
-        />
-      </div>
+      <SelectField
+        label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
+        options={elementarySchoolCompletionPlaceOptions}
+        register={register("elementarySchoolCompletionPlace")}
+        error={errors.elementarySchoolCompletionPlace?.message}
+      />
+      <SelectField
+        label="Em qual faixa de renda per capita sua família se encontra?"
+        options={incomeRangeOptions}
+        register={register("incomeRange")}
+        error={errors.incomeRange?.message}
+      />
       <div className="flex justify-between">
         <Button secondary type="reset">
           Limpar
