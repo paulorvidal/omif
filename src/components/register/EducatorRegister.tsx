@@ -7,6 +7,7 @@ import { SelectField } from "../form/SelectField";
 import { Button } from "../ui/Button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { scrollToTop } from "../../utils/scrollToTop";
 
 const educatorRegisterFormSchema = z
   .object({
@@ -44,6 +45,7 @@ export const EducatorRegister = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(educatorRegisterFormSchema),
     defaultValues: { socialName: "" },
@@ -60,6 +62,11 @@ export const EducatorRegister = () => {
     } catch (error: any) {
       toast.error(error.message);
     }
+  };
+
+  const onReset = () => {
+    reset();
+    scrollToTop();
   };
 
   return (
@@ -123,7 +130,7 @@ export const EducatorRegister = () => {
         />
       </div>
       <div className="flex justify-between">
-        <Button secondary type="reset">
+        <Button secondary type="button" onClick={onReset}>
           Limpar
         </Button>
         <Button type="submit">Cadastrar</Button>

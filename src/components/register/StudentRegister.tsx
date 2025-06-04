@@ -10,6 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { scrollToTop } from "../../utils/scrollToTop";
 
 const studentRegisterFormSchema = z
   .object({
@@ -119,6 +120,7 @@ export const StudentRegister = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(studentRegisterFormSchema),
     defaultValues: { socialName: "" },
@@ -135,6 +137,11 @@ export const StudentRegister = () => {
     } catch (error: any) {
       toast.error(error.message);
     }
+  };
+
+  const onReset = () => {
+    reset();
+    scrollToTop();
   };
 
   return (
@@ -239,7 +246,7 @@ export const StudentRegister = () => {
         error={errors.incomeRange?.message}
       />
       <div className="flex justify-between">
-        <Button secondary type="reset">
+        <Button secondary type="button" onClick={onReset}>
           Limpar
         </Button>
         <Button type="submit">Cadastrar</Button>

@@ -5,6 +5,7 @@ import type { JSX } from "react";
 import { StudentRegister } from "./components/register/StudentRegister";
 import { Register } from "./pages/Register";
 import { Toaster } from "sonner";
+import { ScrollToTop } from "./utils/ScrollToTop";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
@@ -16,6 +17,7 @@ export const App = () => {
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Navigate to="/login" />}></Route>
           <Route path="/login" element={<Login />}></Route>
