@@ -9,6 +9,7 @@ type LoginRequest = {
 
 type LoginResponse = {
   token: string;
+  role: string;
 };
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {

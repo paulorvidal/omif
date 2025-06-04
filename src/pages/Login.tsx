@@ -33,6 +33,7 @@ export const Login = () => {
       const response = await login(payload);
 
       localStorage.setItem("token", response.token);
+      localStorage.setItem("role", response.role);
 
       response.token && toast.success("Login realizado com sucesso");
 

@@ -11,13 +11,19 @@ import { SidebarDesktop } from "./SidebarDesktop";
 import { SidebarMobile } from "./SidebarMobile";
 
 export const Sidebar = () => {
+  const role = localStorage.getItem("role") as string;
+
   const linksCenter = [
-    { title: "Educadores", icon: IdCard },
-    { title: "Instituições", icon: GraduationCap },
-    { title: "Estudantes", icon: UsersRound },
-    { title: "Estudantes com NEEs", icon: Accessibility },
-    { title: "Relatórios", icon: FileSpreadsheet },
+    { title: "Educadores", icon: IdCard, roles: [""] },
+    { title: "Instituições", icon: GraduationCap, roles: [""] },
+    { title: "Estudantes", icon: UsersRound, roles: ["ADMIN"] },
+    { title: "Estudantes com NEEs", icon: Accessibility, roles: [""] },
+    { title: "Relatórios", icon: FileSpreadsheet, roles: [""] },
   ];
+
+  const filteredLinksCenter = linksCenter.filter(
+    (link) => (role && !link.roles) || link.roles.includes(role),
+  );
 
   const linksBottom = [
     { title: "Configurações", icon: Settings },
@@ -26,8 +32,14 @@ export const Sidebar = () => {
 
   return (
     <>
-      <SidebarDesktop linksCenter={linksCenter} linksBottom={linksBottom} />
-      <SidebarMobile linksCenter={linksCenter} linksBottom={linksBottom} />
+      <SidebarDesktop
+        linksCenter={filteredLinksCenter}
+        linksBottom={linksBottom}
+      />
+      <SidebarMobile
+        linksCenter={filteredLinksCenter}
+        linksBottom={linksBottom}
+      />
     </>
   );
 };
