@@ -31,7 +31,7 @@ export const SidebarMobile = ({
 
   return (
     <>
-      <div className="absolute bottom-0 left-0 flex h-14 w-full items-center justify-around bg-green-600 text-white md:hidden">
+      <div className="fixed bottom-0 left-0 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden">
         <div
           className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500"
           onClick={() => setIsOpen(!isOpen)}

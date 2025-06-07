@@ -26,7 +26,7 @@ export const SidebarDesktop = ({
 
   return (
     <div
-      className={`hidden h-screen flex-col items-start duration-100 md:flex ${isOpen ? "w-72" : "w-14"} gap-1 bg-green-600 p-2 text-slate-50`}
+      className={`bottom-0 left-0 hidden h-screen flex-col items-start duration-100 md:fixed md:flex ${isOpen ? "w-72" : "w-14"} gap-1 bg-green-600 p-2 text-slate-50 shadow-2xl`}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
