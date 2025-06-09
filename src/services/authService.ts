@@ -22,7 +22,7 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
     const message =
       axiosError.response?.data?.message ||
       axiosError.message ||
-      "Erro inesperado ao tentar fazer login";
+      "Erro inesperado. Aguarde ou tente novamente.";
 
     throw new Error(message);
   }

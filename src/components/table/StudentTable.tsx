@@ -1,55 +1,105 @@
+import { useEffect, useState } from "react";
 import {
-  Table,
-  Header,
-  HeaderRow,
-  HeaderCell,
-  Body,
-  Row,
-  Cell,
-} from "@table-library/react-table-library/table";
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  findAllStudents,
+  type FindAllStudentResponse,
+} from "../../services/studentService";
 
-const data = {
-  nodes: [
-    { id: "1", name: "Estudar React", isComplete: false },
-    { id: "2", name: "Comprar pão", isComplete: true },
-    { id: "3", name: "Escrever e-mail", isComplete: false },
-  ],
+type StudentColumns = {
+  cpf: string;
+  name: string;
+  email: string;
+  gender: string;
 };
 
-export const StudentTable = () => {
-  return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
-      <Table data={data}>
-        {(tableList) => (
-          <>
-            <Header>
-              <HeaderRow className="bg-gray-100 text-sm text-gray-800 uppercase">
-                <HeaderCell className="px-4 py-2 text-left font-semibold">
-                  Tarefa
-                </HeaderCell>
-                <HeaderCell className="px-4 py-2 text-left font-semibold">
-                  Concluída
-                </HeaderCell>
-              </HeaderRow>
-            </Header>
+const columnHelper = createColumnHelper<StudentColumns>();
 
-            <Body>
-              {tableList.map((item) => (
-                <Row
-                  key={item.id}
-                  item={item}
-                  className="border-t border-gray-200 transition hover:bg-gray-50"
-                >
-                  <Cell className="px-4 py-2 text-gray-800">{item.name}</Cell>
-                  <Cell className="px-4 py-2 text-gray-600">
-                    {item.isComplete ? "Sim" : "Não"}
-                  </Cell>
-                </Row>
+const columns = [
+  columnHelper.accessor("cpf", {
+    header: "CPF",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("name", {
+    header: "Nome",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("email", {
+    header: "Email",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("gender", {
+    header: "Gênero",
+    cell: (info) => info.getValue(),
+  }),
+];
+
+export const StudentTable = () => {
+  const [students, setStudents] = useState<StudentColumns[]>([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await findAllStudents();
+
+        const formattedData = response.map(
+          (student: FindAllStudentResponse) => ({
+            cpf: student.cpf,
+            name: student.name,
+            email: student.email,
+            gender: student.gender,
+          }),
+        );
+        setStudents(formattedData);
+
+        console.log("Dados recebidos:", response);
+      } catch (error) {
+        console.error("Erro ao buscar alunos:", error);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  const table = useReactTable({
+    data: students,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <div className="overflow-x-auto rounded-md">
+      <table className="min-w-full table-auto">
+        <thead className="bg-green-600 text-white">
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => (
+                <th key={header.id} className="p-2 font-semibold">
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+                </th>
               ))}
-            </Body>
-          </>
-        )}
-      </Table>
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className="p-2 text-center">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
