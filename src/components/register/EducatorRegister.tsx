@@ -1,13 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createEducator } from "../../services/educatorService";
+import { createEducator, type CreateEducatorRequest } from "../../services/educatorService";
 import { Field } from "../form/Field";
 import { SelectField } from "../form/SelectField";
 import { Button } from "../ui/Button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { scrollToTop } from "../../utils/scrollToTop";
+
+import { AsyncSelectField } from "../form/AsyncSelectField";
+import { fetchInstitutions } from "../../services/institutionService";
 
 const educatorRegisterFormSchema = z
   .object({
@@ -25,6 +28,13 @@ const educatorRegisterFormSchema = z
     socialName: z.string().optional(),
     gender: z.string().nonempty("Esse campo é obrigatório"),
     siape: z.string().nonempty("O SIAPE é obrigatório"),
+    institution: z
+      .object({
+        label: z.string(),
+        value: z.string().uuid("ID inválido"),
+      })
+      .nullable()
+      .refine((o) => o !== null, "A instituição é obrigatória"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
@@ -44,25 +54,42 @@ export const EducatorRegister = () => {
   const {
     register,
     handleSubmit,
+    control,          
     formState: { errors },
     reset,
   } = useForm({
     resolver: zodResolver(educatorRegisterFormSchema),
-    defaultValues: { socialName: "" },
+    defaultValues: {
+      socialName: "",
+      name: "",
+      cpf: "",
+      gender: "",
+      email: "",
+      password: "",
+      siape: "",
+      confirmPassword: "",
+      institution: null,
+    },
   });
 
-  const onSubmit = async (data: any) => {
-    const { ...payload } = data;
+  type EducatorFormSchema = z.infer<typeof educatorRegisterFormSchema>;
+
+  const onSubmit = async (data: EducatorFormSchema) => {
+    const { institution, ...rest } = data;
+    const payload: CreateEducatorRequest = {
+      ...rest,
+      institutionId: institution!.value, 
+    };
+    console.log(payload)
     try {
       const response = await createEducator(payload);
-
       toast.success(response.message);
-
       navigate("/login");
     } catch (error: any) {
       toast.error(error.message);
     }
   };
+
 
   const onReset = () => {
     reset();
@@ -129,6 +156,18 @@ export const EducatorRegister = () => {
           error={errors.gender?.message}
         />
       </div>
+
+
+      <AsyncSelectField
+        name="institution"
+        label="Instituição:"
+        placeholder="Selecione uma instituição"
+        control={control}
+        loadOptions={fetchInstitutions}
+        error={errors.institution?.message}
+      />
+
+
       <div className="flex justify-between">
         <Button secondary type="button" onClick={onReset}>
           Limpar

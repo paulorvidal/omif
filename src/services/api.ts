@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const apiUrl = "http://89.116.73.16:8080";
+const apiUrl = "http://192.168.3.23:8080";
 
 const api = axios.create({
   baseURL: apiUrl,
-});
+}); 
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
