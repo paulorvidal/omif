@@ -16,6 +16,7 @@ export type CreateStudentRequest = {
   socialName: string;
   cpf: string;
   gender: string;
+  institutionId: string;
 };
 
 export type CreateStudentResponse = {

@@ -5,12 +5,15 @@ import { Button } from "../ui/Button";
 import { Field } from "../form/Field";
 import { SelectField } from "../form/SelectField";
 
-import { createStudent } from "../../services/studentService";
+import { createStudent, type CreateStudentRequest } from "../../services/studentService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { scrollToTop } from "../../utils/scrollToTop";
+
+import { AsyncSelectField } from "../form/AsyncSelectField";
+import { fetchInstitutions } from "../../services/institutionService";
 
 const studentRegisterFormSchema = z
   .object({
@@ -41,6 +44,13 @@ const studentRegisterFormSchema = z
       .string()
       .nonempty("Esse campo é obrigatório"),
     incomeRange: z.string().nonempty("Esse campo é obrigatório"),
+    institution: z
+      .object({
+        label: z.string(),
+        value: z.string().uuid("ID inválido"),
+      })
+      .nullable()
+      .refine((o) => o !== null, "A instituição é obrigatória"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
@@ -119,25 +129,48 @@ export const StudentRegister = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     reset,
   } = useForm({
     resolver: zodResolver(studentRegisterFormSchema),
-    defaultValues: { socialName: "" },
+    defaultValues: { 
+      email: "",
+      password: "",
+      name: "",
+      motherName: "",
+      birthDate: "",
+      auxilioBrasil: "",
+      grade: null,
+      elementarySchoolCompletionPlace: "",
+      incomeRange: "",
+      ethnicity: "",
+      socialName: "",
+      cpf: "",
+      gender: "",
+      institutionId: "",
+      confirmPassword: "",
+      institution: null,
+    },
   });
 
-  const onSubmit = async (data: any) => {
-    const { ...payload } = data;
-    try {
-      const response = await createStudent(payload);
+  type StudentFormSchema = z.infer<typeof studentRegisterFormSchema>;
 
-      toast.success(response.message);
-
-      navigate("/login");
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
+  const onSubmit = async (data: StudentFormSchema) => {
+      const { institution, ...rest } = data;
+      const payload: CreateStudentRequest = {
+        ...rest,
+        institutionId: institution!.value, 
+      };
+      console.log(payload)
+      try {
+        const response = await createStudent(payload);
+        toast.success(response.message);
+        navigate("/login");
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    };
 
   const onReset = () => {
     reset();
@@ -233,18 +266,32 @@ export const StudentRegister = () => {
           error={errors.auxilioBrasil?.message}
         />
       </div>
-      <SelectField
-        label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
-        options={elementarySchoolCompletionPlaceOptions}
-        register={register("elementarySchoolCompletionPlace")}
-        error={errors.elementarySchoolCompletionPlace?.message}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <SelectField
+          label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
+          options={elementarySchoolCompletionPlaceOptions}
+          register={register("elementarySchoolCompletionPlace")}
+          error={errors.elementarySchoolCompletionPlace?.message}
+        />
+        <SelectField
+          label="Em qual faixa de renda per capita sua família se encontra?"
+          options={incomeRangeOptions}
+          register={register("incomeRange")}
+          error={errors.incomeRange?.message}
+        />
+      </div>
+
+
+      <AsyncSelectField
+        name="institution"
+        label="Instituição:"
+        placeholder="Selecione uma instituição"
+        control={control}
+        loadOptions={fetchInstitutions}
+        error={errors.institution?.message}
       />
-      <SelectField
-        label="Em qual faixa de renda per capita sua família se encontra?"
-        options={incomeRangeOptions}
-        register={register("incomeRange")}
-        error={errors.incomeRange?.message}
-      />
+
+
       <div className="flex justify-between">
         <Button secondary type="button" onClick={onReset}>
           Limpar

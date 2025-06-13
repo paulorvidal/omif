@@ -10,6 +10,7 @@ export type CreateEducatorRequest = {
   email: string;
   password: string;
   siape: string;
+  institutionId: string;
 };
 
 export type CreateEducatorResponse = {
