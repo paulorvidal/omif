@@ -44,7 +44,7 @@ export const StudentTable = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await findAllStudents();
+        const response = await findAllStudents(0);
 
         const formattedData = response.map(
           (student: FindAllStudentResponse) => ({
@@ -72,13 +72,13 @@ export const StudentTable = () => {
   });
 
   return (
-    <div className="overflow-x-auto rounded-md">
-      <table className="min-w-full table-auto">
-        <thead className="bg-green-600 text-white">
+    <div className="w-full rounded-md">
+      <table className="w-full table-auto overflow-x-scroll rounded-md bg-green-600">
+        <thead className="rounded-md text-white">
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
               {hg.headers.map((header) => (
-                <th key={header.id} className="p-2 font-semibold">
+                <th key={header.id} className="rounded-md p-2">
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),
@@ -88,7 +88,7 @@ export const StudentTable = () => {
             </tr>
           ))}
         </thead>
-        <tbody>
+        <tbody className="bg-white">
           {table.getRowModel().rows.map((row) => (
             <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
               {row.getVisibleCells().map((cell) => (

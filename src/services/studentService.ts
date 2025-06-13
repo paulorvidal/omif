@@ -57,15 +57,17 @@ export const createStudent = async (
   }
 };
 
-export const findAllStudents = async (): Promise<FindAllStudentResponse[]> => {
+export const findAllStudents = async (
+  page: number,
+): Promise<FindAllStudentResponse[]> => {
   try {
-    const response = await api.get<FindAllStudentResponse>("/students", {
+    const response = await api.get<FindAllStudentResponse[]>("/students", {
       params: {
-        page: 0,
+        page,
         size: 10,
       },
     });
-    return response.data;
+    return response.data.content;
   } catch (error) {
     const axiosError = error as AxiosError<ApiError>;
 
