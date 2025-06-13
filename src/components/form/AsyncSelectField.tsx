@@ -5,14 +5,13 @@ import AsyncSelect from "react-select/async";
 
 type Option = {
   label: string;
-  value: string; 
+  value: string;
 };
 
 type AsyncSelectFieldProps = {
   name: string;
   label: string;
-  placeholder: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  placeholder: string;
   control: Control<any>;
   loadOptions: (inputValue: string) => Promise<Option[]>;
   error?: string;
@@ -26,8 +25,27 @@ export const AsyncSelectField = ({
   loadOptions,
   error,
 }: AsyncSelectFieldProps) => {
+  const classNames = {
+    control: ({ isFocused }: any) =>
+      [
+        "h-10 w-full rounded-md border-2 outline-none px-4 py-2 duration-500 ease-in-out",
+        error
+          ? "border-red-500"
+          : isFocused
+            ? "border-zinc-500"
+            : "border-zinc-300 hover:border-zinc-400 active:border-zinc-400",
+      ].join(" "),
+    menu: () => "mt-1 rounded-md border-2 border-zinc-300 bg-white z-50",
+    menuList: () => "py-1",
+    option: ({ isFocused, isSelected }: any) =>
+      [
+        "px-4 py-2 cursor-pointer",
+        isSelected ? "bg-zinc-200" : isFocused && "bg-zinc-200/50",
+      ].join(" "),
+  };
+
   return (
-    <div className="mb-4">
+    <div>
       <Label htmlFor={name}>{label}</Label>
 
       <Controller
@@ -36,6 +54,7 @@ export const AsyncSelectField = ({
         render={({ field }) => (
           <AsyncSelect<Option, false>
             {...field}
+            unstyled
             inputId={name}
             cacheOptions
             defaultOptions
@@ -46,18 +65,7 @@ export const AsyncSelectField = ({
             getOptionValue={(opt) => String(opt.value)}
             value={field.value ?? null}
             placeholder={placeholder}
-            styles={{
-              control: (provided) => ({
-                ...provided,
-                borderColor: error ? "red" : provided.borderColor,
-                boxShadow: error
-                  ? "0 0 0 1px red"
-                  : provided.boxShadow,
-                "&:hover": {
-                  borderColor: error ? "red" : provided.borderColor,
-                },
-              }),
-            }}
+            classNames={classNames}
           />
         )}
       />
