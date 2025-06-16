@@ -2,12 +2,11 @@ import { useForm } from "react-hook-form";
 import { A } from "../components/ui/A";
 import { Button } from "../components/ui/Button";
 import { H1 } from "../components/ui/H1";
-import { useNavigate } from "react-router";
 import { login } from "../services/authService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field } from "../components/form/Field";
-import { toast } from "sonner";
+import { redirectTo, showToast } from "../utils/events";
 
 const loginFormSchema = z.object({
   email: z
@@ -18,7 +17,6 @@ const loginFormSchema = z.object({
 });
 
 export const Login = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -35,11 +33,13 @@ export const Login = () => {
       localStorage.setItem("token", response.token);
       localStorage.setItem("role", response.role);
 
-      response.token && toast.success("Login realizado com sucesso");
+      if (response.token) {
+        showToast("Login realizado com sucesso", "success");
+      }
 
-      navigate("/dashboard");
+      redirectTo("/dashboard");
     } catch (error: any) {
-      toast.error(error.message);
+      showToast(error.message, "error");
     }
   };
 

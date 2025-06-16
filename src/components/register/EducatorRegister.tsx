@@ -53,7 +53,6 @@ const genderOptions = [
 ];
 
 export const EducatorRegister = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -79,11 +78,12 @@ export const EducatorRegister = () => {
 
   const onSubmit = async (data: EducatorFormSchema) => {
     const { institution, ...rest } = data;
+
     const payload: CreateEducatorRequest = {
       ...rest,
       institutionId: institution!.value,
     };
-    console.log(payload);
+
     try {
       const response = await createEducator(payload);
       toast.success(response.message);

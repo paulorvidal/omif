@@ -55,8 +55,6 @@ export const StudentTable = () => {
           }),
         );
         setStudents(formattedData);
-
-        console.log("Dados recebidos:", response);
       } catch (error) {
         console.error("Erro ao buscar alunos:", error);
       }
