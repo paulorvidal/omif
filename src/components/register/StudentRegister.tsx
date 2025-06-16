@@ -5,7 +5,10 @@ import { Button } from "../ui/Button";
 import { Field } from "../form/Field";
 import { SelectField } from "../form/SelectField";
 
-import { createStudent, type CreateStudentRequest } from "../../services/studentService";
+import {
+  createStudent,
+  type CreateStudentRequest,
+} from "../../services/studentService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -134,7 +137,7 @@ export const StudentRegister = () => {
     reset,
   } = useForm({
     resolver: zodResolver(studentRegisterFormSchema),
-    defaultValues: { 
+    defaultValues: {
       email: "",
       password: "",
       name: "",
@@ -157,20 +160,20 @@ export const StudentRegister = () => {
   type StudentFormSchema = z.infer<typeof studentRegisterFormSchema>;
 
   const onSubmit = async (data: StudentFormSchema) => {
-      const { institution, ...rest } = data;
-      const payload: CreateStudentRequest = {
-        ...rest,
-        institutionId: institution!.value, 
-      };
-      console.log(payload)
-      try {
-        const response = await createStudent(payload);
-        toast.success(response.message);
-        navigate("/login");
-      } catch (error: any) {
-        toast.error(error.message);
-      }
+    const { institution, ...rest } = data;
+    const payload: CreateStudentRequest = {
+      ...rest,
+      institutionId: institution!.value,
     };
+    console.log(payload);
+    try {
+      const response = await createStudent(payload);
+      toast.success(response.message);
+      navigate("/login");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
 
   const onReset = () => {
     reset();
@@ -240,47 +243,52 @@ export const StudentRegister = () => {
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <SelectField
+          name="grade"
           label="Série:"
+          control={control}
           options={gradeOptions}
-          register={register("grade")}
           error={errors.grade?.message}
         />
         <SelectField
+          name="gender"
           label="Gênero:"
+          control={control}
           options={genderOptions}
-          register={register("gender")}
           error={errors.gender?.message}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <SelectField
+          name="ethnicity"
           label="Você se considera:"
+          control={control}
           options={ethnicityOptions}
-          register={register("ethnicity")}
           error={errors.ethnicity?.message}
         />
         <SelectField
+          name="auxilioBrasil"
           label="Sua família é beneficiária do Bolsa Família?"
+          control={control}
           options={auxilioBrasilOptions}
-          register={register("auxilioBrasil")}
           error={errors.auxilioBrasil?.message}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <SelectField
+          name="elementarySchoolCompletionPlace"
           label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
+          control={control}
           options={elementarySchoolCompletionPlaceOptions}
-          register={register("elementarySchoolCompletionPlace")}
           error={errors.elementarySchoolCompletionPlace?.message}
         />
         <SelectField
+          name="incomeRange"
           label="Em qual faixa de renda per capita sua família se encontra?"
+          control={control}
           options={incomeRangeOptions}
-          register={register("incomeRange")}
           error={errors.incomeRange?.message}
         />
       </div>
-
 
       <AsyncSelectField
         name="institution"
@@ -290,7 +298,6 @@ export const StudentRegister = () => {
         loadOptions={fetchInstitutions}
         error={errors.institution?.message}
       />
-
 
       <div className="flex justify-between">
         <Button secondary type="button" onClick={onReset}>

@@ -8,7 +8,7 @@ export const Input = ({ error, ...props }: InputProps) => {
   return (
     <input
       {...props}
-      className={`h-10 w-full rounded-md border-2 ${
+      className={`h-12 w-full rounded-md border-2 ${
         error
           ? "border-red-500"
           : "border-zinc-300 hover:border-zinc-400 focus:border-zinc-500 active:border-zinc-400"

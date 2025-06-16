@@ -90,7 +90,10 @@ export const StudentTable = () => {
         </thead>
         <tbody className="bg-white">
           {table.getRowModel().rows.map((row) => (
-            <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
+            <tr
+              className="odd:bg-white even:bg-zinc-200/50 hover:bg-zinc-200 active:bg-zinc-200"
+              key={row.id}
+            >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="p-2 text-center">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
