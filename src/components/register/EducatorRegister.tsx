@@ -1,7 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createEducator, type CreateEducatorRequest } from "../../services/educatorService";
+import {
+  createEducator,
+  type CreateEducatorRequest,
+} from "../../services/educatorService";
 import { Field } from "../form/Field";
 import { SelectField } from "../form/SelectField";
 import { Button } from "../ui/Button";
@@ -54,7 +57,7 @@ export const EducatorRegister = () => {
   const {
     register,
     handleSubmit,
-    control,          
+    control,
     formState: { errors },
     reset,
   } = useForm({
@@ -78,9 +81,9 @@ export const EducatorRegister = () => {
     const { institution, ...rest } = data;
     const payload: CreateEducatorRequest = {
       ...rest,
-      institutionId: institution!.value, 
+      institutionId: institution!.value,
     };
-    console.log(payload)
+    console.log(payload);
     try {
       const response = await createEducator(payload);
       toast.success(response.message);
@@ -89,7 +92,6 @@ export const EducatorRegister = () => {
       toast.error(error.message);
     }
   };
-
 
   const onReset = () => {
     reset();
@@ -150,13 +152,13 @@ export const EducatorRegister = () => {
           error={errors.siape?.message}
         />
         <SelectField
+          name="gender"
           label="Gênero:"
+          control={control}
           options={genderOptions}
-          register={register("gender")}
           error={errors.gender?.message}
         />
       </div>
-
 
       <AsyncSelectField
         name="institution"
@@ -166,7 +168,6 @@ export const EducatorRegister = () => {
         loadOptions={fetchInstitutions}
         error={errors.institution?.message}
       />
-
 
       <div className="flex justify-between">
         <Button secondary type="button" onClick={onReset}>

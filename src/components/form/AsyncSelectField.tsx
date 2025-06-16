@@ -1,5 +1,4 @@
-import { Controller } from "react-hook-form";
-import type { Control } from "react-hook-form";
+import { Controller, type Control } from "react-hook-form";
 import { Label } from "../ui/Label";
 import AsyncSelect from "react-select/async";
 
@@ -17,6 +16,10 @@ type AsyncSelectFieldProps = {
   error?: string;
 };
 
+const IndicatorSeparator = () => (
+  <span className="mx-1 h-5 w-0.5 rounded-md bg-zinc-300" />
+);
+
 export const AsyncSelectField = ({
   name,
   label,
@@ -28,7 +31,7 @@ export const AsyncSelectField = ({
   const classNames = {
     control: ({ isFocused }: any) =>
       [
-        "h-10 w-full rounded-md border-2 outline-none px-4 py-2 duration-500 ease-in-out",
+        "h-12 w-full rounded-md border-2 outline-none px-4 py-2 duration-500 ease-in-out",
         error
           ? "border-red-500"
           : isFocused
@@ -66,6 +69,7 @@ export const AsyncSelectField = ({
             value={field.value ?? null}
             placeholder={placeholder}
             classNames={classNames}
+            components={{ IndicatorSeparator }}
           />
         )}
       />

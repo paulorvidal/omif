@@ -15,7 +15,7 @@ export const Select = ({ options, error, ...props }: SelectProps) => {
   return (
     <div className="relative">
       <select
-        className={`h-10 w-full rounded-md border-2 ${error ? "border-red-500" : "border-zinc-300 hover:border-zinc-400 focus:border-zinc-500 active:border-zinc-400"} appearance-none px-4 py-2 duration-500 ease-in-out outline-none`}
+        className={`h-12 w-full rounded-md border-2 ${error ? "border-red-500" : "border-zinc-300 hover:border-zinc-400 focus:border-zinc-500 active:border-zinc-400"} appearance-none px-4 py-2 duration-500 ease-in-out outline-none`}
         {...props}
       >
         {options.map((option) => (
