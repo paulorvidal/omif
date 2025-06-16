@@ -63,7 +63,7 @@ export const Dashboard = () => {
               Acesse o gerenciamento completo de estudantes 3
             </p>
           </div>
-          <div className="w-full rounded-md bg-slate-50">
+          <div className="w-full rounded-md ">
             <StudentTable />
           </div>
         </div>
