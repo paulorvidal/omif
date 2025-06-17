@@ -106,8 +106,8 @@ export const StudentTable = () => {
         }));
         setData(formatted);
         setPageCount(result.totalPages);
-      } catch (error) {
-        console.error("Erro ao buscar alunos:", error);
+      } catch (error: any) {
+        showToast(error.message, "error");
       } finally {
         setIsLoading(false);
       }
