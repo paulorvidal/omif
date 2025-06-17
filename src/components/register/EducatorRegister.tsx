@@ -8,12 +8,11 @@ import {
 import { Field } from "../form/Field";
 import { SelectField } from "../form/SelectField";
 import { Button } from "../ui/Button";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
 import { scrollToTop } from "../../utils/scrollToTop";
 
 import { AsyncSelectField } from "../form/AsyncSelectField";
 import { fetchInstitutions } from "../../services/institutionService";
+import { redirectTo, showToast } from "../../utils/events";
 
 const educatorRegisterFormSchema = z
   .object({
@@ -53,7 +52,6 @@ const genderOptions = [
 ];
 
 export const EducatorRegister = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -79,17 +77,24 @@ export const EducatorRegister = () => {
 
   const onSubmit = async (data: EducatorFormSchema) => {
     const { institution, ...rest } = data;
+
     const payload: CreateEducatorRequest = {
       ...rest,
       institutionId: institution!.value,
     };
-    console.log(payload);
+
     try {
       const response = await createEducator(payload);
-      toast.success(response.message);
-      navigate("/login");
+
+      if (response.message) {
+        showToast(response.message, "success");
+      }
+
+      redirectTo("/login");
     } catch (error: any) {
-      toast.error(error.message);
+      if (error.message) {
+        showToast(error.message, "error");
+      }
     }
   };
 

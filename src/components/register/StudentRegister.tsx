@@ -11,12 +11,11 @@ import {
 } from "../../services/studentService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
 import { scrollToTop } from "../../utils/scrollToTop";
 
 import { AsyncSelectField } from "../form/AsyncSelectField";
 import { fetchInstitutions } from "../../services/institutionService";
+import { redirectTo, showToast } from "../../utils/events";
 
 const studentRegisterFormSchema = z
   .object({
@@ -128,7 +127,6 @@ const incomeRangeOptions = [
 ];
 
 export const StudentRegister = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -168,10 +166,14 @@ export const StudentRegister = () => {
     console.log(payload);
     try {
       const response = await createStudent(payload);
-      toast.success(response.message);
-      navigate("/login");
+
+      if (response.message) {
+        showToast(response.message, "success");
+      }
+
+      redirectTo("/login");
     } catch (error: any) {
-      toast.error(error.message);
+      showToast(error.message, "error");
     }
   };
 

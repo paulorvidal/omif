@@ -15,6 +15,7 @@ import { useDebounce } from "./useDebounce";
 import { Pagination } from "./Pagination";
 import { SearchInput } from "./SearchInput";
 import { Edit } from "lucide-react";
+import { showToast } from "../../utils/events";
 
 type StudentColumns = {
   id: string;
