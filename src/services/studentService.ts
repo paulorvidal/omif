@@ -24,7 +24,13 @@ export type CreateStudentResponse = {
   message?: string;
 };
 
+export type Institution = {
+  id: string;
+  name: string;
+}
+
 export type FindAllStudentResponse = {
+  institution: Institution;
   id: string;
   email: string;
   name: string;
@@ -58,25 +64,36 @@ export const createStudent = async (
   }
 };
 
+export type PageResponse<T> = {
+  content: T[];
+  totalPages: number;
+  totalElements?: number;
+  size?: number;
+  number?: number; 
+};
+
 export const findAllStudents = async (
   page: number,
-): Promise<FindAllStudentResponse[]> => {
+  size: number = 10,
+  q?: string,
+): Promise<PageResponse<FindAllStudentResponse>> => {
   try {
-    const response = await api.get<FindAllStudentResponse[]>("/students", {
-      params: {
-        page,
-        size: 10,
-      },
-    });
-    return response.data.content;
+    const params: Record<string, any> = { page, size };
+    if (q && q.trim() !== "") {
+      params.q = q.trim();
+    }
+    const response = await api.get<PageResponse<FindAllStudentResponse>>(
+      "/students",
+      { params },
+    );
+    return response.data;
   } catch (error) {
     const axiosError = error as AxiosError<ApiError>;
-
     const message =
       axiosError.response?.data?.message ||
       axiosError.message ||
       "Erro inesperado. Aguarde ou tente novamente.";
-
     throw new Error(message);
   }
 };
+

@@ -4,26 +4,29 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type PaginationState,
 } from "@tanstack/react-table";
 import {
   findAllStudents,
   type FindAllStudentResponse,
+  type PageResponse,
 } from "../../services/studentService";
+import { useDebounce } from "./useDebounce";
+import { Pagination } from "./Pagination";
+import { SearchInput } from "./SearchInput";
+import { Edit } from "lucide-react";
 
 type StudentColumns = {
+  id: string;
   cpf: string;
   name: string;
   email: string;
   gender: string;
+  institutionName: string;
 };
 
 const columnHelper = createColumnHelper<StudentColumns>();
-
 const columns = [
-  columnHelper.accessor("cpf", {
-    header: "CPF",
-    cell: (info) => info.getValue(),
-  }),
   columnHelper.accessor("name", {
     header: "Nome",
     cell: (info) => info.getValue(),
@@ -32,77 +35,163 @@ const columns = [
     header: "Email",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("gender", {
-    header: "Gênero",
+  columnHelper.accessor("institutionName", {
+    header: "Instituição",
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.display({
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => {
+      const student = row.original;
+      return (
+        <button
+          onClick={() => {}}
+          className="flex items-center gap-1 text-green-600 hover:text-green-800"
+          title="Editar estudante"
+        >
+          <Edit size={16} />
+        </button>
+      );
+    },
+  }),
+  columnHelper.display({
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => {
+      const student = row.original;
+      return (
+        <button
+          onClick={() => {}}
+          className="flex items-center gap-1 text-green-600 hover:text-green-800"
+          title="Editar estudante"
+        >
+          <Edit size={16} />
+        </button>
+      );
+    },
   }),
 ];
 
 export const StudentTable = () => {
-  const [students, setStudents] = useState<StudentColumns[]>([]);
+  const [data, setData] = useState<StudentColumns[]>([]);
+  const [pageCount, setPageCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 12,
+  });
+
+  const [globalFilter, setGlobalFilter] = useState("");
+  //criei uma hook para colocar delay quando o usuario digita para nao fazer tantas requisições
+  const debouncedFilter = useDebounce(globalFilter, 400);
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const response = await findAllStudents(0);
-
-        const formattedData = response.map(
-          (student: FindAllStudentResponse) => ({
-            cpf: student.cpf,
-            name: student.name,
-            email: student.email,
-            gender: student.gender,
-          }),
-        );
-        setStudents(formattedData);
-
-        console.log("Dados recebidos:", response);
+        const pageIndex = pagination.pageIndex;
+        const pageSize = pagination.pageSize;
+        const result: PageResponse<FindAllStudentResponse> =
+          await findAllStudents(pageIndex, pageSize, debouncedFilter);
+        const formatted = result.content.map((student) => ({
+          id: student.id,
+          cpf: student.cpf,
+          name: student.name,
+          email: student.email,
+          gender: student.gender,
+          institutionName: student.institution?.name || "",
+        }));
+        setData(formatted);
+        setPageCount(result.totalPages);
       } catch (error) {
         console.error("Erro ao buscar alunos:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchStudents();
-  }, []);
+    fetchData();
+  }, [pagination.pageIndex, pagination.pageSize, debouncedFilter]);
 
   const table = useReactTable({
-    data: students,
+    data,
     columns,
+    pageCount,
+    state: {
+      pagination,
+    },
+    manualPagination: true,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
-    <div className="w-full rounded-md">
-      <table className="w-full table-auto overflow-x-scroll rounded-md bg-green-600">
-        <thead className="rounded-md text-white">
-          {table.getHeaderGroups().map((hg) => (
-            <tr key={hg.id}>
-              {hg.headers.map((header) => (
-                <th key={header.id} className="rounded-md p-2">
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="bg-white">
-          {table.getRowModel().rows.map((row) => (
-            <tr
-              className="odd:bg-white even:bg-zinc-200/50 hover:bg-zinc-200 active:bg-zinc-200"
-              key={row.id}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="p-2 text-center">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    <div className="w-full">
+      <div className="mb-4 flex flex-col gap-2 rounded-md bg-slate-50 p-1 sm:flex-row sm:items-center sm:justify-between">
+        <SearchInput
+          value={globalFilter}
+          onChange={(e) => {
+            setGlobalFilter(e.target.value);
+            setPagination((old) => ({ ...old, pageIndex: 0 }));
+          }}
+          placeholder="Buscar estudante..."
+          showClearIcon={true}
+          onClear={() => {
+            setGlobalFilter("");
+            setPagination((old) => ({ ...old, pageIndex: 0 }));
+          }}
+          className="w-full"
+        />
+      </div>
+
+      <div className="overflow-x-auto rounded-md bg-slate-50">
+        <table className="w-full table-auto rounded-md bg-green-600">
+          <thead className="text-white">
+            {table.getHeaderGroups().map((hg) => (
+              <tr key={hg.id}>
+                {hg.headers.map((header) => (
+                  <th key={header.id} className="p-2 text-left">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody className="bg-white">
+            {table.getRowModel().rows.map((row) => (
+              <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="p-2 text-left">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+            {data.length === 0 && !isLoading && (
+              <tr>
+                <td colSpan={columns.length} className="p-4 text-center">
+                  Nenhum registro encontrado.
                 </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <Pagination
+          pageIndex={pagination.pageIndex}
+          pageCount={pageCount}
+          isLoading={isLoading}
+          onPageChange={(newPageIndex) =>
+            setPagination((old) => ({ ...old, pageIndex: newPageIndex }))
+          }
+          className="p-1"
+        />
+      </div>
     </div>
   );
 };
