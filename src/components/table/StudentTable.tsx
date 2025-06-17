@@ -9,6 +9,7 @@ import {
   findAllStudents,
   type FindAllStudentResponse,
 } from "../../services/studentService";
+import { showToast } from "../../utils/events";
 
 type StudentColumns = {
   cpf: string;
@@ -54,9 +55,10 @@ export const StudentTable = () => {
             gender: student.gender,
           }),
         );
+
         setStudents(formattedData);
-      } catch (error) {
-        console.error("Erro ao buscar alunos:", error);
+      } catch (error: any) {
+        showToast(error.message, "error");
       }
     };
 

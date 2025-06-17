@@ -1,4 +1,5 @@
 import axios from "axios";
+import { redirectTo, showToast } from "../utils/events";
 
 const apiUrl = "http://89.116.73.16:8080";
 
@@ -21,6 +22,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
+
+      showToast("Token expirado. Realize o login novamente", "info");
+      redirectTo("/login");
     }
 
     return Promise.reject(error);
