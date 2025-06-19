@@ -16,6 +16,7 @@ import { Pagination } from "./Pagination";
 import { SearchInput } from "./SearchInput";
 import { Edit } from "lucide-react";
 import { showToast } from "../../utils/events";
+import { H2 } from "../ui/H2";
 
 type StudentColumns = {
   id: string;
@@ -39,22 +40,6 @@ const columns = [
   columnHelper.accessor("institutionName", {
     header: "Instituição",
     cell: (info) => info.getValue(),
-  }),
-  columnHelper.display({
-    id: "actions",
-    header: "Ações",
-    cell: ({ row }) => {
-      const student = row.original;
-      return (
-        <button
-          onClick={() => {}}
-          className="flex items-center gap-1 text-green-600 hover:text-green-800"
-          title="Editar estudante"
-        >
-          <Edit size={16} />
-        </button>
-      );
-    },
   }),
   columnHelper.display({
     id: "actions",
@@ -129,69 +114,74 @@ export const StudentTable = () => {
   });
 
   return (
-    <div className="w-full">
-      <div className="mb-4 flex flex-col gap-2 rounded-md bg-slate-50 p-1 sm:flex-row sm:items-center sm:justify-between">
-        <SearchInput
-          value={globalFilter}
-          onChange={(e) => {
-            setGlobalFilter(e.target.value);
-            setPagination((old) => ({ ...old, pageIndex: 0 }));
-          }}
-          placeholder="Buscar estudante..."
-          showClearIcon={true}
-          onClear={() => {
-            setGlobalFilter("");
-            setPagination((old) => ({ ...old, pageIndex: 0 }));
-          }}
-          className="w-full"
-        />
-      </div>
+    <div className="flex flex-col gap-4 md:gap-8">
+      <H2>Estudantes</H2>
 
-      <div className="overflow-x-auto rounded-md bg-slate-50">
-        <table className="w-full table-auto rounded-md bg-green-600">
-          <thead className="text-white">
-            {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id}>
-                {hg.headers.map((header) => (
-                  <th key={header.id} className="p-2 text-left">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </th>
+      <div className="rounded-md bg-slate-50">
+        <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <SearchInput
+            value={globalFilter}
+            onChange={(e) => {
+              setGlobalFilter(e.target.value);
+              setPagination((old) => ({ ...old, pageIndex: 0 }));
+            }}
+            placeholder="Buscar estudante..."
+            showClearIcon={true}
+            onClear={() => {
+              setGlobalFilter("");
+              setPagination((old) => ({ ...old, pageIndex: 0 }));
+            }}
+            className="w-96"
+          />
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto rounded-md bg-green-600">
+              <thead className="text-white">
+                {table.getHeaderGroups().map((hg) => (
+                  <tr key={hg.id}>
+                    {hg.headers.map((header) => (
+                      <th key={header.id} className="p-2 text-left">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="bg-white">
-            {table.getRowModel().rows.map((row) => (
-              <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="p-2 text-left">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+              </thead>
+              <tbody className="bg-white">
+                {table.getRowModel().rows.map((row) => (
+                  <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="p-2 text-left">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-            {data.length === 0 && !isLoading && (
-              <tr>
-                <td colSpan={columns.length} className="p-4 text-center">
-                  Nenhum registro encontrado.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-
-        <Pagination
-          pageIndex={pagination.pageIndex}
-          pageCount={pageCount}
-          isLoading={isLoading}
-          onPageChange={(newPageIndex) =>
-            setPagination((old) => ({ ...old, pageIndex: newPageIndex }))
-          }
-          className="p-1"
-        />
+                {data.length === 0 && !isLoading && (
+                  <tr>
+                    <td colSpan={columns.length} className="p-4 text-center">
+                      Nenhum registro encontrado.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            pageIndex={pagination.pageIndex}
+            pageCount={pageCount}
+            isLoading={isLoading}
+            onPageChange={(newPageIndex) =>
+              setPagination((old) => ({ ...old, pageIndex: newPageIndex }))
+            }
+            className="p-1"
+          />
+        </div>
       </div>
     </div>
   );

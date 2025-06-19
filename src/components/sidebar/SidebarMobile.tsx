@@ -31,7 +31,7 @@ export const SidebarMobile = ({
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-50 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden">
+      <div className="fixed bottom-0 left-0 z-10 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden">
         <div
           className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500"
           onClick={() => setIsOpen(!isOpen)}
@@ -51,12 +51,12 @@ export const SidebarMobile = ({
       </div>
       {isOpen && (
         <div
-          className="absolute top-0 left-0 z-10 h-screen w-screen bg-zinc-950/50"
+          className="fixed top-0 left-0 z-10 h-screen w-screen bg-zinc-950/50"
           onClick={() => setIsOpen(!isOpen)}
         ></div>
       )}
       <div
-        className={`absolute top-0 left-0 z-20 h-screen w-72 flex-col items-start duration-100 ${isOpen ? "flex" : "hidden"} gap-1 bg-green-600 p-2 text-slate-50`}
+        className={`fixed top-0 left-0 z-20 h-screen w-72 flex-col items-start duration-100 ${isOpen ? "flex" : "hidden"} gap-1 bg-green-600 p-2 text-slate-50`}
       >
         <div className="flex w-full flex-col gap-1">
           <div

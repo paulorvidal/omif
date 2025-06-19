@@ -21,9 +21,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-
-      showToast("Token expirado. Realize o login novamente", "info");
+      if (localStorage.getItem("token")) {
+        localStorage.removeItem("token");
+      }
+      if (localStorage.getItem("role")) {
+        localStorage.removeItem("role");
+      }
       redirectTo("/login");
     }
 
