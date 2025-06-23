@@ -1,12 +1,9 @@
 import React from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Ellipsis } from "lucide-react";
 
 export interface PaginationProps {
-  pageIndex: number;    
-  pageCount: number;    
+  pageIndex: number;
+  pageCount: number;
   isLoading?: boolean;
   onPageChange: (newPageIndex: number) => void;
   className?: string;
@@ -18,7 +15,7 @@ const generatePageItems = (
   pageCount: number,
   pageIndex: number,
   siblingCount: number,
-  boundaryCount: number
+  boundaryCount: number,
 ) => {
   const totalPageNumbers = siblingCount * 2 + boundaryCount * 2 + 3;
   const pages: (number | string)[] = [];
@@ -28,16 +25,20 @@ const generatePageItems = (
     return pages;
   }
 
-  const leftSiblingIndex = Math.max(pageIndex + 1 - siblingCount, boundaryCount + 2);
+  const leftSiblingIndex = Math.max(
+    pageIndex + 1 - siblingCount,
+    boundaryCount + 2,
+  );
   const rightSiblingIndex = Math.min(
     pageIndex + 1 + siblingCount,
-    pageCount - boundaryCount - 1
+    pageCount - boundaryCount - 1,
   );
 
   for (let i = 1; i <= boundaryCount; i++) pages.push(i);
 
   if (leftSiblingIndex > boundaryCount + 2) pages.push("...");
-  else if (leftSiblingIndex === boundaryCount + 2) pages.push(boundaryCount + 1);
+  else if (leftSiblingIndex === boundaryCount + 2)
+    pages.push(boundaryCount + 1);
 
   for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) pages.push(i);
 
@@ -45,7 +46,8 @@ const generatePageItems = (
   else if (rightSiblingIndex === pageCount - boundaryCount - 1)
     pages.push(pageCount - boundaryCount);
 
-  for (let i = pageCount - boundaryCount + 1; i <= pageCount; i++) pages.push(i);
+  for (let i = pageCount - boundaryCount + 1; i <= pageCount; i++)
+    pages.push(i);
 
   return pages;
 };
@@ -66,26 +68,29 @@ export const Pagination: React.FC<PaginationProps> = ({
     pageCount,
     pageIndex,
     siblingCount,
-    boundaryCount
+    boundaryCount,
   );
 
   return (
-    <div className={`flex w-min items-center justify-center space-x-2 ${className}`}>      
-      {/* Prev */}
+    <div className={`flex h-full items-center gap-2 ${className}`}>
       <button
         onClick={() => onPageChange(pageIndex - 1)}
         disabled={!canPrev}
-        className="px-2 py-1  rounded disabled:opacity-50"
+        className="flex h-8 w-8 items-center justify-center enabled:hover:bg-zinc-200 enabled:active:bg-zinc-200 disabled:opacity-60"
         title="Página anterior"
       >
-        <ChevronLeft size={16} />
+        <ChevronLeft className="h-4 w-4" />
       </button>
 
-      {/* Page Numbers */}
       {pages.map((item, idx) => {
         if (item === "...") {
           return (
-            <span key={`ellipsis-${idx}`} className="px-2 py-1">…</span>
+            <span
+              key={`ellipsis-${idx}`}
+              className="flex h-8 w-8 items-center justify-center"
+            >
+              <Ellipsis className="h-4 w-4" />
+            </span>
           );
         }
         const number = item as number;
@@ -95,26 +100,21 @@ export const Pagination: React.FC<PaginationProps> = ({
             key={number}
             onClick={() => onPageChange(number - 1)}
             disabled={isLoading}
-            className={`px-2 py-1  rounded transition disabled:opacity-50 ${
-              isActive ? "bg-green-600 text-white -blue-500" : "hover:bg-gray-100"
-            }`}
+            className={`h-8 w-8 rounded-md text-center ${isActive ? "bg-green-600 text-zinc-50" : "hover:bg-zinc-200 active:bg-zinc-200"}`}
           >
             {number}
           </button>
         );
       })}
 
-      {/* Next */}
       <button
         onClick={() => onPageChange(pageIndex + 1)}
         disabled={!canNext}
-        className="px-2 py-1  rounded disabled:opacity-50"
+        className="flex h-8 w-8 items-center justify-center enabled:hover:bg-zinc-200 enabled:active:bg-zinc-200 disabled:opacity-60"
         title="Próxima página"
       >
-        <ChevronRight size={16} />
+        <ChevronRight className="h-4 w-4" />
       </button>
-
-      
     </div>
   );
 };

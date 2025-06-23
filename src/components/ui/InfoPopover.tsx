@@ -18,10 +18,10 @@ export const InfoPopover: React.FC<InfoPopoverProps> = ({
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="ml-1 rounded-full p-1 hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-zinc-300"
+          className="p-2 text-zinc-500 duration-300 hover:text-zinc-700 active:text-zinc-700"
           aria-label="Mais informações"
         >
-          <Info size={16} className="text-zinc-500" />
+          <Info className="h-4 w-4" />
         </button>
       </Popover.Trigger>
       <Popover.Portal>
@@ -29,7 +29,7 @@ export const InfoPopover: React.FC<InfoPopoverProps> = ({
           side={side}
           align={align}
           sideOffset={6}
-          className="bg-white text-zinc-800 text-sm p-3 rounded-lg shadow-lg border border-zinc-200 max-w-xs"
+          className="max-w-xs rounded-md bg-white p-4 text-sm text-zinc-800 shadow-lg"
         >
           {content}
           <Popover.Arrow className="fill-white" />

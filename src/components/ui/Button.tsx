@@ -3,8 +3,8 @@ import type { ComponentProps, ReactElement } from "react";
 type ButtonProps = {
   children: string;
   icon?: ReactElement;
-  secondary?: boolean; 
-  outline?: boolean;  
+  secondary?: boolean;
+  outline?: boolean;
 } & ComponentProps<"button">;
 
 export const Button = ({
@@ -20,7 +20,7 @@ export const Button = ({
 
   if (outline) {
     variantClasses =
-      "border-2 border-zinc-300  text-zinc-500 font-normal hover:border-zinc-400 hover:text-zinc-400 active:border-zinc-600 active:text-zinc-600 bg-transparent";
+      "border-2 border-zinc-300 text-zinc-500 font-normal hover:border-zinc-400 hover:text-zinc-400 active:border-zinc-600 active:text-zinc-600 bg-transparent";
   } else if (secondary) {
     variantClasses =
       "border-2 border-green-600 text-green-600 font-semibold hover:border-green-500 hover:text-green-500 active:border-green-500 active:text-green-500 bg-transparent";
