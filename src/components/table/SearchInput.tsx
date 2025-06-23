@@ -8,9 +8,10 @@ interface SearchInputProps {
   placeholder?: string;
   className?: string;
   inputClassName?: string;
-  onSearchIconClick?: () => void; 
+  onSearchIconClick?: () => void;
   showClearIcon?: boolean;
   onClear?: () => void;
+  isLoading?: boolean;
   type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
 }
 
@@ -23,6 +24,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   onSearchIconClick,
   showClearIcon = false,
   onClear,
+  isLoading = false,
   type = "text",
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,38 +37,43 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     }
   };
 
-  return (
-    <div className={`inline-flex items-stretch ${className}`}>      
-      <div className="relative flex-1">
-        <Input
-          ref={inputRef}
-          type={type}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className={`w-full pr-8 border border-r-0 rounded-l-md p-2 ${inputClassName}`}
-        />
+  const prefixIcon = isLoading ? (
+    <Search size={16} className="animate-spin text-gray-500" />
+  ) : (
+    <button
+      type="button"
+      onClick={handleSearchClick}
+      className="flex items-center justify-center"
+      aria-label="Pesquisar"
+    >
+      <Search size={16} className="text-gray-500" />
+    </button>
+  );
 
-        {showClearIcon && value.length > 0 && onClear && (
-          <button
-            type="button"
-            onClick={onClear}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center"
-            aria-label="Limpar pesquisa"
-          >
-            <X size={16} className="text-gray-500" />
-          </button>
-        )}
-      </div>
-
+  const suffixIcon =
+    showClearIcon && value.length > 0 && onClear ? (
       <button
         type="button"
-        onClick={handleSearchClick}
-        className="flex items-center justify-center ml-2 bg-green-600 text-white border rounded-md px-3"
-        aria-label="Pesquisar"
+        onClick={onClear}
+        className="flex items-center justify-center"
+        aria-label="Limpar pesquisa"
       >
-        <Search size={16} />
+        <X size={16} className="text-gray-500" />
       </button>
+    ) : null;
+
+  return (
+    <div className={`inline-flex items-center ${className}`}>
+      <Input
+        ref={inputRef}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        prefix={prefixIcon}
+        suffix={suffixIcon}
+        className={inputClassName}
+      />
     </div>
   );
 };

@@ -2,17 +2,53 @@ import React from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
 } from "lucide-react";
 
 export interface PaginationProps {
-  pageIndex: number;
-  pageCount: number;
+  pageIndex: number;    
+  pageCount: number;    
   isLoading?: boolean;
   onPageChange: (newPageIndex: number) => void;
   className?: string;
+  siblingCount?: number;
+  boundaryCount?: number;
 }
+
+const generatePageItems = (
+  pageCount: number,
+  pageIndex: number,
+  siblingCount: number,
+  boundaryCount: number
+) => {
+  const totalPageNumbers = siblingCount * 2 + boundaryCount * 2 + 3;
+  const pages: (number | string)[] = [];
+
+  if (pageCount <= totalPageNumbers) {
+    for (let i = 1; i <= pageCount; i++) pages.push(i);
+    return pages;
+  }
+
+  const leftSiblingIndex = Math.max(pageIndex + 1 - siblingCount, boundaryCount + 2);
+  const rightSiblingIndex = Math.min(
+    pageIndex + 1 + siblingCount,
+    pageCount - boundaryCount - 1
+  );
+
+  for (let i = 1; i <= boundaryCount; i++) pages.push(i);
+
+  if (leftSiblingIndex > boundaryCount + 2) pages.push("...");
+  else if (leftSiblingIndex === boundaryCount + 2) pages.push(boundaryCount + 1);
+
+  for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) pages.push(i);
+
+  if (rightSiblingIndex < pageCount - boundaryCount - 1) pages.push("...");
+  else if (rightSiblingIndex === pageCount - boundaryCount - 1)
+    pages.push(pageCount - boundaryCount);
+
+  for (let i = pageCount - boundaryCount + 1; i <= pageCount; i++) pages.push(i);
+
+  return pages;
+};
 
 export const Pagination: React.FC<PaginationProps> = ({
   pageIndex,
@@ -20,79 +56,65 @@ export const Pagination: React.FC<PaginationProps> = ({
   isLoading = false,
   onPageChange,
   className = "",
+  siblingCount = 1,
+  boundaryCount = 1,
 }) => {
   const canPrev = pageIndex > 0 && !isLoading;
   const canNext = pageIndex + 1 < pageCount && !isLoading;
 
-  const handleFirst = () => {
-    if (pageIndex > 0) {
-      onPageChange(0);
-    }
-  };
-  const handlePrev = () => {
-    if (pageIndex > 0) {
-      onPageChange(pageIndex - 1);
-    }
-  };
-  const handleNext = () => {
-    if (pageIndex + 1 < pageCount) {
-      onPageChange(pageIndex + 1);
-    }
-  };
-  const handleLast = () => {
-    if (pageIndex + 1 < pageCount) {
-      onPageChange(pageCount - 1);
-    }
-  };
+  const pages = generatePageItems(
+    pageCount,
+    pageIndex,
+    siblingCount,
+    boundaryCount
+  );
 
   return (
-    <div className={`flex items-center justify-between ${className}`}>
+    <div className={`flex w-min items-center justify-center space-x-2 ${className}`}>      
+      {/* Prev */}
+      <button
+        onClick={() => onPageChange(pageIndex - 1)}
+        disabled={!canPrev}
+        className="px-2 py-1  rounded disabled:opacity-50"
+        title="Página anterior"
+      >
+        <ChevronLeft size={16} />
+      </button>
 
-      <div className="text-sm">
-        Página {pageIndex + 1} de {pageCount}
-      </div>
+      {/* Page Numbers */}
+      {pages.map((item, idx) => {
+        if (item === "...") {
+          return (
+            <span key={`ellipsis-${idx}`} className="px-2 py-1">…</span>
+          );
+        }
+        const number = item as number;
+        const isActive = number - 1 === pageIndex;
+        return (
+          <button
+            key={number}
+            onClick={() => onPageChange(number - 1)}
+            disabled={isLoading}
+            className={`px-2 py-1  rounded transition disabled:opacity-50 ${
+              isActive ? "bg-green-600 text-white -blue-500" : "hover:bg-gray-100"
+            }`}
+          >
+            {number}
+          </button>
+        );
+      })}
 
-      <div className="flex gap-2">
-        {/* Primeira página */}
-        <button
-          onClick={handleFirst}
-          disabled={!canPrev}
-          className="px-3 py-1 border rounded disabled:opacity-50 flex items-center"
-          title="Primeira página"
-        >
-          <ChevronsLeft size={16} />
-        </button>
+      {/* Next */}
+      <button
+        onClick={() => onPageChange(pageIndex + 1)}
+        disabled={!canNext}
+        className="px-2 py-1  rounded disabled:opacity-50"
+        title="Próxima página"
+      >
+        <ChevronRight size={16} />
+      </button>
 
-        {/* Página anterior */}
-        <button
-          onClick={handlePrev}
-          disabled={!canPrev}
-          className="px-3 py-1 border rounded disabled:opacity-50 flex items-center"
-          title="Página anterior"
-        >
-          <ChevronLeft size={16} />
-        </button>
-
-        {/* Página próxima */}
-        <button
-          onClick={handleNext}
-          disabled={!canNext}
-          className="px-3 py-1 border rounded disabled:opacity-50 flex items-center"
-          title="Próxima página"
-        >
-          <ChevronRight size={16} />
-        </button>
-
-        {/* Última página */}
-        <button
-          onClick={handleLast}
-          disabled={!canNext}
-          className="px-3 py-1 border rounded disabled:opacity-50 flex items-center"
-          title="Última página"
-        >
-          <ChevronsRight size={16} />
-        </button>
-      </div>
+      
     </div>
   );
 };

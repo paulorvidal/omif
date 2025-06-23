@@ -3,7 +3,7 @@ import { H1 } from "../components/ui/H1";
 import { Label } from "../components/ui/Label";
 import { useState } from "react";
 import { StudentRegister } from "../components/register/StudentRegister";
-import { EducatorRegister } from "../components/register/EducatorRegister";
+import { EducatorForm } from "../components/register/EducatorForm";
 
 export const Register = () => {
   const [selectedTab, setSelectedTab] = useState("Estudante");
@@ -30,7 +30,7 @@ export const Register = () => {
           </div>
         </div>
         {selectedTab == "Estudante" && <StudentRegister />}
-        {selectedTab == "Educador" && <EducatorRegister />}
+        {selectedTab == "Educador" && <EducatorForm />}
       </div>
     </div>
   );

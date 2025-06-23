@@ -1,5 +1,5 @@
 import axios from "axios";
-import { redirectTo, showToast } from "../utils/events";
+import { redirectTo } from "../utils/events";
 
 const apiUrl = "http://89.116.73.16:8080";
 

@@ -13,6 +13,7 @@ import { Register } from "./pages/Register";
 import { toast, Toaster } from "sonner";
 import { ScrollToTop } from "./utils/ScrollToTop";
 import { setRedirectFunction, setToastFunction } from "./utils/events";
+import { EducatorRegister } from "./pages/EducatorRegister";
 
 const SetupEvents = () => {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ export const App = () => {
           <Route path="/" element={<Navigate to="/login" />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/cadastre-se" element={<Register />}></Route>
+          <Route path="/educador/cadastre-se" element={<EducatorRegister />}></Route>
           <Route
             path="/dashboard"
             element={
