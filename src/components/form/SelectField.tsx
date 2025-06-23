@@ -2,6 +2,7 @@ import { Controller, type Control } from "react-hook-form";
 import { Label } from "../ui/Label";
 import Select from "react-select";
 
+
 type Option = {
   label: string;
   value: string | number;
@@ -13,6 +14,7 @@ type SelectFieldProps = {
   control: Control<any>;
   options: Option[];
   error?: string;
+  helpText?: string;
 };
 
 const IndicatorSeparator = () => (
@@ -25,6 +27,7 @@ export const SelectField = ({
   control,
   options,
   error,
+  helpText
 }: SelectFieldProps) => {
   const [placeholderOption, ...validOptions] = options;
 
@@ -49,7 +52,7 @@ export const SelectField = ({
 
   return (
     <div>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name} helpText={helpText}>{label}</Label>
 
       <Controller
         name={name}

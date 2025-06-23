@@ -1,17 +1,19 @@
-// Field.tsx
-import type { UseFormRegisterReturn } from "react-hook-form";
-import { Input } from "../ui/Input";
-import { Label } from "../ui/Label";
-import { mask } from "remask";
+import type { ControllerRenderProps } from 'react-hook-form';
+import { Input } from '../ui/Input';
+import { Label } from '../ui/Label';
+import { mask } from 'remask';
 
-type FieldProps = {
+interface FieldProps {
   label: string;
   type: string;
-  placeholder: string;
+  placeholder?: string;
   mask?: string;
   error?: string;
-  register: UseFormRegisterReturn;
-};
+  helpText?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: ControllerRenderProps<any, any>;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+}
 
 export const Field = ({
   label,
@@ -20,8 +22,10 @@ export const Field = ({
   error,
   mask: maskPattern,
   register,
+  helpText,
+  inputProps,
 }: FieldProps) => {
-  const { onChange, onBlur, name, ref } = register;
+  const { onChange, onBlur, name, ref, value } = register;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (maskPattern) {
@@ -33,7 +37,9 @@ export const Field = ({
 
   return (
     <div>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name} helpText={helpText}>
+        {label}
+      </Label>
       <Input
         id={name}
         type={type}
@@ -43,6 +49,8 @@ export const Field = ({
         onBlur={onBlur}
         name={name}
         ref={ref}
+        value={value}
+        {...inputProps}
       />
       {error && <span className="text-sm text-red-500">{error}</span>}
     </div>

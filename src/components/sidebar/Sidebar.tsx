@@ -14,11 +14,11 @@ export const Sidebar = () => {
   const role = localStorage.getItem("role") as string;
 
   const linksCenter = [
-    { title: "Educadores", icon: IdCard, roles: [""] },
-    { title: "Instituições", icon: GraduationCap, roles: [""] },
-    { title: "Estudantes", icon: UsersRound, roles: ["ADMIN"] },
-    { title: "Estudantes com NEEs", icon: Accessibility, roles: [""] },
-    { title: "Relatórios", icon: FileSpreadsheet, roles: [""] },
+    { title: "Educadores", icon: IdCard, roles: ["ADMINISTRADOR"] },
+    { title: "Instituições", icon: GraduationCap, roles: ["ADMINISTRADOR"] },
+    { title: "Estudantes", icon: UsersRound, roles: ["ADMINISTRADOR"] },
+    { title: "Estudantes com NEEs", icon: Accessibility, roles: ["ADMINISTRADOR"] },
+    { title: "Relatórios", icon: FileSpreadsheet, roles: ["ADMINISTRADOR"] },
   ];
 
   const filteredLinksCenter = linksCenter.filter(

@@ -2,6 +2,7 @@ import { Controller, type Control } from "react-hook-form";
 import { Label } from "../ui/Label";
 import AsyncSelect from "react-select/async";
 
+
 type Option = {
   label: string;
   value: string;
@@ -14,6 +15,7 @@ type AsyncSelectFieldProps = {
   control: Control<any>;
   loadOptions: (inputValue: string) => Promise<Option[]>;
   error?: string;
+  helpText?: string;
 };
 
 const IndicatorSeparator = () => (
@@ -27,6 +29,7 @@ export const AsyncSelectField = ({
   control,
   loadOptions,
   error,
+  helpText
 }: AsyncSelectFieldProps) => {
   const classNames = {
     control: ({ isFocused }: any) =>
@@ -49,7 +52,7 @@ export const AsyncSelectField = ({
 
   return (
     <div>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name} helpText={helpText}>{label}</Label>
 
       <Controller
         name={name}

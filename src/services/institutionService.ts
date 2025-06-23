@@ -1,10 +1,52 @@
+import type { AxiosError } from "axios";
 import api from "./api";
+import type { ApiError } from "./apiError";
 
 export type Institution = {
   id: string;
   name: string;
 };
 
+export type FindAllInstitutionsResponse = {
+  id: string;
+  inep: string;
+  name: string;
+  coordinatorName: string;
+  email: string;
+};
+
+export type PageResponse<T> = {
+  content: T[];
+  totalPages: number;
+  totalElements?: number;
+  size?: number;
+  number?: number; 
+};
+
+export const findAllInstitutions = async (
+  page: number,
+  size: number = 10,
+  q?: string,
+): Promise<PageResponse<FindAllInstitutionsResponse>> => {
+  try {
+    const params: Record<string, any> = { page, size };
+    if (q && q.trim() !== "") {
+      params.q = q.trim();
+    }
+    const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
+      "/institutions",
+      { params },
+    );
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ApiError>;
+    const message =
+      axiosError.response?.data?.message ||
+      axiosError.message ||
+      "Erro inesperado. Aguarde ou tente novamente.";
+    throw new Error(message);
+  }
+};
 
 export async function fetchInstitutions(
   input: string
