@@ -14,7 +14,7 @@ import {
 import { useDebounce } from "./useDebounce";
 import { SearchInput } from "./SearchInput";
 import { ListFilterPlus, Plus } from "lucide-react";
-import { showToast } from "../../utils/events";
+import { redirectTo, showToast } from "../../utils/events";
 import { H2 } from "../ui/H2";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
@@ -155,7 +155,11 @@ export const InstitutionTable = () => {
                   Filtros
                 </Button>
               </div>
-              <Button icon={<Plus />} type="button">
+              <Button
+                icon={<Plus />}
+                type="button"
+                onClick={() => redirectTo("/instituicao")}
+              >
                 Cadastrar
               </Button>
             </div>

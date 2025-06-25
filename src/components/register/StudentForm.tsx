@@ -17,7 +17,7 @@ import { AsyncSelectField } from "../form/AsyncSelectField";
 import { fetchInstitutions } from "../../services/institutionService";
 import { redirectTo, showToast } from "../../utils/events";
 
-const studentRegisterFormSchema = z
+const studentFormSchema = z
   .object({
     name: z.string().nonempty("O nome é obrigatório"),
     email: z.string().email("Email inválido"),
@@ -126,7 +126,7 @@ const incomeRangeOptions = [
   { label: "Prefiro não responder", value: "Prefiro não responder" },
 ];
 
-export const StudentRegister = () => {
+export const StudentForm = () => {
   const {
     register,
     handleSubmit,
@@ -134,7 +134,7 @@ export const StudentRegister = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: zodResolver(studentRegisterFormSchema),
+    resolver: zodResolver(studentFormSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -155,7 +155,7 @@ export const StudentRegister = () => {
     },
   });
 
-  type StudentFormSchema = z.infer<typeof studentRegisterFormSchema>;
+  type StudentFormSchema = z.infer<typeof studentFormSchema>;
 
   const onSubmit = async (data: StudentFormSchema) => {
     const { institution, ...rest } = data;

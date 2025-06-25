@@ -66,7 +66,7 @@ const EducatorFormSchema = z
     path: ["confirmEmail"],
   });
 
-export const EducatorForm = () => {
+export const InstitutionForm = () => {
   const {
     register,
     handleSubmit,
