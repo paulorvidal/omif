@@ -1,12 +1,12 @@
 import { Sidebar } from "../components/sidebar/Sidebar";
-import { H2 } from "../components/ui/H2";
+import { InstitutionTable } from "../components/table/InstitutionTable";
 
-export const Dashboard = () => {
+export const Institutions = () => {
   return (
     <div className="flex pb-14 md:pb-0">
       <Sidebar />
       <div className="w-full p-4 md:ms-14 md:p-8">
-        <H2>Acesse as tabelas pela sidebar</H2>
+        <InstitutionTable />
       </div>
     </div>
   );

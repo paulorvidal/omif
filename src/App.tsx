@@ -1,3 +1,4 @@
+import { useEffect, type JSX } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -5,15 +6,18 @@ import {
   Routes,
   useNavigate,
 } from "react-router";
-import { Login } from "./pages/Login";
-import { Dashboard } from "./pages/Dashboard";
-import { useEffect, type JSX } from "react";
-import { StudentRegister } from "./components/register/StudentRegister";
-import { Register } from "./pages/Register";
 import { toast, Toaster } from "sonner";
-import { ScrollToTop } from "./utils/ScrollToTop";
+
 import { setRedirectFunction, setToastFunction } from "./utils/events";
-import { EducatorRegister } from "./pages/EducatorRegister";
+import { ScrollToTop } from "./utils/ScrollToTop";
+
+import { Login } from "./pages/Login";
+import { Educator } from "./pages/Educator";
+import { Student } from "./pages/Student";
+import { Dashboard } from "./pages/Dashboard";
+import { Institutions } from "./pages/Institutions";
+import { Institution } from "./pages/Institution";
+import { Students } from "./pages/Students";
 
 const SetupEvents = () => {
   const navigate = useNavigate();
@@ -56,10 +60,10 @@ export const App = () => {
         <SetupEvents />
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/cadastre-se" element={<Register />}></Route>
-          <Route path="/educador/cadastre-se" element={<EducatorRegister />}></Route>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/educador" element={<Educator />} />
+          <Route path="/estudante" element={<Student />} />
           <Route
             path="/dashboard"
             element={
@@ -67,8 +71,31 @@ export const App = () => {
                 <Dashboard />
               </PrivateRoute>
             }
-          ></Route>
-          <Route path="/student-register" element={<StudentRegister />}></Route>
+          />
+          <Route
+            path="/instituicoes"
+            element={
+              <PrivateRoute>
+                <Institutions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/instituicao"
+            element={
+              <PrivateRoute>
+                <Institution />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/estudantes"
+            element={
+              <PrivateRoute>
+                <Students />
+              </PrivateRoute>
+            }
+          />
         </Routes>
         <Toaster richColors />
       </BrowserRouter>
