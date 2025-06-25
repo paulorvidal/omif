@@ -1,16 +1,15 @@
-import type { ControllerRenderProps } from 'react-hook-form';
-import { Input } from '../ui/Input';
-import { Label } from '../ui/Label';
-import { mask } from 'remask';
+import type { ControllerRenderProps } from "react-hook-form";
+import { Input } from "../ui/Input";
+import { Label } from "../ui/Label";
+import { mask } from "remask";
 
 interface FieldProps {
   label: string;
   type: string;
   placeholder?: string;
-  mask?: string;
+  mask?: string | string[];
   error?: string;
   helpText?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: ControllerRenderProps<any, any>;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
@@ -29,8 +28,11 @@ export const Field = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (maskPattern) {
-      const maskedValue = mask(e.target.value, maskPattern);
-      e.target.value = maskedValue;
+      const raw = e.target.value.replace(/\D/g, "");
+      const maskPatternArray = Array.isArray(maskPattern)
+        ? maskPattern
+        : [maskPattern];
+      e.target.value = mask(raw, maskPatternArray);
     }
     onChange(e);
   };

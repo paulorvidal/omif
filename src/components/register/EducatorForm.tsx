@@ -17,7 +17,7 @@ const EducatorFormFormSchema = z
   .object({
     name: z.string().nonempty("O nome é obrigatório"),
     email: z.string().email("Email inválido"),
-    confirmEmail: z.string(),   
+    confirmEmail: z.string(),
     cpf: z
       .string()
       .nonempty("O CPF é obrigatório")
@@ -29,7 +29,7 @@ const EducatorFormFormSchema = z
     confirmPassword: z.string(),
     socialName: z
       .string()
-      .optional() 
+      .optional()
       .transform((v) => {
         if (typeof v === "string") {
           const trimmed = v.trim();
@@ -49,7 +49,10 @@ const EducatorFormFormSchema = z
     phoneNumber: z
       .string()
       .nonempty("O telefone é obrigatório")
-      .regex(/^\(\d{2}\)\s?(?:\d{4,5}-\d{4})$/, "Formato de telefone inválido. Use (XX) XXXX-XXXX ou (XX) XXXXX-XXXX"),
+      .regex(
+        /^\(\d{2}\)\s?(?:\d{4,5}-\d{4})$/,
+        "Formato de telefone inválido. Use (XX) XXXX-XXXX ou (XX) XXXXX-XXXX",
+      ),
     dateOfBirth: z
       .string()
       .refine((v) => new Date(v) <= new Date(), "Data inválida"),
@@ -62,7 +65,6 @@ const EducatorFormFormSchema = z
     message: "Os e-mails não coincidem",
     path: ["confirmEmail"],
   });
-
 
 export const EducatorForm = () => {
   const {
@@ -84,7 +86,7 @@ export const EducatorForm = () => {
       siape: "",
       institution: null,
       phoneNumber: "",
-      dateOfBirth: ""
+      dateOfBirth: "",
     },
   });
 
@@ -97,10 +99,10 @@ export const EducatorForm = () => {
       ...rest,
       institutionId: institution!.value,
     };
-    console.log(payload)
+    console.log(payload);
     try {
       const response = await createEducator(payload);
-      
+
       if (response.message) {
         showToast(response.message, "success");
       }
@@ -207,7 +209,7 @@ export const EducatorForm = () => {
           label="Telefone:"
           type="text"
           placeholder="Digite seu telefone"
-          mask="(99) 9999-9999"
+          mask={["(99) 9999-9999", "(99) 99999-9999"]}
           register={register("phoneNumber")}
           error={errors.phoneNumber?.message}
           helpText="Informe seu telefone de contato no formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX. Usaremos para comunicações importantes."
