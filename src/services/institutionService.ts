@@ -66,8 +66,46 @@ export async function fetchInstitutions(
       label: inst.name,
       value: inst.id,
     }));
-  } catch (error: any) {
-    console.error("Erro ao buscar instituições:", error);
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError<ApiError>;
+    const message =
+      axiosError.response?.data?.message ||
+      axiosError.message ||
+      "Erro desconhecido ao buscar instituições.";
+    console.error(message);
     return [];
   }
 }
+
+
+export type CreateInstitutionRequest = {
+  name: string;
+  inep: string;
+  email1: string;
+  email2: string | undefined;
+  email3: string | undefined;
+  phoneNumber: string;
+};
+
+export type CreateInstitutionResponse = {
+  id: string;
+  message?: string;
+};
+
+export const createInstitution = async (
+  data: CreateInstitutionRequest,
+): Promise<CreateInstitutionResponse> => {
+  try {
+    const response = await api.post("/institutions", data);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ApiError>;
+
+    const message =
+      axiosError.response?.data?.message ||
+      axiosError.message ||
+      "Erro inesperado. Aguarde ou tente novamente.";
+
+    throw new Error(message);
+  }
+};

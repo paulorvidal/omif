@@ -13,6 +13,7 @@ interface SearchInputProps {
   onClear?: () => void;
   isLoading?: boolean;
   type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>; 
 }
 
 export const SearchInput: React.FC<SearchInputProps> = ({
