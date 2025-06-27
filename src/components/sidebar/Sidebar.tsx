@@ -14,15 +14,33 @@ export const Sidebar = () => {
   const role = localStorage.getItem("role") as string;
 
   const linksCenter = [
-    { title: "Instituições", icon: GraduationCap, roles: ["ADMINISTRADOR"] },
-    { title: "Estudantes", icon: UsersRound, roles: ["ADMINISTRADOR"] },
-    { title: "Educadores", icon: IdCard, roles: ["ADMINISTRADOR"] },
+    {
+      title: "Instituições",
+      link: "/instituicoes",
+      icon: GraduationCap,
+      roles: ["ADMINISTRADOR"],
+    },
+    {
+      title: "Estudantes",
+      link: "/estudantes",
+      icon: UsersRound,
+      roles: ["ADMINISTRADOR"],
+    },
+    {
+      title: "Educadores",
+      icon: IdCard,
+      roles: ["ADMINISTRADOR"],
+    },
     {
       title: "Estudantes com NEEs",
       icon: Accessibility,
       roles: ["ADMINISTRADOR"],
     },
-    { title: "Relatórios", icon: FileSpreadsheet, roles: ["ADMINISTRADOR"] },
+    {
+      title: "Relatórios",
+      icon: FileSpreadsheet,
+      roles: ["ADMINISTRADOR"],
+    },
   ];
 
   const filteredLinksCenter = linksCenter.filter(

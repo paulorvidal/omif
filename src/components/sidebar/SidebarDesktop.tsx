@@ -5,9 +5,11 @@ import {
   type ForwardRefExoticComponent,
   type RefAttributes,
 } from "react";
+import { NavLink } from "react-router";
 
 type Link = {
   title: string;
+  link?: string;
   icon: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
@@ -64,21 +66,41 @@ export const SidebarDesktop = ({
         <div className="h-0.5 w-full bg-white/30"></div>
         {linksCenter.map((link, index) => {
           const Icon = link.icon;
-          return (
-            <div
-              key={index}
-              className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
-            >
-              <div className="h-10 w-10 shrink-0 rounded-sm">
-                <Icon className="h-10 w-10 p-2" />
-              </div>
-              <p
-                className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
+
+          if (link.link) {
+            return (
+              <NavLink
+                to={link.link}
+                key={index}
+                className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
               >
-                {link.title}
-              </p>
-            </div>
-          );
+                <div className="h-10 w-10 shrink-0 rounded-sm">
+                  <Icon className="h-10 w-10 p-2" />
+                </div>
+                <p
+                  className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
+                >
+                  {link.title}
+                </p>
+              </NavLink>
+            );
+          } else {
+            return (
+              <div
+                key={index}
+                className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
+              >
+                <div className="h-10 w-10 shrink-0 rounded-sm">
+                  <Icon className="h-10 w-10 p-2" />
+                </div>
+                <p
+                  className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
+                >
+                  {link.title}
+                </p>
+              </div>
+            );
+          }
         })}
       </div>
       <div className="flex w-full flex-1 flex-col justify-end gap-1">
