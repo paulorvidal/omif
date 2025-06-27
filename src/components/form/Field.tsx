@@ -1,7 +1,8 @@
-import type { ControllerRenderProps } from "react-hook-form";
 import { Input } from "../ui/Input";
 import { Label } from "../ui/Label";
 import { mask } from "remask";
+import type { UseFormRegisterReturn } from "react-hook-form";
+
 
 interface FieldProps {
   label: string;
@@ -10,7 +11,7 @@ interface FieldProps {
   mask?: string | string[];
   error?: string;
   helpText?: string;
-  register: ControllerRenderProps<any, any>;
+  register: UseFormRegisterReturn;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 

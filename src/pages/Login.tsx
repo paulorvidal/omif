@@ -75,7 +75,7 @@ export const Login = () => {
             <A className="text-center" href="#">
               Esqueci minha senha
             </A>
-            <A to="/educador/cadastre-se" className="text-center">
+            <A to="/educador" className="text-center">
               Criar cadastro
             </A>
           </div>
