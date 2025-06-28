@@ -127,8 +127,8 @@ export const InstitutionTable = () => {
       <H2>Instituições</H2>
       <div className="rounded-md bg-slate-50">
         <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="w-full flex-none md:w-auto">
+          <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+            <div className="w-full flex-1">
               <SearchInput
                 value={globalFilter}
                 onChange={(e) => {
@@ -141,21 +141,20 @@ export const InstitutionTable = () => {
                   setGlobalFilter("");
                   setPagination((old) => ({ ...old, pageIndex: 0 }));
                 }}
-                className="w-full md:w-auto"
               />
             </div>
-            <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
-              <div className="w-full">
-                <Button
-                  icon={<ListFilterPlus />}
-                  type="button"
-                  onClick={() => setIsFilterDialogOpen(true)}
-                  outline
-                >
-                  Filtros
-                </Button>
-              </div>
+            <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row md:w-auto">
               <Button
+                className="w-full sm:w-auto"
+                icon={<ListFilterPlus />}
+                type="button"
+                onClick={() => setIsFilterDialogOpen(true)}
+                outline
+              >
+                Filtros
+              </Button>
+              <Button
+                className="w-full sm:w-auto"
                 icon={<Plus />}
                 type="button"
                 onClick={() => redirectTo("/instituicao")}

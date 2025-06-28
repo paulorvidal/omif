@@ -1,80 +1,48 @@
-import React, { useRef } from "react";
-import { Input } from "../ui/Input";
 import { Search, X } from "lucide-react";
+import { useRef, type ComponentProps } from "react";
 
-interface SearchInputProps {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  className?: string;
-  inputClassName?: string;
-  onSearchIconClick?: () => void;
+type SearchInputProps = {
   showClearIcon?: boolean;
   onClear?: () => void;
   isLoading?: boolean;
-  type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>; 
-}
+  value: string;
+} & ComponentProps<"input">;
 
-export const SearchInput: React.FC<SearchInputProps> = ({
-  value,
-  onChange,
-  placeholder = "Pesquisar...",
-  className = "",
-  inputClassName = "",
-  onSearchIconClick,
-  showClearIcon = false,
+export const SearchInput = ({
+  showClearIcon,
   onClear,
-  isLoading = false,
-  type = "text",
-}) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  isLoading,
+  value,
+  ...props
+}: SearchInputProps) => {
+  const ref = useRef<HTMLInputElement>(null);
 
   const handleSearchClick = () => {
-    if (onSearchIconClick) {
-      onSearchIconClick();
-    } else {
-      inputRef.current?.focus();
-    }
+    ref.current?.focus();
   };
 
-  const prefixIcon = isLoading ? (
-    <Search size={16} className="animate-spin text-gray-500" />
-  ) : (
-    <button
-      type="button"
-      onClick={handleSearchClick}
-      className="flex items-center justify-center"
-      aria-label="Pesquisar"
-    >
-      <Search size={16} className="text-gray-500" />
-    </button>
-  );
-
-  const suffixIcon =
-    showClearIcon && value.length > 0 && onClear ? (
+  return (
+    <div className="flex h-12 items-center justify-center gap-2 rounded-md border-2 border-zinc-300 px-4 py-2 duration-500 ease-in-out outline-none placeholder:text-zinc-500 hover:border-zinc-400 active:border-zinc-400">
       <button
         type="button"
-        onClick={onClear}
-        className="flex items-center justify-center"
-        aria-label="Limpar pesquisa"
+        aria-label="Pesquisar"
+        disabled={isLoading}
+        className="text-zinc-500"
+        onClick={handleSearchClick}
       >
-        <X size={16} className="text-gray-500" />
+        <Search />
       </button>
-    ) : null;
-
-  return (
-    <div className={`inline-flex items-center ${className}`}>
-      <Input
-        ref={inputRef}
-        type={type}
+      <input
+        {...props}
+        ref={ref}
         value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        prefix={prefixIcon}
-        suffix={suffixIcon}
-        className={inputClassName}
+        className="w-full focus:outline-none"
       />
+      {showClearIcon && value.length > 0 && onClear && (
+        <button type="button" onClick={onClear} aria-label="Limpar pesquisa">
+          <X className="size-4 text-zinc-500" />
+        </button>
+      )}
     </div>
   );
 };
