@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactElement } from "react";
 
 type ButtonProps = {
+  className?: string;
   children: string;
   icon?: ReactElement;
   secondary?: boolean;
@@ -8,6 +9,7 @@ type ButtonProps = {
 } & ComponentProps<"button">;
 
 export const Button = ({
+  className,
   children,
   icon,
   secondary,
@@ -15,7 +17,7 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const baseClasses =
-    "flex cursor-pointer items-center justify-center rounded-md px-4 h-12 duration-500";
+    "flex cursor-pointer items-center justify-center rounded-md px-4 gap-2 h-12 duration-500";
   let variantClasses = "";
 
   if (outline) {
@@ -30,8 +32,11 @@ export const Button = ({
   }
 
   return (
-    <button className={`${baseClasses} ${variantClasses}`} {...props}>
-      {icon && <span className="mr-2 flex items-center">{icon}</span>}
+    <button
+      className={` ${className} ${baseClasses} ${variantClasses}`}
+      {...props}
+    >
+      {icon && <span className="flex items-center">{icon}</span>}
       {children}
     </button>
   );
