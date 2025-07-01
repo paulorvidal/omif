@@ -81,6 +81,14 @@ export const App = () => {
             }
           />
           <Route
+            path="/instituicao/:id"
+            element={
+              <PrivateRoute>
+                <Institution />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/instituicao"
             element={
               <PrivateRoute>

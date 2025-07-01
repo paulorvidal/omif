@@ -23,16 +23,23 @@ export type PageResponse<T> = {
   number?: number; 
 };
 
+interface FindAllInstitutionsParams {
+  page: number;
+  size: number;
+  q?: string;
+}
+
 export const findAllInstitutions = async (
   page: number,
   size: number = 10,
   q?: string,
 ): Promise<PageResponse<FindAllInstitutionsResponse>> => {
   try {
-    const params: Record<string, any> = { page, size };
-    if (q && q.trim() !== "") {
+    const params: FindAllInstitutionsParams = { page, size };
+    if (q?.trim()) {
       params.q = q.trim();
     }
+
     const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
       "/institutions",
       { params },
@@ -87,6 +94,10 @@ export type CreateInstitutionRequest = {
   phoneNumber: string;
 };
 
+export type UpdateInstitutionRequest = CreateInstitutionRequest & {
+  coordinatorId?: string;
+};
+
 export type CreateInstitutionResponse = {
   id: string;
   message?: string;
@@ -106,6 +117,47 @@ export const createInstitution = async (
       axiosError.message ||
       "Erro inesperado. Aguarde ou tente novamente.";
 
+    throw new Error(message);
+  }
+};
+
+
+export type FindInstitutionsResponse = {
+  name: string;
+  inep: string;
+  email1: string;
+  email2: string;
+  email3: string;
+  phoneNumber: string;
+  coordinator?: { id: string; socialName: string }
+};
+
+
+export const getInstitutionById = async (id: string) => {
+  const resp = await api.get<FindInstitutionsResponse>(`/institutions/${id}`);
+  return resp.data;
+};
+
+export const updateInstitution = async (
+  id: string,
+  data: CreateInstitutionRequest
+) => {
+  const resp = await api.put<CreateInstitutionResponse>(
+    `/institutions/${id}`,
+    data
+  );
+  return resp.data;
+};
+
+export const deleteInstitution = async (id: string): Promise<void> => {
+  try {
+    await api.delete(`/institutions/${id}`);
+  } catch (error) {
+    const axiosError = error as AxiosError<ApiError>;
+    const message =
+      axiosError.response?.data?.message ||
+      axiosError.message ||
+      "Erro ao deletar a instituição.";
     throw new Error(message);
   }
 };

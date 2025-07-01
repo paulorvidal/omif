@@ -1,7 +1,7 @@
 import axios from "axios";
 import { redirectTo } from "../utils/events";
 
-const apiUrl = "http://89.116.73.16:8080";
+const apiUrl = "http://localhost:8080";
 
 const api = axios.create({
   baseURL: apiUrl,

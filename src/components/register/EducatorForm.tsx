@@ -50,8 +50,8 @@ const EducatorFormSchema = z
       .string()
       .nonempty("O telefone é obrigatório")
       .regex(
-        /^\(\d{2}\)\s?(?:\d{4,5}-\d{4})$/,
-        "Formato de telefone inválido. Use (XX) XXXX-XXXX ou (XX) XXXXX-XXXX",
+        /^\(\d{2}\)\d{4,5}-\d{4}$/,
+        "Formato de telefone inválido. Use (XX)XXXX-XXXX ou (XX)XXXXX-XXXX",
       ),
     dateOfBirth: z
       .string()
@@ -209,10 +209,10 @@ export const EducatorForm = () => {
           label="Telefone:"
           type="text"
           placeholder="Digite seu telefone"
-          mask={["(99) 9999-9999", "(99) 99999-9999"]}
+          mask={["(99)9999-9999", "(99)99999-9999"]}
           register={register("phoneNumber")}
           error={errors.phoneNumber?.message}
-          helpText="Informe seu telefone de contato no formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX. Usaremos para comunicações importantes."
+          helpText="Informe seu telefone de contato no formato (XX)XXXX-XXXX ou (XX)XXXXX-XXXX. Usaremos para comunicações importantes."
         />
       </div>
 

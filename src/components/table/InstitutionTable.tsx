@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-table";
 import {
   findAllInstitutions,
+  deleteInstitution,
   type FindAllInstitutionsResponse,
   type PageResponse,
 } from "../../services/institutionService";
@@ -20,50 +21,17 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { FilterDialog, type TableFilters } from "../ui/FilterDialog";
 import { Pagination } from "./Pagination";
+import { MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../ui/DropdownMenu";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
+import type { AxiosError } from "axios";
 
-const columnHelper = createColumnHelper<FindAllInstitutionsResponse>();
-const columns = [
-  columnHelper.accessor("inep", {
-    header: "INEP",
-    cell: (info) => {
-      const inep = info.getValue();
-      if (!inep || inep.trim() === "") {
-        return (
-          <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge>
-        );
-      }
-      return inep;
-    },
-  }),
-  columnHelper.accessor("name", {
-    header: "Nome",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("email", {
-    header: "Email",
-    cell: (info) => {
-      const email = info.getValue();
-      if (!email || email.trim() === "") {
-        return (
-          <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge>
-        );
-      }
-      return email;
-    },
-  }),
-  columnHelper.accessor("coordinatorName", {
-    header: "Coordenador",
-    cell: (info) => {
-      const coordinatorName = info.getValue();
-      if (!coordinatorName || coordinatorName.trim() === "") {
-        return (
-          <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge>
-        );
-      }
-      return coordinatorName;
-    },
-  }),
-];
+
 
 export const InstitutionTable = () => {
   const [data, setData] = useState<FindAllInstitutionsResponse[]>([]);
@@ -77,39 +45,144 @@ export const InstitutionTable = () => {
 
   const [globalFilter, setGlobalFilter] = useState("");
   const debouncedFilter = useDebounce(globalFilter, 400);
-
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const pageIndex = pagination.pageIndex;
-        const pageSize = pagination.pageSize;
-        const result: PageResponse<FindAllInstitutionsResponse> =
-          await findAllInstitutions(pageIndex, pageSize, debouncedFilter);
-        const formatted = result.content.map((institution) => ({
-          id: institution.id,
-          name: institution.name,
-          inep: institution.inep,
-          email: institution.email,
-          coordinatorName: institution.coordinatorName,
-        }));
-        setData(formatted);
-        setPageCount(result.totalPages);
-      } catch (error) {
-        if (error instanceof Error) {
-          showToast(error.message, "error");
-        } else {
-          showToast("Erro desconhecido", "error");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [pagination.pageIndex, pagination.pageSize, debouncedFilter]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [institutionToDelete, setInstitutionToDelete] = useState<string | null>(null);
 
+  const handleDeleteClick = (id: string) => {
+    setInstitutionToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmOpen(false);
+    setInstitutionToDelete(null);
+  };
+
+  const handleConfirmDelete = async (): Promise<void> => {
+    if (!institutionToDelete) return;
+  
+    try {
+      await deleteInstitution(institutionToDelete);
+      showToast("Instituição deletada com sucesso", "success");
+  
+      setConfirmOpen(false);
+      setInstitutionToDelete(null);
+  
+      await loadInstitutions();
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const message =
+        axiosError.response?.data?.message ??
+        axiosError.message ??
+        "Erro ao deletar instituição.";
+      showToast(message, "error");
+    }
+  };
+
+  const columnHelper = createColumnHelper<FindAllInstitutionsResponse>();
+  const columns = [
+    columnHelper.accessor("inep", {
+      header: "INEP",
+      cell: (info) => {
+        const inep = info.getValue();
+        if (!inep || inep.trim() === "") {
+          return (
+            <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge>
+          );
+        }
+        return inep;
+      },
+    }),
+    columnHelper.accessor("name", {
+      header: "Nome",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("email", {
+      header: "Email",
+      cell: (info) => {
+        const email = info.getValue();
+        if (!email || email.trim() === "") {
+          return (
+            <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge>
+          );
+        }
+        return email;
+      },
+    }),
+    columnHelper.accessor("coordinatorName", {
+      header: "Coordenador",
+      cell: (info) => {
+        const coordinatorName = info.getValue();
+        if (!coordinatorName || coordinatorName.trim() === "") {
+          return (
+            <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge>
+          );
+        }
+        return coordinatorName;
+      },
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-1 rounded hover:bg-slate-100">
+              <MoreHorizontal className="h-5 w-5 text-zinc-600" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              onClick={() =>
+                redirectTo(`/instituicao/${row.original.id}`)
+              }
+            >
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem  onClick={() => handleDeleteClick(row.original.id)}>
+              Deletar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    }),
+  ];
+
+  const loadInstitutions = async () => {
+    setIsLoading(true);
+    try {
+      const pageIndex = pagination.pageIndex;
+      const pageSize = pagination.pageSize;
+      const result: PageResponse<FindAllInstitutionsResponse> =
+        await findAllInstitutions(pageIndex, pageSize, debouncedFilter);
+      const formatted = result.content.map((institution) => ({
+        id: institution.id,
+        name: institution.name,
+        inep: institution.inep,
+        email: institution.email,
+        coordinatorName: institution.coordinatorName,
+      }));
+      setData(formatted);
+      setPageCount(result.totalPages);
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast(error.message, "error");
+      } else {
+        showToast("Erro desconhecido", "error");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
+
+  useEffect(() => {
+    loadInstitutions();
+  }, [pagination.pageIndex, pagination.pageSize, debouncedFilter]);
+  
   const table = useReactTable({
     data,
     columns,
@@ -122,6 +195,7 @@ export const InstitutionTable = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  
   return (
     <div className="flex flex-col gap-4 md:gap-8">
       <H2>Instituições</H2>
@@ -230,6 +304,13 @@ export const InstitutionTable = () => {
           }
           setIsFilterDialogOpen(false);
         }}
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir instituição"
+        message="Tem certeza que deseja excluir esta instituição? Esta ação não pode ser desfeita."
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );
