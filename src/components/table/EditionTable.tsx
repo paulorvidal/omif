@@ -9,6 +9,7 @@ import { ListFilterPlus, Plus, MoreHorizontal } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../services/institutionService";
 import { useInstitutionTable } from "./useInstitutionTable";
+import { H2 } from "../ui/H2";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Pagination } from "./Pagination";
@@ -119,6 +120,7 @@ export const InstitutionTable = () => {
   
   return (
     <div className="flex flex-col gap-4 md:gap-8">
+      <H2>Edições</H2>
       <div className="rounded-md bg-slate-50">
         <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex w-full flex-col items-center gap-4 md:flex-row">

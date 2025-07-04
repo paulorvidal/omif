@@ -14,9 +14,8 @@ import { NavLink } from "react-router";
 
 type Link = {
   title: string;
-  icon: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+  link?: string;
 };
 
 type SidebarDesktopProps = {

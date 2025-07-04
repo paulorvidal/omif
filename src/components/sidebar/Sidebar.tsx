@@ -37,6 +37,12 @@ export const Sidebar = () => {
       roles: ["ADMINISTRADOR"],
     },
     {
+      title: "Edições",
+      link: "/estudantes",
+      icon: UsersRound,
+      roles: ["ADMINISTRADOR"],
+    },
+    {
       title: "Relatórios",
       icon: FileSpreadsheet,
       roles: ["ADMINISTRADOR"],

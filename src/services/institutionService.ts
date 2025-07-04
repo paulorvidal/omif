@@ -1,6 +1,4 @@
-import type { AxiosError } from "axios";
 import api from "./api";
-import type { ApiError } from "./apiError";
 
 export type Institution = {
   id: string;
@@ -27,63 +25,9 @@ interface FindAllInstitutionsParams {
   page: number;
   size: number;
   q?: string;
-}
-
-export const findAllInstitutions = async (
-  page: number,
-  size: number = 10,
-  q?: string,
-): Promise<PageResponse<FindAllInstitutionsResponse>> => {
-  try {
-    const params: FindAllInstitutionsParams = { page, size };
-    if (q?.trim()) {
-      params.q = q.trim();
-    }
-
-    const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
-      "/institutions",
-      { params },
-    );
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiError>;
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro inesperado. Aguarde ou tente novamente.";
-    throw new Error(message);
-  }
+  sort?: string;
+  
 };
-
-export async function fetchInstitutions(
-  input: string
-): Promise<Array<{ label: string; value: string }>> {
-  try {
-    const response = await api.get<{
-      content: Institution[];
-    }>("/institutions/search", {
-      params: {
-        q: input,
-        page: 0,
-        size: 10,
-      },
-    });
-
-    return response.data.content.map((inst) => ({
-      label: inst.name,
-      value: inst.id,
-    }));
-  } catch (error: unknown) {
-    const axiosError = error as AxiosError<ApiError>;
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro desconhecido ao buscar instituições.";
-    console.error(message);
-    return [];
-  }
-}
-
 
 export type CreateInstitutionRequest = {
   name: string;
@@ -102,26 +46,6 @@ export type CreateInstitutionResponse = {
   id: string;
   message?: string;
 };
-
-export const createInstitution = async (
-  data: CreateInstitutionRequest,
-): Promise<CreateInstitutionResponse> => {
-  try {
-    const response = await api.post("/institutions", data);
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiError>;
-
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro inesperado. Aguarde ou tente novamente.";
-
-    throw new Error(message);
-  }
-};
-
-
 export type FindInstitutionsResponse = {
   name: string;
   inep: string;
@@ -130,6 +54,55 @@ export type FindInstitutionsResponse = {
   email3: string;
   phoneNumber: string;
   coordinator?: { id: string; socialName: string }
+};
+
+export const findAllInstitutions = async (
+  page: number,
+  size: number = 10,
+  q?: string,
+  sort?: string, 
+): Promise<PageResponse<FindAllInstitutionsResponse>> => {
+  const params: FindAllInstitutionsParams = { page, size };
+  if (q?.trim()) {
+    params.q = q.trim();
+  }
+  
+  if (sort?.trim()) {
+    params.sort = sort.trim(); 
+  }
+
+  const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
+    "/institutions",
+    { params },
+  );
+  return response.data;
+};
+
+export async function fetchInstitutions(
+  input: string
+): Promise<Array<{ label: string; value: string }>> {
+  const response = await api.get<{
+    content: Institution[];
+  }>("/institutions/search", {
+    params: {
+      q: input,
+      page: 0,
+      size: 10,
+    },
+  });
+
+  return response.data.content.map((inst) => ({
+    label: inst.name,
+    value: inst.id,
+  }));
+};
+
+
+export const createInstitution = async (
+  data: CreateInstitutionRequest,
+): Promise<CreateInstitutionResponse> => {
+  const response = await api.post("/institutions", data);
+  return response.data;
 };
 
 
@@ -150,14 +123,5 @@ export const updateInstitution = async (
 };
 
 export const deleteInstitution = async (id: string): Promise<void> => {
-  try {
-    await api.delete(`/institutions/${id}`);
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiError>;
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro ao deletar a instituição.";
-    throw new Error(message);
-  }
+  await api.delete(`/institutions/${id}`);
 };

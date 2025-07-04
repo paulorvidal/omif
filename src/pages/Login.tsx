@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { A } from "../components/ui/A";
 import { Button } from "../components/ui/Button";
 import { H1 } from "../components/ui/H1";
-import { login } from "../services/authService";
+import { login, type LoginRequest } from "../services/authService";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field } from "../components/form/Field";
@@ -17,6 +18,7 @@ const loginFormSchema = z.object({
 });
 
 export const Login = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -25,23 +27,28 @@ export const Login = () => {
     resolver: zodResolver(loginFormSchema),
   });
 
-  const onSubmit = async (data: any) => {
-    const payload = data;
+  const onSubmit = async (data: LoginRequest) => {
+    setIsSubmitting(true); 
     try {
-      const response = await login(payload);
-
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("role", response.role);
+      const response = await login(data);
 
       if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("role", response.role);
         showToast("Login realizado com sucesso", "success");
+        redirectTo("/dashboard"); 
+      } else {
+        showToast("Resposta inválida do servidor", "error");
       }
-
-      redirectTo("/dashboard");
-    } catch (error: any) {
-      showToast(error.message, "error");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Falha ao tentar fazer login.";
+        showToast(message, "error");
+    } finally {
+      setIsSubmitting(false); 
     }
   };
+
 
   return (
     <div className="flex h-screen w-screen flex-col items-center bg-zinc-200 p-4 text-zinc-700 sm:p-16">
@@ -69,7 +76,9 @@ export const Login = () => {
             error={errors.password?.message}
           />
 
-          <Button type="submit">Entrar</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Entrando..." : "Entrar"}
+          </Button>
 
           <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
             <A className="text-center" href="#">

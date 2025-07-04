@@ -25,7 +25,7 @@ export const Field = ({
   helpText,
   inputProps,
 }: FieldProps) => {
-  const { onChange, onBlur, name, ref, value } = register;
+  const { onChange, onBlur, name, ref } = register;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (maskPattern) {
@@ -52,7 +52,6 @@ export const Field = ({
         onBlur={onBlur}
         name={name}
         ref={ref}
-        value={value}
         {...inputProps}
       />
       {error && <span className="text-sm text-red-500">{error}</span>}

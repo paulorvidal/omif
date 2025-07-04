@@ -18,6 +18,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { Institutions } from "./pages/Institutions";
 import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
+import { Editions } from "./pages/Steps";
+
 
 const SetupEvents = () => {
   const navigate = useNavigate();
@@ -101,6 +103,14 @@ export const App = () => {
             element={
               <PrivateRoute>
                 <Students />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/edicoes"
+            element={
+              <PrivateRoute>
+                <Editions />
               </PrivateRoute>
             }
           />

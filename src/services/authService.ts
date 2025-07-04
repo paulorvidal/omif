@@ -2,7 +2,7 @@ import type { AxiosError } from "axios";
 import api from "./api";
 import type { ApiError } from "./apiError";
 
-type LoginRequest = {
+export type LoginRequest = {
   email: string;
   password: string;
 };

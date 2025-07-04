@@ -44,8 +44,9 @@ const columns = [
   columnHelper.display({
     id: "actions",
     header: "Ações",
-    cell: ({ row }) => {
-      const student = row.original;
+    cell: () => {
+    //cell: ({ row }) => {
+      //const student = row.original;
       return (
         <button
           onClick={() => {}}
@@ -115,8 +116,6 @@ export const StudentTable = () => {
 
   return (
     <div className="flex flex-col gap-4 md:gap-8">
-      <H2>Estudantes</H2>
-
       <div className="rounded-md bg-slate-50">
         <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
           <SearchInput
