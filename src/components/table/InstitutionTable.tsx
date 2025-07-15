@@ -5,7 +5,7 @@ import {
   useReactTable,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, MoreHorizontal } from "lucide-react";
+import { ListFilterPlus, Plus, EllipsisVertical, Pencil, Trash } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../services/institutionService";
 import { useInstitutionTable } from "./useInstitutionTable";
@@ -43,7 +43,7 @@ export const InstitutionTable = () => {
         header: "INEP",
         cell: (info) => {
           const inep = info.getValue();
-          return !inep || inep.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge> : inep;
+          return !inep || inep.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">N/A</Badge> : inep;
         },
       }),
       columnHelper.accessor("name", {
@@ -54,14 +54,14 @@ export const InstitutionTable = () => {
         header: "Email",
         cell: (info) => {
           const email = info.getValue();
-          return !email || email.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge> : email;
+          return !email || email.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">N/A</Badge> : email;
         },
       }),
       columnHelper.accessor("coordinatorName", {
         header: "Coordenador",
         cell: (info) => {
           const name = info.getValue();
-          return !name || name.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge> : name;
+          return !name || name.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">N/A</Badge> : name;
         },
       }),
       columnHelper.display({
@@ -70,15 +70,21 @@ export const InstitutionTable = () => {
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded hover:bg-slate-100">
-                <MoreHorizontal className="h-5 w-5 text-zinc-600" />
+              <button className="p-1 rounded hover:bg-zinc-100">
+                <EllipsisVertical className="h-5 w-5 text-zinc-600" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => redirectTo(`/instituicao/${row.original.id}`)}>
+              <DropdownMenuItem
+                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+                onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
+              >
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleDeleteClick(row.original.id)}>
+              <DropdownMenuItem 
+                icon={<Trash className="h-4 w-4 text-zinc-600" />} 
+                onClick={() => handleDeleteClick(row.original.id)}
+              >
                 Deletar
               </DropdownMenuItem>
             </DropdownMenuContent>
