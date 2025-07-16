@@ -5,7 +5,7 @@ import {
   useReactTable,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, EllipsisVertical, Pencil, Trash } from "lucide-react";
+import { ListFilterPlus, Plus, EllipsisVertical, Pencil, Trash, ExternalLink } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../services/institutionService";
 import { useInstitutionTable } from "./useInstitutionTable";
@@ -180,14 +180,16 @@ export const InstitutionTable = () => {
               </tbody>
             </table>
           </div>
-
-          <Pagination
-            pageIndex={table.getState().pagination.pageIndex}
-            pageCount={table.getPageCount()}
-            isLoading={isLoading}
-            onPageChange={(newPageIndex) => handleURLChange({ page: newPageIndex })}
-            className="p-1"
-          />
+          <div className="flex">
+            <Pagination
+              pageIndex={table.getState().pagination.pageIndex}
+              pageCount={table.getPageCount()}
+              isLoading={isLoading}
+              onPageChange={(newPageIndex) => handleURLChange({ page: newPageIndex })}
+              className="p-1 w-full"
+            />
+            <Button icon={<ExternalLink />} neutral>Exportar</Button>
+          </div>
         </div>
       </div>
       

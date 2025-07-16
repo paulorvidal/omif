@@ -18,7 +18,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { Institutions } from "./pages/Institutions";
 import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
-import { Editions } from "./pages/Steps";
+import { Editions } from "./pages/Editions";
+import { Edition } from "./pages/Edition"
 
 
 const SetupEvents = () => {
@@ -49,10 +50,24 @@ const SetupEvents = () => {
   return null;
 };
 
-const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+const PrivateRoute = ({
+  children,
+  allowedRoles,
+}: {
+  children: JSX.Element;
+  allowedRoles?: string[];
+}) => {
   const token = localStorage.getItem("token");
-
-  return token ? children : <Navigate to="/login" />;
+  const userRole = localStorage.getItem("role");
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+  if (allowedRoles && allowedRoles.length > 0) {
+    if (!userRole || !allowedRoles.includes(userRole)) {
+      return <Navigate to="/login" />;
+    }
+  }
+  return children;
 };
 
 export const App = () => {
@@ -77,7 +92,7 @@ export const App = () => {
           <Route
             path="/instituicoes"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Institutions />
               </PrivateRoute>
             }
@@ -85,7 +100,7 @@ export const App = () => {
           <Route
             path="/instituicao/:id"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Institution />
               </PrivateRoute>
             }
@@ -93,7 +108,7 @@ export const App = () => {
           <Route
             path="/instituicao"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Institution />
               </PrivateRoute>
             }
@@ -111,6 +126,14 @@ export const App = () => {
             element={
               <PrivateRoute>
                 <Editions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/edicao"
+            element={
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <Edition />
               </PrivateRoute>
             }
           />
