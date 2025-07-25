@@ -28,22 +28,25 @@ export const Sidebar = () => {
     },
     {
       title: "Educadores",
+      link: "/educadores",
       icon: IdCard,
       roles: ["ADMINISTRADOR"],
     },
     {
       title: "Estudantes com NEEs",
+      link: "/estudantes-com-nees",
       icon: Accessibility,
       roles: ["ADMINISTRADOR"],
     },
     {
       title: "Edições",
-      link: "/estudantes",
+      link: "/edicoes",
       icon: UsersRound,
       roles: ["ADMINISTRADOR"],
     },
     {
       title: "Relatórios",
+      link: "/relatorios",
       icon: FileSpreadsheet,
       roles: ["ADMINISTRADOR"],
     },

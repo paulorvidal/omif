@@ -1,5 +1,5 @@
 import OmifIcon from "../../assets/omif-icon.svg";
-import { CircleUserRound, type LucideProps } from "lucide-react";
+import { type LucideProps } from "lucide-react";
 import {
   useState,
   type ForwardRefExoticComponent,
@@ -58,23 +58,6 @@ export const SidebarDesktop = ({
             className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
           >
             Página Inicial
-          </p>
-        </NavLink>
-        <NavLink
-          to="/perfil"
-          className={({ isActive }) =>
-            `flex w-full cursor-pointer items-center rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${
-              isActive ? "bg-green-500/50" : ""
-            }`
-          }
-        >
-          <div className="h-10 w-10 shrink-0">
-            <CircleUserRound className="h-10 w-10 p-2" />
-          </div>
-          <p
-            className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
-          >
-            Perfil
           </p>
         </NavLink>
       </div>

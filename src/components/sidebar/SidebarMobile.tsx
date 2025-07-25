@@ -4,12 +4,7 @@ import {
   type RefAttributes,
 } from "react";
 import OmifIcon from "../../assets/omif-icon.svg";
-import {
-  AlignJustify,
-  CircleUserRound,
-  X,
-  type LucideProps,
-} from "lucide-react";
+import { AlignJustify, LogOut, X, type LucideProps } from "lucide-react";
 import { NavLink } from "react-router";
 
 type Link = {
@@ -33,7 +28,7 @@ export const SidebarMobile = ({
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-40 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.25)] md:hidden">
+      <div className="fixed bottom-0 left-0 z-30 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.25)] md:hidden">
         <div
           className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500"
           onClick={() => setIsOpen(!isOpen)}
@@ -43,25 +38,18 @@ export const SidebarMobile = ({
         <NavLink to="/" className="cursor-pointer rounded-sm bg-green-500 p-1">
           <img className="h-8 w-8" src={OmifIcon} alt="Logo da Omif" />
         </NavLink>
-        <NavLink
-          to="/perfil"
-          className={({ isActive }) =>
-            `cursor-pointer rounded-sm p-2 hover:bg-green-500 active:bg-green-500 ${
-              isActive ? "bg-green-500/50" : ""
-            }`
-          }
-        >
-          <CircleUserRound className="h-6 w-6" />
-        </NavLink>
+        <div className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500">
+          <LogOut className="h-10 w-10 p-2" />
+        </div>
       </div>
       {isOpen && (
         <div
-          className="fixed top-0 left-0 z-10 h-screen w-screen bg-zinc-950/50"
+          className="fixed top-0 left-0 z-40 h-screen w-screen bg-zinc-950/50"
           onClick={() => setIsOpen(!isOpen)}
         ></div>
       )}
       <div
-        className={`fixed top-0 left-0 z-20 h-screen w-72 flex-col items-start duration-100 ${isOpen ? "flex" : "hidden"} gap-1 bg-green-600 p-2 text-slate-50`}
+        className={`fixed top-0 left-0 z-50 h-screen w-72 flex-col items-start duration-100 ${isOpen ? "flex" : "hidden"} gap-1 bg-green-600 p-2 text-slate-50`}
       >
         <div className="flex w-full flex-col gap-1">
           <div
@@ -91,16 +79,6 @@ export const SidebarMobile = ({
                 Página Inicial
               </p>
             </div>
-          </div>
-          <div className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500">
-            <div className="h-10 w-10 shrink-0 rounded-sm">
-              <CircleUserRound className="h-10 w-10 p-2" />
-            </div>
-            <p
-              className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
-            >
-              Perfil
-            </p>
           </div>
           <div className="h-0.5 w-full bg-white/30"></div>
           {linksCenter.map((link, index) => {
