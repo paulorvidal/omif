@@ -14,7 +14,9 @@ import { NavLink } from "react-router";
 
 type Link = {
   title: string;
-  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
   link?: string;
 };
 
@@ -31,23 +33,26 @@ export const SidebarMobile = ({
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-10 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden">
+      <div className="fixed bottom-0 left-0 z-40 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.25)] md:hidden">
         <div
           className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500"
           onClick={() => setIsOpen(!isOpen)}
         >
           <AlignJustify className="h-10 w-10 p-2" />
         </div>
-        <div className="h-10 w-10 shrink-0 cursor-pointer rounded-sm bg-green-500">
-          <img
-            className="h-full w-full p-2"
-            src={OmifIcon}
-            alt="Logo da Omif"
-          />
-        </div>
-        <div className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500">
-          <CircleUserRound className="h-10 w-10 p-2" />
-        </div>
+        <NavLink to="/" className="cursor-pointer rounded-sm bg-green-500 p-1">
+          <img className="h-8 w-8" src={OmifIcon} alt="Logo da Omif" />
+        </NavLink>
+        <NavLink
+          to="/perfil"
+          className={({ isActive }) =>
+            `cursor-pointer rounded-sm p-2 hover:bg-green-500 active:bg-green-500 ${
+              isActive ? "bg-green-500/50" : ""
+            }`
+          }
+        >
+          <CircleUserRound className="h-6 w-6" />
+        </NavLink>
       </div>
       {isOpen && (
         <div
