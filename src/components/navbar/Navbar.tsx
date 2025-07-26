@@ -6,14 +6,15 @@ import AsyncSelect from "react-select/async";
 import { NavLink } from "react-router";
 import { z } from "zod";
 import { Controller } from "react-hook-form";
+import { fetchEditions } from "../../services/editionService";
 
 const currentYear = new Date().getFullYear();
 
 const EditionFormSchema = z.object({
-  year: z
+  edition: z
     .object({
       label: z.string(),
-      value: z.string(),
+      value: z.string().uuid("ID inválido"),
     })
     .nullable()
     .refine((v) => v !== null, {
@@ -45,14 +46,11 @@ export const Navbar = () => {
   const { control, watch, trigger } = useForm({
     resolver: zodResolver(EditionFormSchema),
     defaultValues: {
-      year: {
-        label: String(currentYear),
-        value: String(currentYear),
-      },
+      edition: null,
     },
   });
 
-  const selectedYear = watch("year");
+  const selectedYear = watch("edition");
   useEffect(() => {
     if (selectedYear) {
       trigger().then((isValid) => {
@@ -70,14 +68,21 @@ export const Navbar = () => {
       <div className="flex items-center">
         <Calendar className="h-8 w-8 p-1" />
         <Controller
-          name="year"
+          name="edition"
           control={control}
           render={({ field }) => (
             <AsyncSelect
               {...field}
               unstyled
-              loadOptions={[{ label: "2025", value: "2025" }]}
+              inputId="edition"
+              cacheOptions
+              defaultOptions
+              loadOptions={fetchEditions}
               onChange={(option) => field.onChange(option)}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => String(opt.value)}
+              value={field.value ?? null}
+              placeholder={currentYear}
               classNames={classNames}
             />
           )}

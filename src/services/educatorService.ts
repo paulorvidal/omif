@@ -36,26 +36,25 @@ export const createEducator = async (
   }
 };
 
-
 export type Educator = {
   id: string;
   socialName: string;
 };
 
-
 export async function fetchEducators(
   input: string,
-  institutionId: string
+  institutionId: string,
 ): Promise<Array<{ label: string; value: string }>> {
   try {
     const response = await api.get<{ content: Educator[] }>(
-      `/educators/institution/${institutionId}`, {
+      `/educators/institution/${institutionId}`,
+      {
         params: {
           q: input,
           page: 0,
           size: 10,
         },
-      }
+      },
     );
 
     return response.data.content.map((educator) => ({
