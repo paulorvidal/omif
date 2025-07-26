@@ -14,6 +14,7 @@ type SelectFieldProps<T extends FieldValues> = {
   options: Option[];
   error?: string;
   helpText?: string;
+  isClearable?: boolean; 
 };
 
 const IndicatorSeparator = () => (
@@ -27,6 +28,7 @@ export const SelectField = <T extends FieldValues>({
   options,
   error,
   helpText,
+  isClearable = false, 
 }: SelectFieldProps<T>) => {
   const [placeholderOption, ...validOptions] = options;
 
@@ -63,7 +65,7 @@ export const SelectField = <T extends FieldValues>({
             {...field}
             unstyled
             inputId={name}
-            isClearable
+            isClearable={isClearable}
             options={validOptions}
             onChange={(opt) => field.onChange(opt ? opt.value : opt)}
             getOptionLabel={(opt) => opt.label}
