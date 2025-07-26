@@ -2,12 +2,12 @@ import api from "./api";
 
 export type Edition = {
   id: string;
-  year: string;
+  year: number;
 };
 
 export async function fetchEditions(
   input: string,
-): Promise<Array<{ label: string; value: string }>> {
+): Promise<Array<{ label: number; value: string }>> {
   const response = await api.get<{
     content: Edition[];
   }>("/editions/search", {
