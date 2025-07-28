@@ -19,8 +19,8 @@ import { Institutions } from "./pages/Institutions";
 import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
 import { Editions } from "./pages/Editions";
-import { Edition } from "./pages/Edition"
-
+import { Edition } from "./pages/Edition";
+import { Notice } from "./pages/Notice";
 
 const SetupEvents = () => {
   const navigate = useNavigate();
@@ -86,6 +86,14 @@ export const App = () => {
             element={
               <PrivateRoute>
                 <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/aviso"
+            element={
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <Notice />
               </PrivateRoute>
             }
           />

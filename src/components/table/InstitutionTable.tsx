@@ -1,11 +1,18 @@
-import React from 'react';
+import React from "react";
 import {
   createColumnHelper,
   flexRender,
   useReactTable,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, EllipsisVertical, Pencil, Trash, ExternalLink } from "lucide-react";
+import {
+  ListFilterPlus,
+  Plus,
+  EllipsisVertical,
+  Pencil,
+  Trash,
+  ExternalLink,
+} from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../services/institutionService";
 import { useInstitutionTable } from "./useInstitutionTable";
@@ -14,7 +21,7 @@ import { Button } from "../ui/Button";
 import { Pagination } from "./Pagination";
 import { SearchInput } from "./SearchInput";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
-import { DialogForm } from '../ui/GenericDialog';
+import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../form/SelectField";
 import {
   DropdownMenu,
@@ -43,7 +50,11 @@ export const InstitutionTable = () => {
         header: "INEP",
         cell: (info) => {
           const inep = info.getValue();
-          return !inep || inep.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">N/A</Badge> : inep;
+          return !inep || inep.trim() === "" ? (
+            <Badge color="border-zinc-300 text-zinc-600">N/A</Badge>
+          ) : (
+            inep
+          );
         },
       }),
       columnHelper.accessor("name", {
@@ -54,14 +65,22 @@ export const InstitutionTable = () => {
         header: "Email",
         cell: (info) => {
           const email = info.getValue();
-          return !email || email.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">N/A</Badge> : email;
+          return !email || email.trim() === "" ? (
+            <Badge color="border-zinc-300 text-zinc-600">N/A</Badge>
+          ) : (
+            email
+          );
         },
       }),
       columnHelper.accessor("coordinatorName", {
         header: "Coordenador",
         cell: (info) => {
           const name = info.getValue();
-          return !name || name.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">N/A</Badge> : name;
+          return !name || name.trim() === "" ? (
+            <Badge color="border-zinc-300 text-zinc-600">N/A</Badge>
+          ) : (
+            name
+          );
         },
       }),
       columnHelper.display({
@@ -70,7 +89,7 @@ export const InstitutionTable = () => {
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded hover:bg-zinc-100">
+              <button className="rounded p-1 hover:bg-zinc-100">
                 <EllipsisVertical className="h-5 w-5 text-zinc-600" />
               </button>
             </DropdownMenuTrigger>
@@ -81,8 +100,8 @@ export const InstitutionTable = () => {
               >
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem 
-                icon={<Trash className="h-4 w-4 text-zinc-600" />} 
+              <DropdownMenuItem
+                icon={<Trash className="h-4 w-4 text-zinc-600" />}
                 onClick={() => handleDeleteClick(row.original.id)}
               >
                 Deletar
@@ -101,28 +120,32 @@ export const InstitutionTable = () => {
     state: { pagination },
     manualPagination: true,
     onPaginationChange: (updater) => {
-      const newPagination = typeof updater === 'function' ? updater(pagination) : updater;
-      handleURLChange({ page: newPagination.pageIndex, size: newPagination.pageSize });
+      const newPagination =
+        typeof updater === "function" ? updater(pagination) : updater;
+      handleURLChange({
+        page: newPagination.pageIndex,
+        size: newPagination.pageSize,
+      });
     },
     getCoreRowModel: getCoreRowModel(),
   });
 
   const sortOptions = [
-    { label: 'Nome (A-Z)', value: 'name,asc' },
-    { label: 'Nome (A-Z)', value: 'name,asc' },
-    { label: 'Nome (Z-A)', value: 'name,desc' },
-    { label: 'INEP (Crescente)', value: 'inep,asc' },
-    { label: 'INEP (Decrescente)', value: 'inep,desc' },
+    { label: "Nome (A-Z)", value: "name,asc" },
+    { label: "Nome (A-Z)", value: "name,asc" },
+    { label: "Nome (Z-A)", value: "name,desc" },
+    { label: "INEP (Crescente)", value: "inep,asc" },
+    { label: "INEP (Decrescente)", value: "inep,desc" },
   ];
-  
+
   const pageSizeOptions = [
-    { label: '10', value: 10 },
-    { label: '5', value: 5 },
-    { label: '10', value: 10 },
-    { label: '20', value: 20 },
-    { label: '50', value: 50 },
+    { label: "10", value: 10 },
+    { label: "5", value: 5 },
+    { label: "10", value: 10 },
+    { label: "20", value: 20 },
+    { label: "50", value: 50 },
   ];
-  
+
   return (
     <div className="flex flex-col gap-4 md:gap-8">
       <div className="rounded-md bg-slate-50">
@@ -134,14 +157,23 @@ export const InstitutionTable = () => {
                 onChange={(e) => handleURLChange({ q: e.target.value })}
                 placeholder="Buscar instituição..."
                 showClearIcon={true}
-                onClear={() => handleURLChange({ q: '' })}
+                onClear={() => handleURLChange({ q: "" })}
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-              <Button icon={<ListFilterPlus />} type="button" onClick={filterDialog.onOpen} outline>
+              <Button
+                icon={<ListFilterPlus />}
+                type="button"
+                onClick={filterDialog.onOpen}
+                outline
+              >
                 Filtros
               </Button>
-              <Button icon={<Plus />} type="button" onClick={() => redirectTo("/instituicao")}>
+              <Button
+                icon={<Plus />}
+                type="button"
+                onClick={() => redirectTo("/instituicao")}
+              >
                 Cadastrar
               </Button>
             </div>
@@ -154,7 +186,12 @@ export const InstitutionTable = () => {
                   <tr key={hg.id}>
                     {hg.headers.map((header) => (
                       <th key={header.id} className="p-2 text-left">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                       </th>
                     ))}
                   </tr>
@@ -165,7 +202,10 @@ export const InstitutionTable = () => {
                   <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="p-2 text-left">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </td>
                     ))}
                   </tr>
@@ -185,14 +225,18 @@ export const InstitutionTable = () => {
               pageIndex={table.getState().pagination.pageIndex}
               pageCount={table.getPageCount()}
               isLoading={isLoading}
-              onPageChange={(newPageIndex) => handleURLChange({ page: newPageIndex })}
-              className="p-1 w-full"
+              onPageChange={(newPageIndex) =>
+                handleURLChange({ page: newPageIndex })
+              }
+              className="w-full p-1"
             />
-            <Button icon={<ExternalLink />} neutral>Exportar</Button>
+            <Button icon={<ExternalLink />} neutral>
+              Exportar
+            </Button>
           </div>
         </div>
       </div>
-      
+
       <ConfirmDialog
         open={deleteDialog.open}
         title="Excluir instituição"
@@ -211,8 +255,18 @@ export const InstitutionTable = () => {
         cancelText="Cancelar"
       >
         <div className="space-y-4">
-          <SelectField control={filterDialog.form.control} name="sort" label="Ordenar por" options={sortOptions} />
-          <SelectField control={filterDialog.form.control} name="pageSize" label="Itens por página" options={pageSizeOptions} />
+          <SelectField
+            control={filterDialog.form.control}
+            name="sort"
+            label="Ordenar por"
+            options={sortOptions}
+          />
+          <SelectField
+            control={filterDialog.form.control}
+            name="pageSize"
+            label="Itens por página"
+            options={pageSizeOptions}
+          />
         </div>
       </DialogForm>
     </div>
