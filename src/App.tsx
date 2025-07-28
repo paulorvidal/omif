@@ -20,6 +20,7 @@ import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
 import { Editions } from "./pages/Editions";
 import { Edition } from "./pages/Edition"
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
 
 
 const SetupEvents = () => {
@@ -81,6 +82,7 @@ export const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/educador" element={<Educator />} />
           <Route path="/estudante" element={<Student />} />
+          <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
           <Route
             path="/dashboard"
             element={

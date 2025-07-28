@@ -1,6 +1,4 @@
-import type { AxiosError } from "axios";
 import api from "./api";
-import type { ApiError } from "./apiError";
 
 export type LoginRequest = {
   email: string;
@@ -13,17 +11,18 @@ type LoginResponse = {
 };
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-  try {
-    const response = await api.post<LoginResponse>("/auth", data);
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiError>;
+  const response = await api.post<LoginResponse>("/auth", data);
+  return response.data;
+};
 
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro inesperado. Aguarde ou tente novamente.";
+export const resendVerificationLink = (email: string) => {
+  return api.post('/auth/resend-verification-link', { email });
+};
 
-    throw new Error(message);
-  }
+export const verifyEmail = (token: string) => {
+  return api.get('/auth/verify-email', {
+    params: {
+      token,
+    },
+  });
 };
