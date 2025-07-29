@@ -21,6 +21,7 @@ import { Students } from "./pages/Students";
 import { Editions } from "./pages/Editions";
 import { Edition } from "./pages/Edition"
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
+import { Educators } from "./pages/Educators";
 
 
 const SetupEvents = () => {
@@ -136,6 +137,14 @@ export const App = () => {
             element={
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Edition />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/educadores"
+            element={
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <Educators />
               </PrivateRoute>
             }
           />

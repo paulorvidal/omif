@@ -7,10 +7,10 @@ import {
   deleteInstitution,
   type FindAllInstitutionsResponse,
   type PageResponse,
-} from "../../services/institutionService";
-import { showToast } from "../../utils/events";
+} from "../services/institutionService";
+import { showToast } from "../utils/events";
 import type { PaginationState } from "@tanstack/react-table";
-import { ApiError } from "../../services/apiError"; 
+import { ApiError } from "../services/apiError"; 
 
 type FilterFormValues = {
   sort: string;

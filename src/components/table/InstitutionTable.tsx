@@ -8,7 +8,7 @@ import {
 import { ListFilterPlus, Plus, EllipsisVertical, Pencil, Trash, ExternalLink } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../services/institutionService";
-import { useInstitutionTable } from "./useInstitutionTable";
+import { useInstitutionTable } from "../../hooks/useInstitutionTable";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Pagination } from "./Pagination";
