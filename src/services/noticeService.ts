@@ -1,4 +1,3 @@
-import type { AxiosError } from "axios";
 import api from "./api";
 import type { ApiError } from "./apiError";
 import type { PageParams, PageResponse } from "./defaultTypes";

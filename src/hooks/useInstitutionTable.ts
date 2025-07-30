@@ -2,15 +2,15 @@ import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { useDebounce } from "./useDebounce";
-import {
-  findAllInstitutions,
-  deleteInstitution,
-  type FindAllInstitutionsResponse,
-} from "../../services/institutionService";
-import { showToast } from "../../utils/events";
 import type { PaginationState } from "@tanstack/react-table";
-import { ApiError } from "../../services/apiError";
-import type { PageResponse } from "../../services/defaultTypes";
+import {
+  deleteInstitution,
+  findAllInstitutions,
+  type FindAllInstitutionsResponse,
+} from "../services/institutionService";
+import type { PageResponse } from "../services/defaultTypes";
+import { ApiError } from "../services/apiError";
+import { showToast } from "../utils/events";
 
 type FilterFormValues = {
   sort: string;

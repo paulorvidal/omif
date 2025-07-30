@@ -1,6 +1,5 @@
-import type { AxiosError } from "axios";
 import api from "./api";
-import type { ApiError } from "./apiError";
+
 
 export type CreateEducatorRequest = {
   name: string;
@@ -21,19 +20,8 @@ export type CreateEducatorResponse = {
 export const createEducator = async (
   data: CreateEducatorRequest,
 ): Promise<CreateEducatorResponse> => {
-  try {
-    const response = await api.post("/educators", data);
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiError>;
-
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro inesperado. Aguarde ou tente novamente.";
-
-    throw new Error(message);
-  }
+  const response = await api.post("/educators", data);
+  return response.data;
 };
 
 export type Educator = {
@@ -45,29 +33,85 @@ export async function fetchEducators(
   input: string,
   institutionId: string,
 ): Promise<Array<{ label: string; value: string }>> {
-  try {
-    const response = await api.get<{ content: Educator[] }>(
-      `/educators/institution/${institutionId}`,
-      {
-        params: {
-          q: input,
-          page: 0,
-          size: 10,
-        },
+  const response = await api.get<{ content: Educator[] }>(
+    `/educators/institution/${institutionId}`,
+    {
+      params: {
+        q: input,
+        page: 0,
+        size: 10,
       },
-    );
+    },
+  );
 
-    return response.data.content.map((educator) => ({
-      label: educator.socialName,
-      value: educator.id,
-    }));
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiError>;
-    const message =
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "Erro desconhecido ao buscar educadores.";
-    console.error(message);
-    return [];
-  }
+  return response.data.content.map((educator) => ({
+    label: educator.socialName,
+    value: educator.id,
+  }));
 }
+
+export type PageResponse<T> = {
+  content: T[];
+  totalPages: number;
+  totalElements?: number;
+  size?: number;
+  number?: number; 
+};
+
+
+
+export type FindAllEducatorsResponse = {
+  id: string;
+  siape: string;
+  socialName: string;
+  email: string;
+  role: string;
+  phoneNumber: string;
+  validated: boolean; 
+  institutionName: string;
+};
+
+interface FindAllEducatorsParams {
+  page: number;
+  size: number;
+  q?: string;
+  sort?: string;
+};
+
+export const findAllEducators = async (
+  page: number,
+  size: number = 10,
+  q?: string,
+  sort?: string, 
+): Promise<PageResponse<FindAllEducatorsResponse>> => {
+  const params: FindAllEducatorsParams = { page, size };
+  if (q?.trim()) {
+    params.q = q.trim();
+  }
+  
+  if (sort?.trim()) {
+    params.sort = sort.trim(); 
+  }
+
+  const response = await api.get<PageResponse<FindAllEducatorsResponse>>(
+    "/educators",
+    { params },
+  );
+  return response.data;
+};
+
+export const validateMultipleEducators = async (educatorIds: string[]) => {
+  console.log(educatorIds)
+  const response = await api.post('/educators/validate', { 
+      educatorIds: educatorIds 
+  });
+  return response.data;
+};
+
+export const unvalidateEducators = async (educatorIds: string[]) => {
+  console.log(educatorIds)
+  const response = await api.post('/educators/unvalidate', { 
+      educatorIds: educatorIds 
+  });
+  return response.data;
+};

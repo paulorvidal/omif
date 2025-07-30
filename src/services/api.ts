@@ -2,7 +2,9 @@ import axios, { type AxiosError } from "axios";
 import { redirectTo } from "../utils/events";
 import { ApiError } from "./apiError";
 
-const apiUrl = "http://89.116.73.16:8080";
+// const apiUrl = "http://89.116.73.16:8080";
+const apiUrl = "http://localhost:8080";
+
 
 type BackendErrorResponse = {
   timestamp: string;
@@ -10,6 +12,7 @@ type BackendErrorResponse = {
   error: string;
   message: string;
   path: string;
+  code?: string;
 };
 
 const api = axios.create({
@@ -42,11 +45,11 @@ api.interceptors.response.use(
 
     if (error.isAxiosError && error.response) {
       const backendError = error.response.data;
-      const message =
-        backendError?.message || "Ocorreu um erro inesperado no servidor.";
+      const message = backendError?.message || "Ocorreu um erro inesperado no servidor.";
       const statusCode = backendError?.status || 500;
+      const code = backendError?.code;
 
-      return Promise.reject(new ApiError(message, statusCode));
+      return Promise.reject(new ApiError(message, statusCode, code));
     }
 
     return Promise.reject(

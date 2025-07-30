@@ -1,8 +1,8 @@
-import type { ComponentProps, ReactElement } from "react";
+import type { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ButtonProps = {
   className?: string;
-  children: string;
+  children: ReactNode;
   icon?: ReactElement;
   secondary?: boolean;
   outline?: boolean;

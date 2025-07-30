@@ -11,12 +11,11 @@ import {
   type FindAllStudentResponse,
   type PageResponse,
 } from "../../services/studentService";
-import { useDebounce } from "./useDebounce";
+import { useDebounce } from "../../hooks/useDebounce";
 import { Pagination } from "./Pagination";
 import { SearchInput } from "./SearchInput";
 import { Edit } from "lucide-react";
 import { showToast } from "../../utils/events";
-import { H2 } from "../ui/H2";
 
 type StudentColumns = {
   id: string;
