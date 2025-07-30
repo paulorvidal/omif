@@ -1,6 +1,7 @@
 import type { AxiosError } from "axios";
 import api from "./api";
 import type { ApiError } from "./apiError";
+import type { PageParams, PageResponse } from "./defaultTypes";
 
 export type CreateStudentRequest = {
   email: string;
@@ -27,7 +28,7 @@ export type CreateStudentResponse = {
 export type Institution = {
   id: string;
   name: string;
-}
+};
 
 export type FindAllStudentResponse = {
   institution: Institution;
@@ -64,24 +65,18 @@ export const createStudent = async (
   }
 };
 
-export type PageResponse<T> = {
-  content: T[];
-  totalPages: number;
-  totalElements?: number;
-  size?: number;
-  number?: number; 
-};
-
 export const findAllStudents = async (
   page: number,
   size: number = 10,
   q?: string,
 ): Promise<PageResponse<FindAllStudentResponse>> => {
   try {
-    const params: Record<string, any> = { page, size };
+    const params: PageParams = { page, size };
+
     if (q && q.trim() !== "") {
       params.q = q.trim();
     }
+
     const response = await api.get<PageResponse<FindAllStudentResponse>>(
       "/students",
       { params },
@@ -96,4 +91,3 @@ export const findAllStudents = async (
     throw new Error(message);
   }
 };
-

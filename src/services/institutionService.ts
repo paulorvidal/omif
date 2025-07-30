@@ -1,4 +1,5 @@
 import api from "./api";
+import type { PageParams, PageResponse } from "./defaultTypes";
 
 export type Institution = {
   id: string;
@@ -13,20 +14,11 @@ export type FindAllInstitutionsResponse = {
   email: string;
 };
 
-export type PageResponse<T> = {
-  content: T[];
-  totalPages: number;
-  totalElements?: number;
-  size?: number;
-  number?: number; 
-};
-
-interface FindAllInstitutionsParams {
+export type FindAllInstitutionsParams = {
   page: number;
   size: number;
   q?: string;
   sort?: string;
-  
 };
 
 export type CreateInstitutionRequest = {
@@ -46,6 +38,7 @@ export type CreateInstitutionResponse = {
   id: string;
   message?: string;
 };
+
 export type FindInstitutionsResponse = {
   name: string;
   inep: string;
@@ -53,22 +46,23 @@ export type FindInstitutionsResponse = {
   email2: string;
   email3: string;
   phoneNumber: string;
-  coordinator?: { id: string; socialName: string }
+  coordinator?: { id: string; socialName: string };
 };
 
 export const findAllInstitutions = async (
   page: number,
   size: number = 10,
   q?: string,
-  sort?: string, 
+  sort?: string,
 ): Promise<PageResponse<FindAllInstitutionsResponse>> => {
-  const params: FindAllInstitutionsParams = { page, size };
+  const params: PageParams = { page, size };
+
   if (q?.trim()) {
     params.q = q.trim();
   }
-  
+
   if (sort?.trim()) {
-    params.sort = sort.trim(); 
+    params.sort = sort.trim();
   }
 
   const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
@@ -79,7 +73,7 @@ export const findAllInstitutions = async (
 };
 
 export async function fetchInstitutions(
-  input: string
+  input: string,
 ): Promise<Array<{ label: string; value: string }>> {
   const response = await api.get<{
     content: Institution[];
@@ -95,8 +89,7 @@ export async function fetchInstitutions(
     label: inst.name,
     value: inst.id,
   }));
-};
-
+}
 
 export const createInstitution = async (
   data: CreateInstitutionRequest,
@@ -105,7 +98,6 @@ export const createInstitution = async (
   return response.data;
 };
 
-
 export const getInstitutionById = async (id: string) => {
   const resp = await api.get<FindInstitutionsResponse>(`/institutions/${id}`);
   return resp.data;
@@ -113,11 +105,11 @@ export const getInstitutionById = async (id: string) => {
 
 export const updateInstitution = async (
   id: string,
-  data: CreateInstitutionRequest
+  data: CreateInstitutionRequest,
 ) => {
   const resp = await api.put<CreateInstitutionResponse>(
     `/institutions/${id}`,
-    data
+    data,
   );
   return resp.data;
 };

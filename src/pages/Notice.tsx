@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDashboard } from "../hooks/useDashboard";
+import { useNoticeForm } from "../hooks/useNoticeForm";
 import { ProgressDialog } from "../components/ui/ProgressDialog";
 import { Sidebar } from "../components/sidebar/Sidebar";
 import { H2 } from "../components/ui/H2";
@@ -24,7 +24,7 @@ export const Notice = () => {
     watch,
     handleSubmit,
     register,
-  } = useDashboard({ setIsLoading });
+  } = useNoticeForm({ setIsLoading });
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);

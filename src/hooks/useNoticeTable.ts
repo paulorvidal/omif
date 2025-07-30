@@ -1,57 +1,61 @@
-import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router";
-import { useForm } from "react-hook-form";
-import { useDebounce } from "./useDebounce";
-import {
-  findAllInstitutions,
-  deleteInstitution,
-  type FindAllInstitutionsResponse,
-} from "../../services/institutionService";
-import { showToast } from "../../utils/events";
+import { useDebounce } from "../components/table/useDebounce";
 import type { PaginationState } from "@tanstack/react-table";
-import { ApiError } from "../../services/apiError";
-import type { PageResponse } from "../../services/defaultTypes";
+import {
+  findAllNotices,
+  type FindAllNoticesResponse,
+} from "../services/noticeService";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import type { PageResponse } from "../services/defaultTypes";
+import { ApiError } from "../services/apiError";
+import { showToast } from "../utils/events";
+import { formatDate } from "../utils/formatDate";
 
 type FilterFormValues = {
   sort: string;
   pageSize: number;
 };
 
-export const useInstitutionTable = () => {
+export const useNoticeTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageIndex = parseInt(searchParams.get("page") || "0", 10);
   const pageSize = parseInt(searchParams.get("size") || "10", 10);
-  const sort = searchParams.get("sort") || "name,asc";
+  const sort = searchParams.get("sort") || "timestamp,asc";
   const globalFilter = searchParams.get("q") || "";
   const debouncedFilter = useDebounce(globalFilter, 400);
 
   const pagination: PaginationState = { pageIndex, pageSize };
 
-  const [data, setData] = useState<FindAllInstitutionsResponse[]>([]);
+  const [data, setData] = useState<FindAllNoticesResponse[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [institutionToDelete, setInstitutionToDelete] = useState<string | null>(
-    null,
-  );
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
 
   const { control, handleSubmit, reset } = useForm<FilterFormValues>();
 
-  const loadInstitutions = useCallback(async () => {
+  const loadNotices = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result: PageResponse<FindAllInstitutionsResponse> =
-        await findAllInstitutions(pageIndex, pageSize, debouncedFilter, sort);
-      setData(result.content);
+      const result: PageResponse<FindAllNoticesResponse> = await findAllNotices(
+        pageIndex,
+        pageSize,
+        debouncedFilter,
+        sort,
+      );
+
+      const formatted = result.content.map((item) => ({
+        ...item,
+        timestamp: formatDate(item.timestamp),
+      }));
+
+      setData(formatted);
       setPageCount(result.totalPages);
     } catch (error) {
       const message =
-        error instanceof ApiError
-          ? error.message
-          : "Erro ao carregar instituições";
+        error instanceof ApiError ? error.message : "Erro ao carregar avisos";
       showToast(message, "error");
     } finally {
       setIsLoading(false);
@@ -59,8 +63,8 @@ export const useInstitutionTable = () => {
   }, [pageIndex, pageSize, debouncedFilter, sort]);
 
   useEffect(() => {
-    loadInstitutions();
-  }, [loadInstitutions]);
+    loadNotices();
+  }, [loadNotices]);
 
   const handleURLChange = useCallback(
     (newParams: Record<string, string | number>) => {
@@ -79,29 +83,6 @@ export const useInstitutionTable = () => {
     },
     [searchParams, setSearchParams],
   );
-
-  const handleConfirmDelete = async (): Promise<void> => {
-    if (!institutionToDelete) return;
-    try {
-      await deleteInstitution(institutionToDelete);
-      showToast("Instituição deletada com sucesso", "success");
-      setConfirmOpen(false);
-      setInstitutionToDelete(null);
-      await loadInstitutions();
-    } catch (error) {
-      showToast(
-        error instanceof Error ? error.message : "Erro ao deletar instituição",
-        "error",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteClick = (id: string) => {
-    setInstitutionToDelete(id);
-    setConfirmOpen(true);
-  };
 
   const handleOpenFilterDialog = () => {
     reset({ sort, pageSize });
@@ -129,11 +110,5 @@ export const useInstitutionTable = () => {
         onSubmit: handleSubmit(handleApplyFilters),
       },
     },
-    deleteDialog: {
-      open: confirmOpen,
-      onConfirm: handleConfirmDelete,
-      onCancel: () => setConfirmOpen(false),
-    },
-    handleDeleteClick,
   };
 };
