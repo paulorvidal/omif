@@ -203,8 +203,9 @@ export const EducatorTable = () => {
   });
 
   const sortOptions = [
-    { label: 'Nome Social (A-Z)', value: 'socialName,asc' },
-    { label: 'Nome Social (Z-A)', value: 'socialName,desc' },
+    { label: 'Nome (A-Z)', value: 'socialName,asc' },
+    { label: 'Nome (A-Z)', value: 'socialName,asc' },
+    { label: 'Nome (Z-A)', value: 'socialName,desc' },
     { label: 'Instituição (A-Z)', value: 'institutionName,asc' },
     { label: 'Instituição (Z-A)', value: 'institutionName,desc' },
   ];

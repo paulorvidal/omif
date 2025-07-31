@@ -13,6 +13,7 @@ type Link = {
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
   link?: string;
+  onClick?: () => void;
 };
 
 type SidebarDesktopProps = {
@@ -122,6 +123,24 @@ export const SidebarMobile = ({
         <div className="flex w-full flex-1 flex-col justify-end gap-1">
           {linksBottom.map((link, index) => {
             const Icon = link.icon;
+            if (link.onClick) {
+              return (
+                <div
+                  key={index}
+                  onClick={link.onClick}
+                  className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
+                >
+                  <div className="h-10 w-10 shrink-0 rounded-sm">
+                    <Icon className="h-10 w-10 p-2" />
+                  </div>
+                  <p
+                    className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
+                  >
+                    {link.title}
+                  </p>
+                </div>
+              );
+            }
             return (
               <div
                 key={index}

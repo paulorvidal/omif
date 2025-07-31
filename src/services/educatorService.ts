@@ -5,11 +5,13 @@ export type CreateEducatorRequest = {
   name: string;
   socialName: string;
   cpf: string;
-  gender: string;
   email: string;
   password: string;
+  phoneNumber: string;
+  dateOfBirth: string;
   siape: string;
-  coordinator: string;
+  institutionId: string;
+  captchaToken: string;
 };
 
 export type CreateEducatorResponse = {

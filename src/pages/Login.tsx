@@ -6,7 +6,7 @@ import { Field } from "../components/form/Field";
 import { ProgressDialog } from "../components/ui/ProgressDialog";
 import { EmailVerificationDialog } from "../components/dialog/EmailVerificationDialog";
 import { AccountApprovalDialog } from "../components/dialog/AccountApprovalDialog";
-
+import Captcha from '../components/Captcha';
 
 export const Login = () => {
   const {
@@ -14,6 +14,9 @@ export const Login = () => {
     handleLoginSubmit,
     errors,
     isSubmitting,
+    setCaptchaToken,
+    captchaResetKey,
+    captchaError,
     isVerificationDialogOpen,
     emailForVerification,
     isResending,
@@ -50,7 +53,15 @@ export const Login = () => {
             error={errors.password?.message}
           />
 
-          <Button type="submit" disabled={isSubmitting}>
+          <Captcha
+            key={captchaResetKey}
+            onVerify={setCaptchaToken}
+            theme="light"
+            error={captchaError}
+          />
+
+
+          <Button type="submit">
             Entrar
           </Button>
 
@@ -68,7 +79,7 @@ export const Login = () => {
           </p>
         </form>
       </div>
-      
+
       <ProgressDialog open={isSubmitting} />
 
       <EmailVerificationDialog

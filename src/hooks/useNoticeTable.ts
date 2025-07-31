@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { useDebounce } from "../components/table/useDebounce";
+import { useDebounce } from "./useDebounce";
 import type { PaginationState } from "@tanstack/react-table";
 import {
   findAllNotices,

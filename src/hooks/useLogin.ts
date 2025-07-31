@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { login, resendVerificationLink, type LoginRequest } from "../services/authService";
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
+import { useMutation } from "@tanstack/react-query";
 
 const loginFormSchema = z.object({
   email: z
@@ -17,18 +18,28 @@ const loginFormSchema = z.object({
 const COUNTDOWN_SECONDS = 60;
 const COOLDOWN_STORAGE_KEY = 'resendVerificationCooldownEnd';
 
-
 export const useLogin = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
   const [emailForVerification, setEmailForVerification] = useState("");
-  const [isResending, setIsResending] = useState(false);
-
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
-
-
   const [countdown, setCountdown] = useState(0);
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    setCaptchaResetKey((prevKey) => prevKey + 1);
+  };
+
+  const handleVerifyCaptcha = (token: string) => {
+    setCaptchaToken(token);
+    if (token) {
+      setCaptchaError(null);
+    }
+  };
+
 
   useEffect(() => {
     const cooldownEndTime = localStorage.getItem(COOLDOWN_STORAGE_KEY);
@@ -41,7 +52,7 @@ export const useLogin = () => {
       }
     }
   }, []);
-  
+
   useEffect(() => {
     if (countdown <= 0) {
       localStorage.removeItem(COOLDOWN_STORAGE_KEY);
@@ -57,15 +68,13 @@ export const useLogin = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginRequest>({ 
+  } = useForm<Omit<LoginRequest, 'captchaToken'>>({
     resolver: zodResolver(loginFormSchema),
   });
 
-  const onSubmit = async (data: LoginRequest) => {
-    setIsSubmitting(true);
-    try {
-      const response = await login(data);
-
+  const loginMutation = useMutation({
+    mutationFn: (payload: LoginRequest) => login(payload),
+    onSuccess: (response) => {
       if (response.token) {
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
@@ -74,10 +83,11 @@ export const useLogin = () => {
       } else {
         showToast("Resposta inválida do servidor", "error");
       }
-    } catch (error) {
+    },
+    onError: (error, variables) => {
       if (error instanceof ApiError) {
         if (error.code === 'EMAIL_NOT_VALIDATED') {
-          setEmailForVerification(data.email);
+          setEmailForVerification(variables.email);
           setIsVerificationDialogOpen(true);
         } else if (error.code === 'ACCOUNT_NOT_APPROVED') {
           setIsApprovalDialogOpen(true);
@@ -88,41 +98,56 @@ export const useLogin = () => {
         console.error("Erro não capturado pela API:", error);
         showToast("Ocorreu um erro inesperado.", "error");
       }
-      
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    },
+    onSettled: () => {
+      resetCaptcha();
+    },
+  });
 
-  const handleResendVerificationLink = async (email: string) => {
-    setIsResending(true);
-    try {
-      await resendVerificationLink(email);
+
+  const resendLinkMutation = useMutation({
+    mutationFn: (email: string) => resendVerificationLink(email),
+    onSuccess: () => {
       showToast("Um novo link foi enviado para seu e-mail.", "success");
       const endTime = Date.now() + COUNTDOWN_SECONDS * 1000;
       localStorage.setItem(COOLDOWN_STORAGE_KEY, endTime.toString());
-      setCountdown(COUNTDOWN_SECONDS); 
-
-    } catch (error) {
+      setCountdown(COUNTDOWN_SECONDS);
+    },
+    onError: (error) => {
       if (error instanceof ApiError) {
         showToast(error.message, "error");
       } else {
         console.error("Erro ao reenviar link:", error);
         showToast("Falha ao reenviar o link.", "error");
       }
-    } finally {
-      setIsResending(false);
+    },
+  });
+
+  const onSubmit = (data: Omit<LoginRequest, 'captchaToken'>) => {
+    if (!captchaToken) {
+      setCaptchaError("Por favor, complete a verificação.");
+      return;
     }
+    const payload: LoginRequest = { ...data, captchaToken };
+    loginMutation.mutate(payload);
+  };
+
+  const handleResendVerificationLink = (email: string) => {
+    resendLinkMutation.mutate(email);
   };
 
   return {
     register,
-    handleLoginSubmit: handleSubmit(onSubmit), 
+    handleLoginSubmit: handleSubmit(onSubmit),
     errors,
-    isSubmitting,
+    isSubmitting: loginMutation.isPending,
+    captchaToken,
+    setCaptchaToken: handleVerifyCaptcha,
+    captchaResetKey,
+    captchaError,
     isVerificationDialogOpen,
     emailForVerification,
-    isResending,
+    isResending: resendLinkMutation.isPending,
     handleResendVerificationLink,
     closeVerificationDialog: () => setIsVerificationDialogOpen(false),
     countdown,
