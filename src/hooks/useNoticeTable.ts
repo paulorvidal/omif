@@ -1,5 +1,4 @@
 import { useSearchParams } from "react-router";
-import { useDebounce } from "../components/table/useDebounce";
 import type { PaginationState } from "@tanstack/react-table";
 import {
   findAllNotices,
@@ -11,6 +10,7 @@ import type { PageResponse } from "../services/defaultTypes";
 import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
 import { formatDate } from "../utils/formatDate";
+import { useDebounce } from "./useDebounce";
 
 type FilterFormValues = {
   sort: string;
