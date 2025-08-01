@@ -10,7 +10,7 @@ export const Educators = () => {
       <Sidebar />
       <div className="flex w-full flex-col gap-4 p-4 md:ms-14 md:gap-8 md:p-8">
         <H2>Educadores</H2>
-        <div className="flex pb-14 md:pb-0">
+        <div className="flex">
           <div className="w-full rounded-md">
             <EducatorTable />
           </div>

@@ -45,7 +45,8 @@ api.interceptors.response.use(
 
     if (error.isAxiosError && error.response) {
       const backendError = error.response.data;
-      const message = backendError?.message || "Ocorreu um erro inesperado no servidor.";
+      const message =
+        backendError?.message || "Ocorreu um erro inesperado no servidor.";
       const statusCode = backendError?.status || 500;
       const code = backendError?.code;
 

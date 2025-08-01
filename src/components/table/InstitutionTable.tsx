@@ -220,7 +220,7 @@ export const InstitutionTable = () => {
               </tbody>
             </table>
           </div>
-          <div className="flex">
+          <div className="flex flex-col gap-4 md:flex-row">
             <Pagination
               pageIndex={table.getState().pagination.pageIndex}
               pageCount={table.getPageCount()}
@@ -228,9 +228,9 @@ export const InstitutionTable = () => {
               onPageChange={(newPageIndex) =>
                 handleURLChange({ page: newPageIndex })
               }
-              className="w-full p-1"
+              className="flex w-full justify-center p-1 md:justify-start"
             />
-            <Button icon={<ExternalLink />} neutral>
+            <Button icon={<ExternalLink />} outline>
               Exportar
             </Button>
           </div>

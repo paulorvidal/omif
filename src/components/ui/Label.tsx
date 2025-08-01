@@ -8,7 +8,7 @@ type LabelProps = {
 
 export const Label = ({ children, helpText, ...props }: LabelProps) => {
   return (
-    <label {...props} className="text-sm text-zinc-800 flex items-center">
+    <label {...props} className="text-sm text-zinc-800 flex items-center h-8">
       <span className="flex items-center">
         {children}
         {helpText && (

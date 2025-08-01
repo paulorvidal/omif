@@ -85,17 +85,14 @@ export const Dashboard = () => {
                       )}
                     </div>
                   </div>
-
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex flex-wrap gap-4">
-                      {data.map((notice) => (
-                        <Notice
-                          key={notice.id}
-                          title={notice.title}
-                          date={notice.timestamp}
-                        />
-                      ))}
-                    </div>
+                  <div className="flex w-full flex-wrap gap-4">
+                    {data.map((notice) => (
+                      <Notice
+                        key={notice.id}
+                        title={notice.title}
+                        date={notice.timestamp}
+                      />
+                    ))}
                   </div>
 
                   <div className="flex items-center rounded-md bg-slate-50 p-4 md:p-8">
