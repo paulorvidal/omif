@@ -57,9 +57,8 @@ export type PageResponse<T> = {
   totalPages: number;
   totalElements?: number;
   size?: number;
-  number?: number; 
+  number?: number;
 };
-
 
 
 export type FindAllEducatorsResponse = {
@@ -69,7 +68,7 @@ export type FindAllEducatorsResponse = {
   email: string;
   role: string;
   phoneNumber: string;
-  validated: boolean; 
+  validated: boolean;
   institutionName: string;
 };
 
@@ -84,15 +83,15 @@ export const findAllEducators = async (
   page: number,
   size: number = 10,
   q?: string,
-  sort?: string, 
+  sort?: string,
 ): Promise<PageResponse<FindAllEducatorsResponse>> => {
   const params: FindAllEducatorsParams = { page, size };
   if (q?.trim()) {
     params.q = q.trim();
   }
-  
+
   if (sort?.trim()) {
-    params.sort = sort.trim(); 
+    params.sort = sort.trim();
   }
 
   const response = await api.get<PageResponse<FindAllEducatorsResponse>>(
@@ -103,17 +102,25 @@ export const findAllEducators = async (
 };
 
 export const validateMultipleEducators = async (educatorIds: string[]) => {
-  console.log(educatorIds)
-  const response = await api.post('/educators/validate', { 
-      educatorIds: educatorIds 
+  const response = await api.post('/educators/validate', {
+    educatorIds: educatorIds
   });
   return response.data;
 };
 
 export const unvalidateEducators = async (educatorIds: string[]) => {
-  console.log(educatorIds)
-  const response = await api.post('/educators/unvalidate', { 
-      educatorIds: educatorIds 
+  const response = await api.post('/educators/unvalidate', {
+    educatorIds: educatorIds
   });
   return response.data;
+};
+
+export type GetMyDataEducatorResponse = {
+  id: string;
+  socialName: string;
+};
+
+export const getMyData = async () => {
+  const resp = await api.get<GetMyDataEducatorResponse>(`/educators/me`);
+  return resp.data;
 };

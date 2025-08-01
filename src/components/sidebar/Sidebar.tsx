@@ -6,6 +6,7 @@ import {
   LogOut,
   Settings,
   UsersRound,
+  BookOpenText
 } from "lucide-react";
 import { SidebarDesktop } from "./SidebarDesktop";
 import { SidebarMobile } from "./SidebarMobile";
@@ -50,7 +51,7 @@ export const Sidebar = () => {
     {
       title: "Edições",
       link: "/edicoes",
-      icon: UsersRound,
+      icon: BookOpenText,
       roles: ["ADMINISTRADOR"],
     },
     {

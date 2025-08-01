@@ -4,17 +4,17 @@ import {
   flexRender,
   useReactTable,
   getCoreRowModel,
+  getFilteredRowModel,
+  getFacetedRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, MoreHorizontal } from "lucide-react";
+import { ListFilterPlus, EllipsisVertical, Pencil, CheckSquare, Undo2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
-import { type FindAllInstitutionsResponse } from "../../services/institutionService";
-import { useInstitutionTable } from "../../hooks/useInstitutionTable";
-import { H2 } from "../ui/H2";
+import { useEducatorTable } from "../../hooks/useEducatorTable";
+import { type FindAllEducatorsResponse as Educator } from '../../services/educatorService';
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Pagination } from "./Pagination";
 import { SearchInput } from "./SearchInput";
-import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DialogForm } from '../ui/GenericDialog';
 import { SelectField } from "../form/SelectField";
 import {
@@ -23,8 +23,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/DropdownMenu";
+import { Checkbox } from "../ui/Checkbox";
 
-export const InstitutionTable = () => {
+export const EditionTable = () => {
   const {
     data,
     pageCount,
@@ -33,37 +34,108 @@ export const InstitutionTable = () => {
     globalFilter,
     handleURLChange,
     filterDialog,
-    deleteDialog,
-    handleDeleteClick,
-  } = useInstitutionTable();
+    validateEducators,
+    isUpdating,
+    bulkUnvalidate,
+    isUnvalidating,
+  } = useEducatorTable();
+
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectionType, setSelectionType] = React.useState<boolean | null>(null);
+
+  const handleRowSelectionChange = (updater: React.SetStateAction<Record<string, boolean>>) => {
+    const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
+    const newSelectedIds = Object.keys(newSelection);
+
+    if (newSelectedIds.length === 0) {
+      setRowSelection({});
+      setSelectionType(null);
+      return;
+    }
+
+    let currentSelectionType = selectionType;
+    if (currentSelectionType === null) {
+      const firstSelectedRow = data.find(row => row.id === newSelectedIds[0]);
+      if (firstSelectedRow) {
+        currentSelectionType = firstSelectedRow.validated;
+        setSelectionType(currentSelectionType);
+      } else {
+        return;
+      }
+    }
+
+    const finalSelection: { [key: string]: boolean } = {};
+    const currentPageIds = new Set(data.map(row => row.id));
+
+    for (const id of newSelectedIds) {
+      if (currentPageIds.has(id)) {
+        const row = data.find(r => r.id === id);
+        if (row && row.validated === currentSelectionType) {
+          finalSelection[id] = true;
+        }
+      } else {
+        finalSelection[id] = true;
+      }
+    }
+
+    setRowSelection(finalSelection);
+  };
 
   const columns = React.useMemo(() => {
-    const columnHelper = createColumnHelper<FindAllInstitutionsResponse>();
+    const columnHelper = createColumnHelper<Educator>();
     return [
-      columnHelper.accessor("inep", {
-        header: "INEP",
-        cell: (info) => {
-          const inep = info.getValue();
-          return !inep || inep.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge> : inep;
+      columnHelper.display({
+        id: 'select',
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            indeterminate={table.getIsSomePageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Selecionar todas as linhas"
+          />
+        ),
+        cell: ({ row }) => {
+          return (
+            <Checkbox
+              checked={row.getIsSelected()}
+              disabled={!row.getCanSelect()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Selecionar linha"
+            />
+          );
         },
       }),
-      columnHelper.accessor("name", {
-        header: "Nome",
+      columnHelper.accessor("siape", {
+        header: "Siape",
+        cell: (info) => info.getValue() || <Badge>N/A</Badge>,
+      }),
+      columnHelper.accessor("socialName", {
+        header: "Nome Social",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("email", {
         header: "Email",
-        cell: (info) => {
-          const email = info.getValue();
-          return !email || email.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge> : email;
-        },
+        cell: (info) => info.getValue() || <Badge>N/A</Badge>,
       }),
-      columnHelper.accessor("coordinatorName", {
-        header: "Coordenador",
-        cell: (info) => {
-          const name = info.getValue();
-          return !name || name.trim() === "" ? <Badge color="border-zinc-300 text-zinc-600">Não informado</Badge> : name;
-        },
+      columnHelper.accessor("role", {
+        header: "Função",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            {row.original.validated ? (
+              <Badge color="border-green-300 text-green-700" >
+                {row.original.role}
+              </Badge>
+            ) : (
+              <Badge color="border-red-500 text-red-800" >
+                Pendente
+              </Badge>
+            )}
+          </div>
+        ),
+      }),
+      columnHelper.accessor("institutionName", {
+        header: "Instituição",
+        cell: (info) => info.getValue(),
       }),
       columnHelper.display({
         id: "actions",
@@ -71,45 +143,73 @@ export const InstitutionTable = () => {
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded hover:bg-slate-100">
-                <MoreHorizontal className="h-5 w-5 text-zinc-600" />
+              <button className="p-1 rounded hover:bg-zinc-100">
+                <EllipsisVertical className="h-5 w-5 text-zinc-600" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => redirectTo(`/instituicao/${row.original.id}`)}>
+              <DropdownMenuItem
+                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+                onClick={() => redirectTo(`/educador/${row.original.id}`)}
+              >
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleDeleteClick(row.original.id)}>
-                Deletar
-              </DropdownMenuItem>
+              {row.original.validated ? (
+                <DropdownMenuItem
+                  icon={<Undo2 className="h-4 w-4 text-zinc-600" />}
+                  onClick={() => bulkUnvalidate([row.original.id])}
+                >
+                  Desvalidar Cadastro
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  icon={<CheckSquare className="h-4 w-4 text-zinc-600" />}
+                  onClick={() => validateEducators([row.original.id])}
+                >
+                  Validar Cadastro
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         ),
       }),
     ];
-  }, [handleDeleteClick]);
+  }, []);
 
   const table = useReactTable({
     data,
     columns,
     pageCount,
-    state: { pagination },
+    state: {
+      pagination,
+      rowSelection,
+    },
+    enableRowSelection: (row) => {
+      if (selectionType === null) {
+        return true;
+      }
+      return row.original.validated === selectionType;
+    },
+    onRowSelectionChange: handleRowSelectionChange,
     manualPagination: true,
     onPaginationChange: (updater) => {
       const newPagination = typeof updater === 'function' ? updater(pagination) : updater;
       handleURLChange({ page: newPagination.pageIndex, size: newPagination.pageSize });
     },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getRowId: (row) => row.id,
   });
 
   const sortOptions = [
-    { label: 'Nome (A-Z)', value: 'name,asc' },
-    { label: 'Nome (A-Z)', value: 'name,asc' },
-    { label: 'Nome (Z-A)', value: 'name,desc' },
-    { label: 'INEP (Crescente)', value: 'inep,asc' },
-    { label: 'INEP (Decrescente)', value: 'inep,desc' },
+    { label: 'Nome (A-Z)', value: 'socialName,asc' },
+    { label: 'Nome (A-Z)', value: 'socialName,asc' },
+    { label: 'Nome (Z-A)', value: 'socialName,desc' },
+    { label: 'Instituição (A-Z)', value: 'institutionName,asc' },
+    { label: 'Instituição (Z-A)', value: 'institutionName,desc' },
   ];
-  
+
   const pageSizeOptions = [
     { label: '10', value: 10 },
     { label: '5', value: 5 },
@@ -117,10 +217,31 @@ export const InstitutionTable = () => {
     { label: '20', value: 20 },
     { label: '50', value: 50 },
   ];
-  
+
+  const handleValidateSelected = () => {
+    const selectedIds = Object.keys(rowSelection);
+    if (selectedIds.length === 0) return;
+    validateEducators(selectedIds, {
+      onSuccess: () => {
+        table.resetRowSelection();
+      },
+    });
+  };
+
+  const handleUnvalidateSelected = () => {
+    const selectedIds = Object.keys(rowSelection);
+    if (selectedIds.length === 0) return;
+    bulkUnvalidate(selectedIds, {
+      onSuccess: () => {
+        table.resetRowSelection();
+      },
+    });
+  };
+
+  const selectedRowCount = Object.keys(rowSelection).length;
+
   return (
     <div className="flex flex-col gap-4 md:gap-8">
-      <H2>Edições</H2>
       <div className="rounded-md bg-slate-50">
         <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex w-full flex-col items-center gap-4 md:flex-row">
@@ -128,17 +249,35 @@ export const InstitutionTable = () => {
               <SearchInput
                 value={globalFilter}
                 onChange={(e) => handleURLChange({ q: e.target.value })}
-                placeholder="Buscar instituição..."
+                placeholder="Buscar educador..."
                 showClearIcon={true}
                 onClear={() => handleURLChange({ q: '' })}
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
+              {selectedRowCount > 0 && selectionType !== null && (
+                <>
+                  {selectionType === false ? (
+                    <Button
+                      icon={<CheckSquare className="h-4 w-4" />}
+                      onClick={handleValidateSelected}
+                      disabled={isUpdating}
+                    >
+                      {isUpdating ? 'Validando...' : `Validar (${selectedRowCount})`}
+                    </Button>
+                  ) : (
+                    <Button
+                      icon={<Undo2 className="h-4 w-4" />}
+                      onClick={handleUnvalidateSelected}
+                      disabled={isUnvalidating}
+                    >
+                      {isUnvalidating ? 'Desvalidando...' : `Desvalidar (${selectedRowCount})`}
+                    </Button>
+                  )}
+                </>
+              )}
               <Button icon={<ListFilterPlus />} type="button" onClick={filterDialog.onOpen} outline>
                 Filtros
-              </Button>
-              <Button icon={<Plus />} type="button" onClick={() => redirectTo("/instituicao")}>
-                Cadastrar
               </Button>
             </div>
           </div>
@@ -158,7 +297,10 @@ export const InstitutionTable = () => {
               </thead>
               <tbody className="bg-white">
                 {table.getRowModel().rows.map((row) => (
-                  <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
+                  <tr
+                    key={row.id}
+                    className={`odd:bg-white even:bg-zinc-200/50 ${row.getIsSelected() ? "bg-green-100" : ""}`}
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="p-2 text-left">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -176,24 +318,15 @@ export const InstitutionTable = () => {
               </tbody>
             </table>
           </div>
-
           <Pagination
             pageIndex={table.getState().pagination.pageIndex}
             pageCount={table.getPageCount()}
             isLoading={isLoading}
             onPageChange={(newPageIndex) => handleURLChange({ page: newPageIndex })}
-            className="p-1"
+            className="p-1 w-full"
           />
         </div>
       </div>
-      
-      <ConfirmDialog
-        open={deleteDialog.open}
-        title="Excluir instituição"
-        message="Tem certeza que deseja excluir esta instituição? Esta ação não pode ser desfeita."
-        onCancel={deleteDialog.onCancel}
-        onConfirm={deleteDialog.onConfirm}
-      />
 
       <DialogForm
         open={filterDialog.open}
