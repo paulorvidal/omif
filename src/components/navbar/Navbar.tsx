@@ -1,68 +1,12 @@
-import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller } from "react-hook-form";
 import AsyncSelect from "react-select/async";
-import { z } from "zod";
-import { fetchEditions } from "../../services/editionService";
 import { Calendar, CircleUserRound } from "lucide-react";
 import { NavLink } from "react-router";
-import { showToast } from "../../utils/events";
+import { useNavbar } from "../../hooks/useNavbar";
 
-const currentYear = new Date().getFullYear();
-
-const defaultOption = {
-  label: "Todas",
-  value: "todas",
-};
-
-const EditionFormSchema = z.object({
-  edition: z
-    .object({
-      label: z.union([z.string(), z.number()]),
-      value: z.string().uuid("ID inválido").or(z.literal("todas")),
-    })
-    .nullable()
-    .refine((v) => v !== null, {
-      message: "O ano é obrigatório",
-    }),
-});
-
-const loadOptions = async (inputValue: string) => {
-  const editions = await fetchEditions(inputValue);
-  return [defaultOption, ...editions];
-};
 
 export const Navbar = () => {
-  const { control, watch, trigger } = useForm({
-    resolver: zodResolver(EditionFormSchema),
-  });
-
-  const selectedEdition = watch("edition");
-
-  useEffect(() => {
-    if (selectedEdition) {
-      trigger("edition").then((isValid) => {
-        if (isValid) {
-          localStorage.setItem("edition", selectedEdition?.label.toString());
-        } else {
-          showToast("Ano inválido.", "error");
-        }
-      });
-    }
-  }, [selectedEdition, trigger]);
-
-  const classNames = {
-    control: () =>
-      "w-full outline-none hover:bg-zinc-200 focus:bg-zinc-200 p-2",
-    menu: () => "z-50 w-full",
-    menuList: () =>
-      "py-1 w-40 bg-white mt-1 rounded-md border-2 border-zinc-300 ",
-    option: ({ isFocused, isSelected }: any) =>
-      [
-        "px-4 py-2 cursor-pointer",
-        isSelected ? "bg-zinc-200" : isFocused && "bg-zinc-200/50",
-      ].join(" "),
-  };
+  const { control, loadOptions, placeholder, classNames } = useNavbar();
 
   return (
     <div className="fixed top-0 left-0 z-30 flex h-14 w-full items-center justify-between bg-zinc-100 px-4 shadow-md md:px-8 md:ps-22">
@@ -77,14 +21,12 @@ export const Navbar = () => {
               name={field.name}
               inputId="edition"
               cacheOptions
-              defaultOptions={true}
+              defaultOptions
               loadOptions={loadOptions}
               getOptionLabel={(opt) => String(opt.label)}
               getOptionValue={(opt) => opt.value}
               value={field.value ?? null}
-              placeholder={
-                localStorage.getItem("edition") ?? currentYear.toString()
-              }
+              placeholder={placeholder}
               unstyled
               classNames={classNames}
             />

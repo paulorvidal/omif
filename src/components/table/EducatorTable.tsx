@@ -3,13 +3,13 @@ import {
   createColumnHelper,
   flexRender,
   useReactTable,
-  getCoreRowModel,  
+  getCoreRowModel,
   getFilteredRowModel,
   getFacetedRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, EllipsisVertical, Pencil, CheckSquare, Undo2 } from "lucide-react"; 
+import { ListFilterPlus, EllipsisVertical, Pencil, CheckSquare, Undo2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
-import { useEducatorTable } from "../../hooks/useEducatorTable"; 
+import { useEducatorTable } from "../../hooks/useEducatorTable";
 import { type FindAllEducatorsResponse as Educator } from '../../services/educatorService';
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
@@ -38,7 +38,7 @@ export const EducatorTable = () => {
     isUpdating,
     bulkUnvalidate,
     isUnvalidating,
-  } = useEducatorTable(); 
+  } = useEducatorTable();
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectionType, setSelectionType] = React.useState<boolean | null>(null);
@@ -52,7 +52,7 @@ export const EducatorTable = () => {
       setSelectionType(null);
       return;
     }
-    
+
     let currentSelectionType = selectionType;
     if (currentSelectionType === null) {
       const firstSelectedRow = data.find(row => row.id === newSelectedIds[0]);
@@ -60,7 +60,7 @@ export const EducatorTable = () => {
         currentSelectionType = firstSelectedRow.validated;
         setSelectionType(currentSelectionType);
       } else {
-        return; 
+        return;
       }
     }
 
@@ -98,7 +98,7 @@ export const EducatorTable = () => {
           return (
             <Checkbox
               checked={row.getIsSelected()}
-              disabled={!row.getCanSelect()} 
+              disabled={!row.getCanSelect()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Selecionar linha"
             />
@@ -150,7 +150,7 @@ export const EducatorTable = () => {
             <DropdownMenuContent>
               <DropdownMenuItem
                 icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-                onClick={() => redirectTo(`/educador/${row.original.id}`)} 
+                onClick={() => redirectTo(`/educador/${row.original.id}`)}
               >
                 Editar
               </DropdownMenuItem>
@@ -174,15 +174,15 @@ export const EducatorTable = () => {
         ),
       }),
     ];
-  },[]); 
+  }, []);
 
- const table = useReactTable({
+  const table = useReactTable({
     data,
     columns,
     pageCount,
-    state: { 
+    state: {
       pagination,
-      rowSelection, 
+      rowSelection,
     },
     enableRowSelection: (row) => {
       if (selectionType === null) {
@@ -199,16 +199,17 @@ export const EducatorTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getRowId: (row) => row.id, 
+    getRowId: (row) => row.id,
   });
 
   const sortOptions = [
-    { label: 'Nome Social (A-Z)', value: 'socialName,asc' },
-    { label: 'Nome Social (Z-A)', value: 'socialName,desc' },
+    { label: 'Nome (A-Z)', value: 'socialName,asc' },
+    { label: 'Nome (A-Z)', value: 'socialName,asc' },
+    { label: 'Nome (Z-A)', value: 'socialName,desc' },
     { label: 'Instituição (A-Z)', value: 'institutionName,asc' },
     { label: 'Instituição (Z-A)', value: 'institutionName,desc' },
   ];
-  
+
   const pageSizeOptions = [
     { label: '10', value: 10 },
     { label: '5', value: 5 },
@@ -217,28 +218,28 @@ export const EducatorTable = () => {
     { label: '50', value: 50 },
   ];
 
-   const handleValidateSelected = () => {
+  const handleValidateSelected = () => {
     const selectedIds = Object.keys(rowSelection);
     if (selectedIds.length === 0) return;
     validateEducators(selectedIds, {
       onSuccess: () => {
-        table.resetRowSelection(); 
+        table.resetRowSelection();
       },
     });
   };
-  
+
   const handleUnvalidateSelected = () => {
     const selectedIds = Object.keys(rowSelection);
     if (selectedIds.length === 0) return;
     bulkUnvalidate(selectedIds, {
       onSuccess: () => {
-        table.resetRowSelection(); 
+        table.resetRowSelection();
       },
     });
   };
 
   const selectedRowCount = Object.keys(rowSelection).length;
-  
+
   return (
     <div className="flex flex-col gap-4 md:gap-8">
       <div className="rounded-md bg-slate-50">
@@ -256,17 +257,17 @@ export const EducatorTable = () => {
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
               {selectedRowCount > 0 && selectionType !== null && (
                 <>
-                  {selectionType === false ? ( 
-                    <Button 
-                      icon={<CheckSquare className="h-4 w-4" />} 
+                  {selectionType === false ? (
+                    <Button
+                      icon={<CheckSquare className="h-4 w-4" />}
                       onClick={handleValidateSelected}
                       disabled={isUpdating}
                     >
                       {isUpdating ? 'Validando...' : `Validar (${selectedRowCount})`}
                     </Button>
-                  ) : ( 
+                  ) : (
                     <Button
-                      icon={<Undo2 className="h-4 w-4" />} 
+                      icon={<Undo2 className="h-4 w-4" />}
                       onClick={handleUnvalidateSelected}
                       disabled={isUnvalidating}
                     >
@@ -280,7 +281,7 @@ export const EducatorTable = () => {
               </Button>
             </div>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full table-auto rounded-md bg-green-600">
               <thead className="text-white">
@@ -296,7 +297,7 @@ export const EducatorTable = () => {
               </thead>
               <tbody className="bg-white">
                 {table.getRowModel().rows.map((row) => (
-                  <tr 
+                  <tr
                     key={row.id}
                     className={`odd:bg-white even:bg-zinc-200/50 ${row.getIsSelected() ? "bg-green-100" : ""}`}
                   >
@@ -326,7 +327,7 @@ export const EducatorTable = () => {
           />
         </div>
       </div>
-      
+
       <DialogForm
         open={filterDialog.open}
         onClose={filterDialog.onClose}

@@ -13,6 +13,7 @@ type Link = {
   icon: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
+  onClick?: () => void;
 };
 
 type SidebarDesktopProps = {
@@ -28,9 +29,8 @@ export const SidebarDesktop = ({
 
   return (
     <div
-      className={`bottom-0 left-0 hidden h-screen flex-col items-start duration-200 md:fixed md:flex ${
-        isOpen ? "w-72" : "w-14"
-      } z-50 gap-1 bg-green-600 p-2 text-slate-50 shadow-md`}
+      className={`bottom-0 left-0 hidden h-screen flex-col items-start duration-200 md:fixed md:flex ${isOpen ? "w-72" : "w-14"
+        } z-50 gap-1 bg-green-600 p-2 text-slate-50 shadow-md`}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
@@ -38,15 +38,13 @@ export const SidebarDesktop = ({
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex w-full cursor-pointer items-center rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${
-              isActive && isOpen ? "bg-green-500/50" : ""
+            `flex w-full cursor-pointer items-center rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${isActive && isOpen ? "bg-green-500/50" : ""
             }`
           }
         >
           <div
-            className={`h-10 w-10 shrink-0 cursor-pointer rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${
-              isOpen ? "bg-transparent" : "bg-green-500"
-            }`}
+            className={`h-10 w-10 shrink-0 cursor-pointer rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${isOpen ? "bg-transparent" : "bg-green-500"
+              }`}
           >
             <img
               className="h-full w-full p-2"
@@ -104,6 +102,24 @@ export const SidebarDesktop = ({
       <div className="flex w-full flex-1 flex-col justify-end gap-1">
         {linksBottom.map((link, index) => {
           const Icon = link.icon;
+          if (link.onClick) {
+            return (
+              <div
+                key={index}
+                onClick={link.onClick}
+                className="flex w-full cursor-pointer items-center rounded-sm duration-500 hover:bg-green-500 active:bg-green-500"
+              >
+                <div className="h-10 w-10 shrink-0 rounded-sm">
+                  <Icon className="h-10 w-10 p-2" />
+                </div>
+                <p
+                  className={`font-semibold text-nowrap ${isOpen ? "flex" : "hidden"}`}
+                >
+                  {link.title}
+                </p>
+              </div>
+            );
+          }
           return (
             <div
               key={index}

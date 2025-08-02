@@ -3,6 +3,7 @@ import api from "./api";
 export type LoginRequest = {
   email: string;
   password: string;
+  captchaToken: string;
 };
 
 type LoginResponse = {

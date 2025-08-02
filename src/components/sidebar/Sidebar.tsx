@@ -6,12 +6,22 @@ import {
   LogOut,
   Settings,
   UsersRound,
+  BookOpenText
 } from "lucide-react";
 import { SidebarDesktop } from "./SidebarDesktop";
 import { SidebarMobile } from "./SidebarMobile";
+import { redirectTo } from "../../utils/events";
 
 export const Sidebar = () => {
   const role = localStorage.getItem("role") as string;
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("role");
+
+    redirectTo("/login");
+  };
 
   const linksCenter = [
     {
@@ -41,7 +51,7 @@ export const Sidebar = () => {
     {
       title: "Edições",
       link: "/edicoes",
-      icon: UsersRound,
+      icon: BookOpenText,
       roles: ["ADMINISTRADOR"],
     },
     {
@@ -58,7 +68,7 @@ export const Sidebar = () => {
 
   const linksBottom = [
     { title: "Configurações", icon: Settings },
-    { title: "Sair", icon: LogOut },
+    { title: "Sair", icon: LogOut, onClick: handleLogout },
   ];
 
   return (

@@ -1,6 +1,6 @@
 import { Sidebar } from "../components/sidebar/Sidebar";
 import { H2 } from "../components/ui/H2";
-import { InstitutionForm } from "../components/register/InstitutionForm.tsx";
+import { EditionForm } from "../components/register/EditionForm.tsx";
 import { useParams } from "react-router";
 
 export const Edition = () => {
@@ -14,7 +14,7 @@ export const Edition = () => {
         <H2>{isEditMode ? "Editar Edição" : "Cadastrar Edição"}</H2>
         <div className="flex w-full flex-col justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8">
           <div className="w-full rounded-md">
-            <InstitutionForm institutionId={id} />
+            <EditionForm editionId={id} />
           </div>
         </div>
       </div>
