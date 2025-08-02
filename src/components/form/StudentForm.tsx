@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "../ui/Button";
 
-import { Field } from "../form/Field";
-import { SelectField } from "../form/SelectField";
+import { Field } from "../ui/Field";
+import { SelectField } from "../ui/SelectField";
 
 import {
   createStudent,
@@ -13,7 +13,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { scrollToTop } from "../../utils/scrollToTop";
 
-import { AsyncSelectField } from "../form/AsyncSelectField";
+import { AsyncSelectField } from "../ui/AsyncSelectField";
 import { fetchInstitutions } from "../../services/institutionService";
 import { redirectTo, showToast } from "../../utils/events";
 

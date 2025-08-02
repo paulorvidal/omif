@@ -1,8 +1,7 @@
-import { Input } from "../ui/Input";
-import { Label } from "../ui/Label";
+import { Input } from "./Input";
+import { Label } from "./Label";
 import { mask } from "remask";
 import type { UseFormRegisterReturn } from "react-hook-form";
-
 
 interface FieldProps {
   label: string;

@@ -1,5 +1,5 @@
 import { H1 } from "../components/ui/H1";
-import { StudentForm } from "../components/register/StudentForm";
+import { StudentForm } from "../components/form/StudentForm";
 
 export const Student = () => {
   return (

@@ -4,7 +4,6 @@ import { Calendar, CircleUserRound } from "lucide-react";
 import { NavLink } from "react-router";
 import { useNavbar } from "../../hooks/useNavbar";
 
-
 export const Navbar = () => {
   const { control, loadOptions, placeholder, classNames } = useNavbar();
 

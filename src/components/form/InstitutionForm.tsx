@@ -1,6 +1,6 @@
-import { useInstitutionForm } from "./useInstitutionForm";
-import { Field } from "../form/Field";
-import { AsyncSelectField } from "../form/AsyncSelectField";
+import { useInstitutionForm } from "../../hooks/useInstitutionForm";
+import { Field } from "../ui/Field";
+import { AsyncSelectField } from "../ui/AsyncSelectField";
 import { Button } from "../ui/Button";
 
 type Props = {

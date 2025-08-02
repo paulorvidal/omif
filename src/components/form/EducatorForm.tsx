@@ -1,9 +1,9 @@
 import { useEducatorForm } from "../../hooks/useEducatorForm";
 import { fetchInstitutions } from "../../services/institutionService";
-import { AsyncSelectField } from "../form/AsyncSelectField";
-import { Field } from "../form/Field";
+import { AsyncSelectField } from "../ui/AsyncSelectField";
+import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
-import Captcha from '../Captcha';
+import Captcha from "../ui/Captcha";
 import { ProgressDialog } from "../ui/ProgressDialog";
 
 export const EducatorForm = () => {
@@ -16,7 +16,7 @@ export const EducatorForm = () => {
     setCaptchaToken,
     captchaResetKey,
     captchaError,
-    isPending
+    isPending,
   } = useEducatorForm();
 
   return (

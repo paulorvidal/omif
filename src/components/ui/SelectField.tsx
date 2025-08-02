@@ -1,5 +1,10 @@
-import { Controller, type Control, type FieldValues, type Path } from "react-hook-form"; 
-import { Label } from "../ui/Label";
+import {
+  Controller,
+  type Control,
+  type FieldValues,
+  type Path,
+} from "react-hook-form";
+import { Label } from "./Label";
 import Select, { type ControlProps, type OptionProps } from "react-select";
 
 type Option = {
@@ -8,13 +13,13 @@ type Option = {
 };
 
 type SelectFieldProps<T extends FieldValues> = {
-  name: Path<T>; 
+  name: Path<T>;
   label: string;
   control: Control<T>;
   options: Option[];
   error?: string;
   helpText?: string;
-  isClearable?: boolean; 
+  isClearable?: boolean;
 };
 
 const IndicatorSeparator = () => (
@@ -28,7 +33,7 @@ export const SelectField = <T extends FieldValues>({
   options,
   error,
   helpText,
-  isClearable = false, 
+  isClearable = false,
 }: SelectFieldProps<T>) => {
   const [placeholderOption, ...validOptions] = options;
 
@@ -39,8 +44,8 @@ export const SelectField = <T extends FieldValues>({
         error
           ? "border-red-500"
           : isFocused
-          ? "border-zinc-500"
-          : "border-zinc-300 hover:border-zinc-400 active:border-zinc-400",
+            ? "border-zinc-500"
+            : "border-zinc-300 hover:border-zinc-400 active:border-zinc-400",
       ].join(" "),
     menu: () => "mt-1 rounded-md border-2 border-zinc-300 bg-white z-50",
     menuList: () => "py-1",
@@ -58,7 +63,7 @@ export const SelectField = <T extends FieldValues>({
       </Label>
 
       <Controller
-        name={name} 
+        name={name}
         control={control}
         render={({ field }) => (
           <Select<Option, false>
@@ -70,7 +75,7 @@ export const SelectField = <T extends FieldValues>({
             onChange={(opt) => field.onChange(opt ? opt.value : opt)}
             getOptionLabel={(opt) => opt.label}
             getOptionValue={(opt) => String(opt.value)}
-            value={validOptions.find(o => o.value === field.value) ?? null}
+            value={validOptions.find((o) => o.value === field.value) ?? null}
             placeholder={placeholderOption.label}
             classNames={classNames}
             components={{ IndicatorSeparator }}

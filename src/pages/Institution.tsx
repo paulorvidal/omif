@@ -1,6 +1,6 @@
-import { Sidebar } from "../components/sidebar/Sidebar";
+import { Sidebar } from "../components/ui/Sidebar.tsx";
 import { H2 } from "../components/ui/H2";
-import { InstitutionForm } from "../components/register/InstitutionForm.tsx";
+import { InstitutionForm } from "../components/form/InstitutionForm.tsx";
 import { useParams } from "react-router";
 
 export const Institution = () => {

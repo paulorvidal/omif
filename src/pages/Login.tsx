@@ -2,11 +2,11 @@ import { useLogin } from "../hooks/useLogin";
 import { A } from "../components/ui/A";
 import { Button } from "../components/ui/Button";
 import { H1 } from "../components/ui/H1";
-import { Field } from "../components/form/Field";
+import { Field } from "../components/ui/Field";
 import { ProgressDialog } from "../components/ui/ProgressDialog";
-import { EmailVerificationDialog } from "../components/dialog/EmailVerificationDialog";
-import { AccountApprovalDialog } from "../components/dialog/AccountApprovalDialog";
-import Captcha from '../components/Captcha';
+import { EmailVerificationDialog } from "../components/ui/EmailVerificationDialog";
+import { AccountApprovalDialog } from "../components/ui/AccountApprovalDialog";
+import Captcha from "../components/ui/Captcha";
 
 export const Login = () => {
   const {
@@ -60,10 +60,7 @@ export const Login = () => {
             error={captchaError}
           />
 
-
-          <Button type="submit">
-            Entrar
-          </Button>
+          <Button type="submit">Entrar</Button>
 
           <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
             <A className="text-center" href="#">

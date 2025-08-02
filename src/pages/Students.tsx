@@ -1,5 +1,5 @@
-import { Navbar } from "../components/navbar/Navbar";
-import { Sidebar } from "../components/sidebar/Sidebar";
+import { Navbar } from "../components/ui/Navbar";
+import { Sidebar } from "../components/ui/Sidebar";
 import { StudentTable } from "../components/table/StudentTable";
 import { H2 } from "../components/ui/H2";
 
