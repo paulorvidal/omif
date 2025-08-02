@@ -18,8 +18,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { Institutions } from "./pages/Institutions";
 import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
-import { Editions } from "./pages/Editions";
 import { Edition } from "./pages/Edition";
+import { Editions } from "./pages/Editions";
 import { Notice } from "./pages/Notice";import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { Educators } from "./pages/Educators";
 

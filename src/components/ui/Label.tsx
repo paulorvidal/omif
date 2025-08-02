@@ -13,7 +13,7 @@ export const Label = ({ children, helpText, ...props }: LabelProps) => {
         {children}
         {helpText && (
           <span className="flex items-center">
-            <InfoPopover content={helpText} side="top" align="center" />
+            <InfoPopover content={helpText} side="top" align="start" />
           </span>
         )}
       </span>
