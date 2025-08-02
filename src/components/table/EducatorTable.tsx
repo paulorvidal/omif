@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -7,16 +7,22 @@ import {
   getFilteredRowModel,
   getFacetedRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, EllipsisVertical, Pencil, CheckSquare, Undo2 } from "lucide-react";
+import {
+  ListFilterPlus,
+  EllipsisVertical,
+  Pencil,
+  CheckSquare,
+  Undo2,
+} from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEducatorTable } from "../../hooks/useEducatorTable";
-import { type FindAllEducatorsResponse as Educator } from '../../services/educatorService';
+import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { Pagination } from "./Pagination";
-import { SearchInput } from "./SearchInput";
-import { DialogForm } from '../ui/GenericDialog';
-import { SelectField } from "../form/SelectField";
+import { Pagination } from "../ui/Pagination";
+import { SearchInput } from "../ui/SearchInput";
+import { DialogForm } from "../ui/GenericDialog";
+import { SelectField } from "../ui/SelectField";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,10 +47,15 @@ export const EducatorTable = () => {
   } = useEducatorTable();
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [selectionType, setSelectionType] = React.useState<boolean | null>(null);
+  const [selectionType, setSelectionType] = React.useState<boolean | null>(
+    null,
+  );
 
-  const handleRowSelectionChange = (updater: React.SetStateAction<Record<string, boolean>>) => {
-    const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
+  const handleRowSelectionChange = (
+    updater: React.SetStateAction<Record<string, boolean>>,
+  ) => {
+    const newSelection =
+      typeof updater === "function" ? updater(rowSelection) : updater;
     const newSelectedIds = Object.keys(newSelection);
 
     if (newSelectedIds.length === 0) {
@@ -55,7 +66,7 @@ export const EducatorTable = () => {
 
     let currentSelectionType = selectionType;
     if (currentSelectionType === null) {
-      const firstSelectedRow = data.find(row => row.id === newSelectedIds[0]);
+      const firstSelectedRow = data.find((row) => row.id === newSelectedIds[0]);
       if (firstSelectedRow) {
         currentSelectionType = firstSelectedRow.validated;
         setSelectionType(currentSelectionType);
@@ -65,11 +76,11 @@ export const EducatorTable = () => {
     }
 
     const finalSelection: { [key: string]: boolean } = {};
-    const currentPageIds = new Set(data.map(row => row.id));
+    const currentPageIds = new Set(data.map((row) => row.id));
 
     for (const id of newSelectedIds) {
       if (currentPageIds.has(id)) {
-        const row = data.find(r => r.id === id);
+        const row = data.find((r) => r.id === id);
         if (row && row.validated === currentSelectionType) {
           finalSelection[id] = true;
         }
@@ -85,12 +96,14 @@ export const EducatorTable = () => {
     const columnHelper = createColumnHelper<Educator>();
     return [
       columnHelper.display({
-        id: 'select',
+        id: "select",
         header: ({ table }) => (
           <Checkbox
             checked={table.getIsAllPageRowsSelected()}
             indeterminate={table.getIsSomePageRowsSelected()}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
             aria-label="Selecionar todas as linhas"
           />
         ),
@@ -122,13 +135,11 @@ export const EducatorTable = () => {
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             {row.original.validated ? (
-              <Badge color="border-green-300 text-green-700" >
+              <Badge color="border-green-300 text-green-700">
                 {row.original.role}
               </Badge>
             ) : (
-              <Badge color="border-red-500 text-red-800" >
-                Pendente
-              </Badge>
+              <Badge color="border-red-500 text-red-800">Pendente</Badge>
             )}
           </div>
         ),
@@ -143,7 +154,7 @@ export const EducatorTable = () => {
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded hover:bg-zinc-100">
+              <button className="rounded p-1 hover:bg-zinc-100">
                 <EllipsisVertical className="h-5 w-5 text-zinc-600" />
               </button>
             </DropdownMenuTrigger>
@@ -193,8 +204,12 @@ export const EducatorTable = () => {
     onRowSelectionChange: handleRowSelectionChange,
     manualPagination: true,
     onPaginationChange: (updater) => {
-      const newPagination = typeof updater === 'function' ? updater(pagination) : updater;
-      handleURLChange({ page: newPagination.pageIndex, size: newPagination.pageSize });
+      const newPagination =
+        typeof updater === "function" ? updater(pagination) : updater;
+      handleURLChange({
+        page: newPagination.pageIndex,
+        size: newPagination.pageSize,
+      });
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -203,19 +218,19 @@ export const EducatorTable = () => {
   });
 
   const sortOptions = [
-    { label: 'Nome (A-Z)', value: 'socialName,asc' },
-    { label: 'Nome (A-Z)', value: 'socialName,asc' },
-    { label: 'Nome (Z-A)', value: 'socialName,desc' },
-    { label: 'Instituição (A-Z)', value: 'institutionName,asc' },
-    { label: 'Instituição (Z-A)', value: 'institutionName,desc' },
+    { label: "Nome (A-Z)", value: "socialName,asc" },
+    { label: "Nome (A-Z)", value: "socialName,asc" },
+    { label: "Nome (Z-A)", value: "socialName,desc" },
+    { label: "Instituição (A-Z)", value: "institutionName,asc" },
+    { label: "Instituição (Z-A)", value: "institutionName,desc" },
   ];
 
   const pageSizeOptions = [
-    { label: '10', value: 10 },
-    { label: '5', value: 5 },
-    { label: '10', value: 10 },
-    { label: '20', value: 20 },
-    { label: '50', value: 50 },
+    { label: "10", value: 10 },
+    { label: "5", value: 5 },
+    { label: "10", value: 10 },
+    { label: "20", value: 20 },
+    { label: "50", value: 50 },
   ];
 
   const handleValidateSelected = () => {
@@ -251,7 +266,7 @@ export const EducatorTable = () => {
                 onChange={(e) => handleURLChange({ q: e.target.value })}
                 placeholder="Buscar educador..."
                 showClearIcon={true}
-                onClear={() => handleURLChange({ q: '' })}
+                onClear={() => handleURLChange({ q: "" })}
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
@@ -263,7 +278,9 @@ export const EducatorTable = () => {
                       onClick={handleValidateSelected}
                       disabled={isUpdating}
                     >
-                      {isUpdating ? 'Validando...' : `Validar (${selectedRowCount})`}
+                      {isUpdating
+                        ? "Validando..."
+                        : `Validar (${selectedRowCount})`}
                     </Button>
                   ) : (
                     <Button
@@ -271,12 +288,19 @@ export const EducatorTable = () => {
                       onClick={handleUnvalidateSelected}
                       disabled={isUnvalidating}
                     >
-                      {isUnvalidating ? 'Desvalidando...' : `Desvalidar (${selectedRowCount})`}
+                      {isUnvalidating
+                        ? "Desvalidando..."
+                        : `Desvalidar (${selectedRowCount})`}
                     </Button>
                   )}
                 </>
               )}
-              <Button icon={<ListFilterPlus />} type="button" onClick={filterDialog.onOpen} outline>
+              <Button
+                icon={<ListFilterPlus />}
+                type="button"
+                onClick={filterDialog.onOpen}
+                outline
+              >
                 Filtros
               </Button>
             </div>
@@ -289,7 +313,12 @@ export const EducatorTable = () => {
                   <tr key={hg.id}>
                     {hg.headers.map((header) => (
                       <th key={header.id} className="p-2 text-left">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                       </th>
                     ))}
                   </tr>
@@ -303,7 +332,10 @@ export const EducatorTable = () => {
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="p-2 text-left">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </td>
                     ))}
                   </tr>
@@ -322,8 +354,10 @@ export const EducatorTable = () => {
             pageIndex={table.getState().pagination.pageIndex}
             pageCount={table.getPageCount()}
             isLoading={isLoading}
-            onPageChange={(newPageIndex) => handleURLChange({ page: newPageIndex })}
-            className="p-1 w-full"
+            onPageChange={(newPageIndex) =>
+              handleURLChange({ page: newPageIndex })
+            }
+            className="w-full p-1"
           />
         </div>
       </div>
@@ -338,8 +372,18 @@ export const EducatorTable = () => {
         cancelText="Cancelar"
       >
         <div className="space-y-4">
-          <SelectField control={filterDialog.form.control} name="sort" label="Ordenar por" options={sortOptions} />
-          <SelectField control={filterDialog.form.control} name="pageSize" label="Itens por página" options={pageSizeOptions} />
+          <SelectField
+            control={filterDialog.form.control}
+            name="sort"
+            label="Ordenar por"
+            options={sortOptions}
+          />
+          <SelectField
+            control={filterDialog.form.control}
+            name="pageSize"
+            label="Itens por página"
+            options={pageSizeOptions}
+          />
         </div>
       </DialogForm>
     </div>

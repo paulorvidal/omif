@@ -1,6 +1,6 @@
-import { Sidebar } from "../components/sidebar/Sidebar";
+import { Sidebar } from "../components/ui/Sidebar.tsx";
 import { H2 } from "../components/ui/H2";
-import { EditionForm } from "../components/register/EditionForm.tsx";
+import { EditionForm } from "../components/form/EditionForm.tsx";
 import { useParams } from "react-router";
 
 export const Edition = () => {

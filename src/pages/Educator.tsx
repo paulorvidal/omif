@@ -1,5 +1,5 @@
 import { H1 } from "../components/ui/H1";
-import { EducatorForm } from "../components/register/EducatorForm";
+import { EducatorForm } from "../components/form/EducatorForm";
 
 export const Educator = () => {
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNoticeForm } from "../hooks/useNoticeForm";
 import { ProgressDialog } from "../components/ui/ProgressDialog";
-import { Sidebar } from "../components/sidebar/Sidebar";
+import { Sidebar } from "../components/ui/Sidebar";
 import { H2 } from "../components/ui/H2";
 import { ViewDialog } from "../components/ui/ViewDialog";
 import { Controller } from "react-hook-form";
@@ -10,8 +10,8 @@ import { Button } from "../components/ui/Button";
 import { SendHorizonal, Eye } from "lucide-react";
 import DOMPurify from "dompurify";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
-import { Field } from "../components/form/Field";
-import { SelectField } from "../components/form/SelectField";
+import { Field } from "../components/ui/Field";
+import { SelectField } from "../components/ui/SelectField";
 
 export const Notice = () => {
   const [isLoading, setIsLoading] = useState(false);

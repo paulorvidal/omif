@@ -1,5 +1,5 @@
-import { Navbar } from "../components/navbar/Navbar";
-import { Sidebar } from "../components/sidebar/Sidebar";
+import { Navbar } from "../components/ui/Navbar";
+import { Sidebar } from "../components/ui/Sidebar";
 import { EducatorTable } from "../components/table/EducatorTable";
 import { H2 } from "../components/ui/H2";
 

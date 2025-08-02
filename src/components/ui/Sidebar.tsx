@@ -6,18 +6,17 @@ import {
   LogOut,
   Settings,
   UsersRound,
-  BookOpenText
+  BookOpenText,
 } from "lucide-react";
+import { redirectTo } from "../../utils/events";
 import { SidebarDesktop } from "./SidebarDesktop";
 import { SidebarMobile } from "./SidebarMobile";
-import { redirectTo } from "../../utils/events";
 
 export const Sidebar = () => {
   const role = localStorage.getItem("role") as string;
 
-
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
+    localStorage.removeItem("token");
     localStorage.removeItem("role");
 
     redirectTo("/login");

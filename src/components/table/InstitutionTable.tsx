@@ -18,11 +18,11 @@ import { type FindAllInstitutionsResponse } from "../../services/institutionServ
 import { useInstitutionTable } from "../../hooks/useInstitutionTable";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { Pagination } from "./Pagination";
-import { SearchInput } from "./SearchInput";
+import { Pagination } from "../ui/Pagination";
+import { SearchInput } from "../ui/SearchInput";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DialogForm } from "../ui/GenericDialog";
-import { SelectField } from "../form/SelectField";
+import { SelectField } from "../ui/SelectField";
 import {
   DropdownMenu,
   DropdownMenuTrigger,

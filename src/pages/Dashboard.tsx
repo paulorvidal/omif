@@ -1,4 +1,4 @@
-import { Sidebar } from "../components/sidebar/Sidebar";
+import { Sidebar } from "../components/ui/Sidebar";
 import { Button } from "../components/ui/Button";
 import { H2 } from "../components/ui/H2";
 import { ExternalLink, ListFilterPlus, Plus } from "lucide-react";
@@ -7,9 +7,9 @@ import { Notice } from "../components/ui/Notice";
 import { useNoticeTable } from "../hooks/useNoticeTable";
 import { ProgressDialog } from "../components/ui/ProgressDialog";
 import { DialogForm } from "../components/ui/GenericDialog";
-import { SelectField } from "../components/form/SelectField";
-import { SearchInput } from "../components/table/SearchInput";
-import { Pagination } from "../components/table/Pagination";
+import { SelectField } from "../components/ui/SelectField";
+import { SearchInput } from "../components/ui/SearchInput";
+import { Pagination } from "../components/ui/Pagination";
 
 export const Dashboard = () => {
   const isAdmin = localStorage.getItem("role") === "ADMINISTRADOR";

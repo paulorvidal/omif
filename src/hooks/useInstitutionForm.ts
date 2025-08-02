@@ -8,16 +8,19 @@ import {
   getInstitutionById,
   type CreateInstitutionRequest,
   type UpdateInstitutionRequest,
-} from "../../services/institutionService";
-import { fetchEducators } from "../../services/educatorService";
-import { scrollToTop } from "../../utils/scrollToTop";
-import { redirectTo, showToast } from "../../utils/events";
+} from "../services/institutionService";
+import { fetchEducators } from "../services/educatorService";
+import { scrollToTop } from "../utils/scrollToTop";
+import { redirectTo, showToast } from "../utils/events";
 import { AxiosError } from "axios";
 
 const InstitutionFormSchema = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
   inep: z.string(),
-  email1: z.string().nonempty("Informe ao menos um e‑mail").email("Email inválido"),
+  email1: z
+    .string()
+    .nonempty("Informe ao menos um e‑mail")
+    .email("Email inválido"),
   email2: z.string().email("Email inválido").optional().or(z.literal("")),
   email3: z.string().email("Email inválido").optional().or(z.literal("")),
   phoneNumber: z
@@ -39,7 +42,9 @@ type UseInstitutionFormProps = {
   institutionId?: string;
 };
 
-export const useInstitutionForm = ({ institutionId }: UseInstitutionFormProps) => {
+export const useInstitutionForm = ({
+  institutionId,
+}: UseInstitutionFormProps) => {
   const isEditMode = Boolean(institutionId);
 
   const {
@@ -75,10 +80,10 @@ export const useInstitutionForm = ({ institutionId }: UseInstitutionFormProps) =
           phoneNumber: institution.phoneNumber,
           coordinator: institution.coordinator
             ? {
-              label: institution.coordinator.socialName,
-              value: institution.coordinator.id,
-            }
-          : null,
+                label: institution.coordinator.socialName,
+                value: institution.coordinator.id,
+              }
+            : null,
         });
       } catch {
         showToast("Não foi possível carregar a instituição", "error");
@@ -91,7 +96,7 @@ export const useInstitutionForm = ({ institutionId }: UseInstitutionFormProps) =
       showToast("Nenhuma alteração para salvar", "info");
       return;
     }
-    
+
     const basePayload: CreateInstitutionRequest = {
       name: data.name,
       inep: data.inep,
@@ -115,11 +120,12 @@ export const useInstitutionForm = ({ institutionId }: UseInstitutionFormProps) =
       redirectTo("/instituicoes");
     } catch (err) {
       const axiosErr = err as AxiosError<{ message: string }>;
-      const message = axiosErr.response?.data?.message || axiosErr.message || "Erro";
+      const message =
+        axiosErr.response?.data?.message || axiosErr.message || "Erro";
       showToast(message, "error");
     }
   });
-  
+
   const handleReset = () => {
     reset();
     scrollToTop();

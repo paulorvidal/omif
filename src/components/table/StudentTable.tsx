@@ -9,13 +9,13 @@ import {
 import {
   findAllStudents,
   type FindAllStudentResponse,
-  type PageResponse,
 } from "../../services/studentService";
 import { useDebounce } from "../../hooks/useDebounce";
-import { Pagination } from "./Pagination";
-import { SearchInput } from "./SearchInput";
+import { Pagination } from "../ui/Pagination";
+import { SearchInput } from "../ui/SearchInput";
 import { Edit } from "lucide-react";
 import { showToast } from "../../utils/events";
+import type { PageResponse } from "../../services/defaultTypes";
 
 type StudentColumns = {
   id: string;
@@ -44,7 +44,7 @@ const columns = [
     id: "actions",
     header: "Ações",
     cell: () => {
-    //cell: ({ row }) => {
+      //cell: ({ row }) => {
       //const student = row.original;
       return (
         <button
