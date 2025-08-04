@@ -36,7 +36,7 @@ export const SidebarDesktop = ({
     >
       <div className="flex w-full flex-col gap-1">
         <NavLink
-          to="/"
+          to="/dashboard"
           className={({ isActive }) =>
             `flex w-full cursor-pointer items-center rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${isActive && isOpen ? "bg-green-500/50" : ""
             }`
