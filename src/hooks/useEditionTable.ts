@@ -20,7 +20,7 @@
     pageSize: number;
   };
 
-  export const useEducatorTable = () => {
+  export const useEditionTable = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const pageIndex = parseInt(searchParams.get("page") || "0", 10);

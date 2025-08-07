@@ -1,15 +1,16 @@
 import api from "./api";
-
-export type Edition = {
-  id: string;
-  year: number;
-};
+import type { 
+  FetchEditionsResponse,
+  CreateEditionRequest,
+  UpdateEditionRequest,
+  CreateEditionResponse
+} from "../types/editionTypes"
 
 export async function fetchEditions(
   input: string,
 ): Promise<Array<{ label: number; value: string }>> {
   const response = await api.get<{
-    content: Edition[];
+    content: FetchEditionsResponse[];
   }>("/editions/search", {
     params: {
       q: input,
@@ -25,31 +26,6 @@ export async function fetchEditions(
   }));
 }
 
-export type CreateEditionRequest = {
-  name: string;
-  year: number;
-  registrationStartDate: string;
-  registrationEndDate: string;
-  startDate: string;
-  endDate: string;
-  minimumWage: string;
-};
-
-export type UpdateEditionRequest = {
-  editionId: string;
-  name: string;
-  year: number;
-  registrationStartDate: string;
-  registrationEndDate: string;
-  startDate: string;
-  endDate: string;
-  minimumWage: string;
-};
-
-export type CreateEditionResponse = {
-  message?: string;
-  id?: string;
-};
 
 export const createEdition = async (
   data: CreateEditionRequest,

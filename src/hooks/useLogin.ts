@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login, resendVerificationLink, type LoginRequest } from "../services/authService";
+import {
+  login,
+  resendVerificationLink,
+  requestPasswordRecovery,
+  type LoginRequest
+} from "../services/authService";
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 import { useMutation } from "@tanstack/react-query";
@@ -27,6 +32,8 @@ export const useLogin = () => {
   const [emailForVerification, setEmailForVerification] = useState("");
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [isPasswordRecoveryDialogOpen, setIsPasswordRecoveryDialogOpen] = useState(false);
+  const [maskedEmailForRecovery, setMaskedEmailForRecovery] = useState<string | null>(null);
 
   const resetCaptcha = () => {
     setCaptchaToken(null);
@@ -117,8 +124,22 @@ export const useLogin = () => {
       if (error instanceof ApiError) {
         showToast(error.message, "error");
       } else {
-        console.error("Erro ao reenviar link:", error);
         showToast("Falha ao reenviar o link.", "error");
+      }
+    },
+  });
+
+  const passwordRecoveryMutation = useMutation({
+    mutationFn: (identifier: string) => requestPasswordRecovery(identifier),
+    onSuccess: (data) => {
+      setMaskedEmailForRecovery(data.email);
+      console.log(data)
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        showToast(error.message, "error");
+      } else {
+        showToast("Falha ao solicitar a recuperação de senha.", "error");
       }
     },
   });
@@ -135,6 +156,16 @@ export const useLogin = () => {
   const handleResendVerificationLink = (email: string) => {
     resendLinkMutation.mutate(email);
   };
+
+  const handlePasswordRecoverySubmit = (data: { identifier: string }) => {
+    passwordRecoveryMutation.mutate(data.identifier);
+  };
+
+  const closePasswordRecoveryDialog = () => {
+    setIsPasswordRecoveryDialogOpen(false);
+    setTimeout(() => setMaskedEmailForRecovery(null), 300);
+  };
+
 
   return {
     register,
@@ -153,5 +184,11 @@ export const useLogin = () => {
     countdown,
     isApprovalDialogOpen,
     closeApprovalDialog: () => setIsApprovalDialogOpen(false),
+    isPasswordRecoveryDialogOpen,
+    openPasswordRecoveryDialog: () => setIsPasswordRecoveryDialogOpen(true),
+    closePasswordRecoveryDialog,
+    handlePasswordRecoverySubmit,
+    isSendingPasswordRecovery: passwordRecoveryMutation.isPending,
+    maskedEmailForRecovery,
   };
 };

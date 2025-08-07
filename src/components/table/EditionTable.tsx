@@ -13,9 +13,10 @@ import {
   Pencil,
   CheckSquare,
   Undo2,
+  Plus
 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
-import { useEducatorTable } from "../../hooks/useEducatorTable";
+import { useEditionTable } from "../../hooks/useEditionTable";
 import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
@@ -44,7 +45,7 @@ export const EditionTable = () => {
     isUpdating,
     bulkUnvalidate,
     isUnvalidating,
-  } = useEducatorTable();
+  } = useEditionTable();
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectionType, setSelectionType] = React.useState<boolean | null>(
@@ -303,6 +304,13 @@ export const EditionTable = () => {
               >
                 Filtros
               </Button>
+              <Button
+                icon={<Plus />}
+                type="button"
+                onClick={() => redirectTo("/edicao")}
+              >
+                Cadastrar
+              </Button>
             </div>
           </div>
 
@@ -316,9 +324,9 @@ export const EditionTable = () => {
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                       </th>
                     ))}
                   </tr>

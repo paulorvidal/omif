@@ -8,6 +8,7 @@ type Props = {
 };
 
 export const EditionForm = ({ editionId }: Props) => {
+  // `control` e a lógica de adicionar/remover não são mais necessários
   const {
     errors,
     isEditMode,
@@ -51,7 +52,6 @@ export const EditionForm = ({ editionId }: Props) => {
           helpText="Valor base para o formulário socioeconômico."
         />
       </div>
-
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Field
           label="Início da Vigência:"
@@ -68,7 +68,6 @@ export const EditionForm = ({ editionId }: Props) => {
           helpText="Data e hora em que a edição será encerrada."
         />
       </div>
-
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Field
           label="Início das Inscrições:"
@@ -86,13 +85,11 @@ export const EditionForm = ({ editionId }: Props) => {
         />
       </div>
 
-      <div className="flex justify-between">
-        <Button
-          secondary
-          type="button"
-          onClick={handleReset}
-          disabled={isLoading}
-        >
+
+      
+
+      <div className="mt-6 flex justify-between">
+        <Button secondary type="button" onClick={handleReset} disabled={isLoading}>
           Limpar
         </Button>
         <Button type="submit" disabled={isLoading}>

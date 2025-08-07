@@ -7,6 +7,7 @@ import { ProgressDialog } from "../components/ui/ProgressDialog";
 import { EmailVerificationDialog } from "../components/ui/EmailVerificationDialog";
 import { AccountApprovalDialog } from "../components/ui/AccountApprovalDialog";
 import Captcha from "../components/ui/Captcha";
+import { PasswordRecoveryDialog } from "../components/ui/PasswordRecoveryDialog";
 
 export const Login = () => {
   const {
@@ -25,6 +26,12 @@ export const Login = () => {
     countdown,
     isApprovalDialogOpen,
     closeApprovalDialog,
+    isPasswordRecoveryDialogOpen,
+    openPasswordRecoveryDialog,
+    closePasswordRecoveryDialog,
+    handlePasswordRecoverySubmit,
+    isSendingPasswordRecovery,
+    maskedEmailForRecovery
   } = useLogin();
 
   return (
@@ -63,7 +70,14 @@ export const Login = () => {
           <Button type="submit">Entrar</Button>
 
           <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
-            <A className="text-center" href="#">
+            <A
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                openPasswordRecoveryDialog();
+              }}
+              className="text-center"
+            >
               Esqueci minha senha
             </A>
             <A to="/educador" className="text-center">
@@ -90,6 +104,14 @@ export const Login = () => {
       <AccountApprovalDialog
         open={isApprovalDialogOpen}
         onClose={closeApprovalDialog}
+      />
+
+      <PasswordRecoveryDialog
+        open={isPasswordRecoveryDialogOpen}
+        onClose={closePasswordRecoveryDialog}
+        onSubmit={handlePasswordRecoverySubmit}
+        isSending={isSendingPasswordRecovery}
+        maskedEmail={maskedEmailForRecovery} 
       />
     </div>
   );

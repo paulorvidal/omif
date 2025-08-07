@@ -20,8 +20,11 @@ import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
 import { Edition } from "./pages/Edition";
 import { Editions } from "./pages/Editions";
-import { Notice } from "./pages/Notice";import { VerifyEmailPage } from './pages/VerifyEmailPage';
+import { Notice } from "./pages/Notice"; 
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
+import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage"
 import { Educators } from "./pages/Educators";
+import { Steps } from "./pages/Steps";
 
 
 const SetupEvents = () => {
@@ -84,6 +87,8 @@ export const App = () => {
           <Route path="/educador" element={<Educator />} />
           <Route path="/estudante" element={<Student />} />
           <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+          <Route path="/password-recovery/:token" element={<PasswordRecoveryPage />} />
+
           <Route
             path="/dashboard"
             element={
@@ -145,6 +150,14 @@ export const App = () => {
             element={
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Edition />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/etapas/:id"
+            element={
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <Steps />
               </PrivateRoute>
             }
           />
