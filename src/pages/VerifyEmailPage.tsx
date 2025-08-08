@@ -27,7 +27,7 @@ export function VerifyEmailPage() {
   const statusContent = {
     loading: (
       <StatusDisplay
-        icon={<CircularProgress size={48} className="!text-green-600"/>}
+        icon={<CircularProgress size={48} className="!text-green-600" />}
         title="Verificando seu e-mail..."
         message="Isso levará apenas um instante. Por favor, aguarde."
       />

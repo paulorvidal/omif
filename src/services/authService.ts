@@ -1,15 +1,10 @@
 import api from "./api";
-
-export type LoginRequest = {
-  email: string;
-  password: string;
-  captchaToken: string;
-};
-
-type LoginResponse = {
-  token: string;
-  role: string;
-};
+import type {
+  LoginRequest,
+  LoginResponse,
+  PasswordRecoverRequest,
+  PasswordRecovery
+} from "../types/authTypes"
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/auth", data);
@@ -26,4 +21,18 @@ export const verifyEmail = (token: string) => {
       token,
     },
   });
+};
+
+export const requestPasswordRecovery = async (
+  identifier: string
+): Promise<PasswordRecovery> => {
+  const response = await api.post<PasswordRecovery>('/auth/generate-password-recovery', {
+    identifier, 
+  });
+  return response.data;
+};
+
+
+export const recoverPassword = async (data: PasswordRecoverRequest): Promise<void> => {
+  await api.post('/auth/password-recovery', data);
 };

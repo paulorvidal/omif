@@ -36,7 +36,7 @@ export const SidebarMobile = ({
         >
           <AlignJustify className="h-10 w-10 p-2" />
         </div>
-        <NavLink to="/" className="cursor-pointer rounded-sm bg-green-500 p-1">
+        <NavLink to="/dashboard" className="cursor-pointer rounded-sm bg-green-500 p-1">
           <img className="h-8 w-8" src={OmifIcon} alt="Logo da Omif" />
         </NavLink>
         <div className="h-10 w-10 shrink-0 cursor-pointer rounded-sm hover:bg-green-500 active:bg-green-500">

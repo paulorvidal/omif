@@ -3,8 +3,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { fetchEditions } from "../services/editionService";
+import { getMyData } from "../services/educatorService"; 
 import { showToast } from "../utils/events";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const currentYear = new Date().getFullYear();
 
@@ -34,6 +35,13 @@ export const useNavbar = () => {
     });
 
     const queryClient = useQueryClient();
+
+    const { data: userData, isLoading: isUserDataLoading } = useQuery({
+        queryKey: ["myData"],
+        queryFn: getMyData,
+        staleTime: 1000 * 60 * 60, 
+        refetchOnWindowFocus: false, 
+    });
 
     const loadOptions = async (inputValue: string) => {
         try {
@@ -78,10 +86,13 @@ export const useNavbar = () => {
 
     const placeholder = localStorage.getItem("edition") ?? currentYear.toString();
 
+    // Retorne os dados do usuário e o estado de loading
     return {
         control,
         loadOptions,
         placeholder,
         classNames,
+        userData, // <-- Os dados do usuário (ex: { id, socialName })
+        isUserDataLoading, // <-- Um booleano para saber se está carregando
     };
 };
