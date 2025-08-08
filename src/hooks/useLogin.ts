@@ -6,8 +6,10 @@ import {
   login,
   resendVerificationLink,
   requestPasswordRecovery,
-  type LoginRequest
 } from "../services/authService";
+import type {
+  LoginRequest
+} from "../types/authTypes"
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 import { useMutation } from "@tanstack/react-query";

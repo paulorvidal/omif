@@ -1,25 +1,10 @@
 import api from "./api";
-
-export type LoginRequest = {
-  email: string;
-  password: string;
-  captchaToken: string;
-};
-
-type LoginResponse = {
-  token: string;
-  role: string;
-};
-
-export interface PasswordRecovery {
-  email: string;
-  message: string;
-}
-
-export type PasswordRecoverRequest = {
-  token: string;
-  password: string;
-};
+import type {
+  LoginRequest,
+  LoginResponse,
+  PasswordRecoverRequest,
+  PasswordRecovery
+} from "../types/authTypes"
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/auth", data);
