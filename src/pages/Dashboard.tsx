@@ -25,11 +25,11 @@ export const Dashboard = () => {
   } = useNoticeTable();
 
   const sortOptions = [
-    { label: "Nome (A-Z)", value: "name,asc" },
-    { label: "Nome (A-Z)", value: "name,asc" },
-    { label: "Nome (Z-A)", value: "name,desc" },
-    { label: "INEP (Crescente)", value: "inep,asc" },
-    { label: "INEP (Decrescente)", value: "inep,desc" },
+    { label: "Data de Inclusão (Mais Recente)", value: "timestamp,asc" },
+    { label: "Data de Inclusão (Mais Recente)", value: "timestamp,asc" },
+    { label: "Data de Inclusão (Mais Antiga)", value: "timestamp,desc" },
+    { label: "Título (A-Z)", value: "title,asc" },
+    { label: "Título (Z-A)", value: "title,desc" },
   ];
 
   const pageSizeOptions = [
