@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router";
 import type { PaginationState } from "@tanstack/react-table";
 import {
   findAllNotices,
-  type FindAllNoticesResponse,
+  type FindAllNoticesResponse as Notice,
 } from "../services/noticeService";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,11 @@ import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
 import { formatDate } from "../utils/formatDate";
 import { useDebounce } from "./useDebounce";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 type FilterFormValues = {
   sort: string;
@@ -27,44 +32,26 @@ export const useNoticeTable = () => {
   const debouncedFilter = useDebounce(globalFilter, 400);
 
   const pagination: PaginationState = { pageIndex, pageSize };
-
-  const [data, setData] = useState<FindAllNoticesResponse[]>([]);
-  const [pageCount, setPageCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { control, handleSubmit, reset } = useForm<FilterFormValues>();
-
-  const loadNotices = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const result: PageResponse<FindAllNoticesResponse> = await findAllNotices(
-        pageIndex,
-        pageSize,
-        debouncedFilter,
-        sort,
-      );
-
-      const formatted = result.content.map((item) => ({
-        ...item,
-        timestamp: formatDate(item.timestamp),
-      }));
-
-      setData(formatted);
-      setPageCount(result.totalPages);
-    } catch (error) {
-      const message =
-        error instanceof ApiError ? error.message : "Erro ao carregar avisos";
-      showToast(message, "error");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [pageIndex, pageSize, debouncedFilter, sort]);
+  const { data, isFetching, isError, error } = useQuery<PageResponse<Notice>>({
+    queryKey: ["notices", pageIndex, pageSize, debouncedFilter, sort],
+    queryFn: () => findAllNotices(pageIndex, pageSize, debouncedFilter, sort),
+    placeholderData: keepPreviousData,
+  });
 
   useEffect(() => {
-    loadNotices();
-  }, [loadNotices]);
+    if (isError) {
+      const message =
+        error instanceof ApiError
+          ? error.message
+          : "Falha ao carregar a lista de avisos.";
+      showToast(message, "error");
+    }
+  }, [isError, error]);
+
+  const { control, handleSubmit, reset } = useForm<FilterFormValues>();
 
   const handleURLChange = useCallback(
     (newParams: Record<string, string | number>) => {
@@ -95,10 +82,14 @@ export const useNoticeTable = () => {
   };
 
   return {
-    data,
-    pageCount,
+    data:
+      data?.content.map((notice) => ({
+        ...notice,
+        timestamp: formatDate(notice.timestamp),
+      })) ?? [],
+    pageCount: data?.totalPages ?? 0,
+    isLoading: isFetching,
     pagination,
-    isLoading,
     globalFilter,
     handleURLChange,
     filterDialog: {
