@@ -20,11 +20,12 @@ import { Institution } from "./pages/Institution";
 import { Students } from "./pages/Students";
 import { Edition } from "./pages/Edition";
 import { Editions } from "./pages/Editions";
-import { Notice } from "./pages/Notice"; 
+import { Notice } from "./pages/Notice";
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage"
 import { Educators } from "./pages/Educators";
 import { Steps } from "./pages/Steps";
+import { Profile } from "./pages/Profile"
 
 
 const SetupEvents = () => {
@@ -166,6 +167,14 @@ export const App = () => {
             element={
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Educators />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             }
           />

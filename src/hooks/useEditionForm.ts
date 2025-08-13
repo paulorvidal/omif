@@ -15,6 +15,7 @@ import type {
 import { redirectTo, showToast } from "../utils/events";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
+
 const EditionFormSchema = z.object({
     name: z.string().nonempty("O nome é obrigatório"),
     year: z.coerce.number().min(2000, "O ano deve ser válido"),
@@ -22,8 +23,7 @@ const EditionFormSchema = z.object({
     startDate: z.string().nonempty("A data de início da vigência é obrigatória"),
     endDate: z.string().nonempty("A data de fim da vigência é obrigatória"),
     registrationStartDate: z.string().nonempty("A data de início das inscrições é obrigatória"),
-    registrationEndDate: z.string().nonempty("A data de fim das inscrições é obrigatória")
-
+    registrationEndDate: z.string().nonempty("A data de fim das inscrições é obrigatória"),
 }).refine(data => new Date(data.endDate) > new Date(data.startDate), {
     message: "O fim da vigência deve ser após o início.",
     path: ["endDate"],
@@ -40,13 +40,13 @@ type UseEditionFormProps = {
 
 export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     const isEditMode = Boolean(editionId);
-    // const queryClient = useQueryClient();
 
     const {
         register,
         handleSubmit,
         formState: { errors, isDirty },
         reset,
+
     } = useForm<FormData>({
         resolver: zodResolver(EditionFormSchema),
         defaultValues: {
@@ -78,36 +78,42 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
                 endDate: formatDateForInput(editionData.endDate),
                 registrationStartDate: formatDateForInput(editionData.registrationStartDate),
                 registrationEndDate: formatDateForInput(editionData.registrationEndDate),
-                
             });
         }
     }, [editionData, reset]);
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (payload: CreateEditionRequest | UpdateEditionRequest) => {
-            if (isEditMode) return updateEdition({ editionId: editionId!, ...payload } as UpdateEditionRequest);
-            return createEdition(payload as CreateEditionRequest);
+        mutationFn: (requestData: CreateEditionRequest | UpdateEditionRequest) => {
+            if (isEditMode) {
+                return updateEdition(requestData as UpdateEditionRequest);
+            }
+            return createEdition(requestData as CreateEditionRequest);
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             showToast(isEditMode ? "Edição atualizada com sucesso" : "Edição criada com sucesso", "success");
-            redirectTo("/edicoes");
+            const returnedId = data.id
+            redirectTo(`/etapas/${returnedId}`);
         },
         onError: (error) => showToast(error instanceof ApiError ? error.message : "Falha na requisição.", "error"),
     });
 
+
     const handleFormSubmit = handleSubmit(async (data: FormData) => {
         if (isEditMode && !isDirty) return showToast("Nenhuma alteração para salvar", "info");
-
-        const payload = {
-            name: data.name,
-            year: data.year,
+        const basePayload = {
+            ...data,
             minimumWage: data.minimumWage.replace(',', '.'),
-            startDate: data.startDate,
-            endDate: data.endDate,
-            registrationStartDate: data.registrationStartDate,
-            registrationEndDate: data.registrationEndDate,
         };
-        mutate(payload);
+
+        if (isEditMode) {
+            const updatePayload: UpdateEditionRequest = {
+                editionId: editionId!,
+                ...basePayload,
+            };
+            mutate(updatePayload);
+        } else {
+            mutate(basePayload);
+        }
     });
 
     const handleReset = () => reset();
