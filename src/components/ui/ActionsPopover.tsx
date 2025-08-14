@@ -2,13 +2,13 @@ import * as Popover from "@radix-ui/react-popover";
 import { EllipsisVertical } from "lucide-react";
 import type { FC, ReactNode } from "react";
 
-type EditAndDeletePopoverProps = {
+type ButtonsPopoverProps = {
   children: ReactNode;
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
 };
 
-export const EditAndDeletePopover: FC<EditAndDeletePopoverProps> = ({
+export const ActionsPopover: FC<ButtonsPopoverProps> = ({
   children,
   side = "bottom",
   align = "end",
@@ -25,7 +25,7 @@ export const EditAndDeletePopover: FC<EditAndDeletePopoverProps> = ({
           side={side}
           align={align}
           sideOffset={6}
-          className="max-w-xs rounded-md bg-white p-4 text-sm text-zinc-800 shadow-lg"
+          className="max-w-xs rounded-md bg-white p-2 text-sm text-zinc-800 shadow-lg"
         >
           {children}
           <Popover.Arrow className="fill-white" />
