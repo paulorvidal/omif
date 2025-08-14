@@ -29,6 +29,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/DropdownMenu";
+import { EditAndDeletePopover } from "../ui/EditAndDeletePopover";
 
 export const InstitutionTable = () => {
   const {
@@ -87,27 +88,26 @@ export const InstitutionTable = () => {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="rounded p-1 hover:bg-zinc-100">
-                <EllipsisVertical className="h-5 w-5 text-zinc-600" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-                onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
-              >
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                icon={<Trash className="h-4 w-4 text-zinc-600" />}
-                onClick={() => handleDeleteClick(row.original.id)}
-              >
-                Deletar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <EditAndDeletePopover>
+            <button
+              className="flex items-center rounded-sm px-2 py-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
+            >
+              <div className="mr-2 flex h-5 w-5 items-center justify-center">
+                <Pencil className="h-4 w-4 text-zinc-600" />
+              </div>
+              <span>Editar</span>
+            </button>
+            <button
+              className="flex items-center rounded-sm px-2 py-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              onClick={() => handleDeleteClick(row.original.id)}
+            >
+              <div className="mr-2 flex h-5 w-5 items-center justify-center">
+                <Trash className="h-4 w-4 text-zinc-600" />
+              </div>
+              <span>Deletar</span>
+            </button>
+          </EditAndDeletePopover>
         ),
       }),
     ];
