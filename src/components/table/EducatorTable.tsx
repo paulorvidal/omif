@@ -7,13 +7,7 @@ import {
   getFilteredRowModel,
   getFacetedRowModel,
 } from "@tanstack/react-table";
-import {
-  ListFilterPlus,
-  EllipsisVertical,
-  Pencil,
-  CheckSquare,
-  Undo2,
-} from "lucide-react";
+import { ListFilterPlus, Pencil, CheckSquare, Undo2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEducatorTable } from "../../hooks/useEducatorTable";
 import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
@@ -23,13 +17,8 @@ import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
 import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../ui/SelectField";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/DropdownMenu";
 import { Checkbox } from "../ui/Checkbox";
+import { ActionsPopover } from "../ui/ActionsPopover";
 
 export const EducatorTable = () => {
   const {
@@ -152,36 +141,38 @@ export const EducatorTable = () => {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="rounded p-1 hover:bg-zinc-100">
-                <EllipsisVertical className="h-5 w-5 text-zinc-600" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-                onClick={() => redirectTo(`/educador/${row.original.id}`)}
+          <ActionsPopover>
+            <button
+              className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              onClick={() => redirectTo(`/educador/${row.original.id}`)}
+            >
+              <div className="flex h-5 w-5 items-center justify-center">
+                <Pencil className="h-4 w-4 text-zinc-600" />
+              </div>
+              <span>Editar</span>
+            </button>
+            {row.original.validated ? (
+              <button
+                className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                onClick={() => bulkUnvalidate([row.original.id])}
               >
-                Editar
-              </DropdownMenuItem>
-              {row.original.validated ? (
-                <DropdownMenuItem
-                  icon={<Undo2 className="h-4 w-4 text-zinc-600" />}
-                  onClick={() => bulkUnvalidate([row.original.id])}
-                >
-                  Desvalidar Cadastro
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  icon={<CheckSquare className="h-4 w-4 text-zinc-600" />}
-                  onClick={() => validateEducators([row.original.id])}
-                >
-                  Validar Cadastro
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <div className="flex h-5 w-5 items-center justify-center">
+                  <Undo2 className="h-4 w-4 text-zinc-600" />
+                </div>
+                <span>Desvalidar Cadastro</span>
+              </button>
+            ) : (
+              <button
+                className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                onClick={() => validateEducators([row.original.id])}
+              >
+                <div className="flex h-5 w-5 items-center justify-center">
+                  <CheckSquare className="h-4 w-4 text-zinc-600" />
+                </div>
+                <span>Validar Cadastro</span>
+              </button>
+            )}
+          </ActionsPopover>
         ),
       }),
     ];
