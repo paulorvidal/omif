@@ -8,7 +8,6 @@ type Props = {
 };
 
 export const EditionForm = ({ editionId }: Props) => {
-  // `control` e a lógica de adicionar/remover não são mais necessários
   const {
     errors,
     isEditMode,
@@ -84,10 +83,7 @@ export const EditionForm = ({ editionId }: Props) => {
           helpText="Prazo final para recebimento de novas inscrições."
         />
       </div>
-
-
       
-
       <div className="mt-6 flex justify-between">
         <Button secondary type="button" onClick={handleReset} disabled={isLoading}>
           Limpar

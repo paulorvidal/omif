@@ -1,120 +1,163 @@
-// src/hooks/useStepsForm.ts
-
-import { useEffect, useState } from "react";
-import { useForm, FieldName } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ApiError } from "../services/apiError";
-import {
-  createEdition,
-  updateEdition,
-  getEditionById,
-} from "../services/editionService";
-import type {
-  CreateEditionRequest,
-  UpdateEditionRequest,
-  Edition,
-} from "../types/editionTypes";
-import { redirectTo, showToast } from "../utils/events";
+import { getEditionWithSteps, saveStepsForEdition } from "../services/editionService";
+import type { Step, CreateStepDTO } from "../types/stepsTypes";
 
-// Schema Zod (sem alterações)
-const EditionFormSchema = z.object({
-    name: z.string().nonempty("O nome é obrigatório"),
-    year: z.coerce.number().min(2000, "O ano deve ser válido"),
-    minimumWage: z.string().nonempty("O salário mínimo é obrigatório"),
-    startDate: z.string().nonempty("A data de início da vigência é obrigatória"),
-    endDate: z.string().nonempty("A data de fim da vigência é obrigatória"),
-    registrationStartDate: z.string().nonempty("A data de início das inscrições é obrigatória"),
-    registrationEndDate: z.string().nonempty("A data de fim das inscrições é obrigatória")
-}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
-    message: "O fim da vigência deve ser após o início.",
+
+const stepOneSchema = z.object({
+  cutOffScore: z.coerce.number().min(0, "A nota não pode ser negativa.").nullable(),
+  startDate: z.string().min(1, "A data de início é obrigatória."),
+  endDate: z.string().min(1, "A data de encerramento é obrigatória."),
+  endDateForReleaseOfNote: z.string().min(1, "A data de liberação da nota é obrigatória."),
+})
+  .refine((data) => new Date(data.endDate) > new Date(data.startDate), {
+    message: "A data de encerramento deve ser posterior à de início.",
     path: ["endDate"],
-}).refine(data => new Date(data.registrationEndDate) > new Date(data.registrationStartDate), {
-    message: "O fim das inscrições deve ser após o início.",
-    path: ["registrationEndDate"],
-});
+  })
+  .refine((data) => new Date(data.endDateForReleaseOfNote) > new Date(data.endDate), {
+    message: "A data da nota deve ser posterior ao encerramento.",
+    path: ["endDateForReleaseOfNote"],
+  });
 
-type FormData = z.infer<typeof EditionFormSchema>;
+const stepTwoSchema = z.object({
+  startDate: z.string().min(1, "A data de início é obrigatória."),
+  endDate: z.string().min(1, "A data de encerramento é obrigatória."),
+})
+  .refine((data) => new Date(data.endDate) > new Date(data.startDate), {
+    message: "A data de encerramento deve ser posterior à de início.",
+    path: ["endDate"],
+  });
 
-// Campos definidos para a estrutura de 2 ETAPAS
-const stepFields: FieldName<FormData>[][] = [
-  ["name", "year", "minimumWage", "startDate", "endDate"], // Etapa 1
-  ["registrationStartDate", "registrationEndDate"],     // Etapa 2
-];
 
-type UseStepsFormProps = {
-  editionId?: string;
-};
+export const stepsFormSchema = z.object({
+  steps: z.tuple([stepOneSchema, stepTwoSchema]),
+}).refine(
+  (data) => {
+    const step1EndDate = new Date(data.steps[0].endDate);
+    const step1NoteReleaseDate = new Date(data.steps[0].endDateForReleaseOfNote);
+    const step2StartDate = new Date(data.steps[1].startDate);
 
-export const useStepsForm = ({ editionId }: UseStepsFormProps) => {
-  const isEditMode = Boolean(editionId);
-  const [currentStep, setCurrentStep] = useState(0);
+    return step2StartDate > step1EndDate && step2StartDate > step1NoteReleaseDate;
+  },
+  {
+    message: "O início da Etapa 2 deve ocorrer após o fim e a liberação da nota da Etapa 1.",
+    path: ["steps", 1, "startDate"],
+  }
+);
+
+export type StepsFormData = z.infer<typeof stepsFormSchema>;
+
+export const useStepsForm = (editionId?: string) => {
+  const { data: editionData, isLoading, isError } = useQuery({
+    queryKey: ["editionSteps", editionId],
+    queryFn: () => getEditionWithSteps(editionId!),
+    enabled: !!editionId,
+  });
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
     reset,
-    trigger, // Essencial para validar cada etapa
-  } = useForm<FormData>({ resolver: zodResolver(EditionFormSchema), defaultValues: { /* ... */ }});
-
-  const { data: editionData, isLoading: isEditionLoading } = useQuery<Edition>({
-    queryKey: ["edition", editionId],
-    queryFn: () => getEditionById(editionId!),
-    enabled: isEditMode,
+    formState: { isDirty, errors },
+  } = useForm<StepsFormData>({
+    resolver: zodResolver(stepsFormSchema),
+    defaultValues: {
+      steps: [
+        { cutOffScore: 0, startDate: '', endDate: '', endDateForReleaseOfNote: '' },
+        { startDate: '', endDate: '' },
+      ],
+    },
   });
 
+
+
+  const formatDateForInput = (dateString?: string | Date) => {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const pad = (num: number) => num.toString().padStart(2, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   useEffect(() => {
-    if (editionData) {
-        // Lógica para popular o form (reset) permanece a mesma
-        // ...
+    if (editionData?.steps && editionData.steps.length >= 2) {
+      const initialSteps: [Step, Step] = [editionData.steps[0], editionData.steps[1]];
+      reset({
+        steps: [
+          {
+            ...initialSteps[0],
+            startDate: formatDateForInput(initialSteps[0].startDate),
+            endDate: formatDateForInput(initialSteps[0].endDate),
+            endDateForReleaseOfNote: formatDateForInput(initialSteps[0].endDateForReleaseOfNote),
+          },
+          {
+            ...initialSteps[1],
+            startDate: formatDateForInput(initialSteps[1].startDate),
+            endDate: formatDateForInput(initialSteps[1].endDate),
+          },
+        ],
+      });
     }
   }, [editionData, reset]);
 
-  const { mutate, isPending } = useMutation({
-    // Lógica de Create/Update permanece a mesma
-    // ...
+  const queryClient = useQueryClient();
+  const { mutate: saveMutation, isPending: isSaving } = useMutation({
+    mutationFn: (createSteps: CreateStepDTO[]) => saveStepsForEdition(editionId!, createSteps),
+    onSuccess: (savedData) => {
+      console.log("Salvo com sucesso!");
+      if (savedData?.steps && savedData.steps.length >= 2) {
+        const stepsToReset: [Step, Step] = [savedData.steps[0], savedData.steps[1]];
+        reset({ steps: stepsToReset });
+      }
+      queryClient.invalidateQueries({ queryKey: ["editionSteps", editionId] });
+    },
+    onError: (error) => {
+      console.error("Falha ao salvar:", error);
+    },
   });
 
-  const handleFormSubmit = handleSubmit(async (data: FormData) => {
-    // Lógica de submissão final permanece a mesma
-    // ...
-  });
+  const onSubmit = (formData: StepsFormData) => {
+    const createStepDTOs = [
+      {
+        number: 1,
+        startDate: formData.steps[0].startDate,
+        endDate: formData.steps[0].endDate,
+        cutOffScore: formData.steps[0].cutOffScore,
+        endDateForReleaseOfNote: formData.steps[0].endDateForReleaseOfNote
+      },
+      {
+        number: 2,
+        startDate: formData.steps[1].startDate,
+        endDate: formData.steps[1].endDate,
+        cutOffScore: null,
+        endDateForReleaseOfNote: null
+      }
+    ];
 
-  // Funções de navegação para as etapas
-  const nextStep = async () => {
-    const fields = stepFields[currentStep];
-    const output = await trigger(fields, { shouldFocus: true });
-    if (output) {
-      setCurrentStep((prev) => Math.min(prev + 1, stepFields.length - 1));
-    }
+    saveMutation(createStepDTOs);
   };
+  const handleReset = () => reset();
 
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
-  };
-
-  const handleReset = () => {
-    reset();
-    setCurrentStep(0);
-  };
 
   return {
-    errors,
-    isEditMode,
-    isPending,
-    isEditionLoading,
-    register,
-    handleFormSubmit,
-    handleReset,
-    // Propriedades das etapas
-    currentStep,
-    totalSteps: stepFields.length,
-    nextStep,
-    prevStep,
-    // Dados para o cabeçalho
-    editionData,
+    editionData, isLoading, isError, isSaving, isDirty,
+    register, handleSubmit, onSubmit, errors, handleReset
   };
 };
+

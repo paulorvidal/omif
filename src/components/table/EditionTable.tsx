@@ -4,21 +4,76 @@ import {
   flexRender,
   useReactTable,
   getCoreRowModel,
-  getFilteredRowModel,
-  getFacetedRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, Pencil, CheckSquare, Undo2, Plus } from "lucide-react";
+import {
+  ListFilterPlus,
+  EllipsisVertical,
+  Pencil,
+  Plus,
+  CalendarClock,
+  CalendarPlus,
+  CirclePlay,
+  CheckCircle,
+} from "lucide-react";
 import { redirectTo } from "../../utils/events";
-import { useEditionTable } from "../../hooks/useEditionTable";
-import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
+import { useEditionsTable } from "../../hooks/useEditionTable";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
 import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../ui/SelectField";
-import { Checkbox } from "../ui/Checkbox";
-import { ActionsPopover } from "../ui/ActionsPopover";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../ui/DropdownMenu";
+
+import type { Edition } from "../../types/editionTypes";
+
+const formatDate = (dateString?: string): string => {
+  if (!dateString) return "N/A";
+  return new Date(dateString).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+};
+
+const getEditionStatus = (edition: Edition) => {
+  const now = new Date();
+  const registrationStart = new Date(edition.registrationStartDate);
+  const registrationEnd = new Date(edition.registrationEndDate);
+  const start = new Date(edition.startDate);
+  const end = new Date(edition.endDate);
+
+  if (now >= registrationStart && now <= registrationEnd) {
+    return (
+      <Badge color="border-sky-300 text-sky-700 bg-sky-50">
+        <CalendarPlus className="mr-1 h-3 w-3" /> Inscrições Abertas
+      </Badge>
+    );
+  }
+  if (now < start) {
+    return (
+      <Badge color="border-gray-300 text-gray-700 bg-gray-50">
+        <CalendarClock className="mr-1 h-3 w-3" /> Em Breve
+      </Badge>
+    );
+  }
+  if (now >= start && now <= end) {
+    return (
+      <Badge color="border-green-300 text-green-700 bg-green-50">
+        <CirclePlay className="mr-1 h-3 w-3" /> Acontecendo
+      </Badge>
+    );
+  }
+  if (now > end) {
+    return (
+      <Badge color="border-gray-300 text-gray-700 bg-gray-50">
+        <CheckCircle className="mr-1 h-3 w-3" /> Finalizada
+      </Badge>
+    );
+  }
+  return <Badge>Planejada</Badge>;
+};
 
 export const EditionTable = () => {
   const {
@@ -29,150 +84,65 @@ export const EditionTable = () => {
     globalFilter,
     handleURLChange,
     filterDialog,
-    validateEducators,
-    isUpdating,
-    bulkUnvalidate,
-    isUnvalidating,
-  } = useEditionTable();
-
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [selectionType, setSelectionType] = React.useState<boolean | null>(
-    null,
-  );
-
-  const handleRowSelectionChange = (
-    updater: React.SetStateAction<Record<string, boolean>>,
-  ) => {
-    const newSelection =
-      typeof updater === "function" ? updater(rowSelection) : updater;
-    const newSelectedIds = Object.keys(newSelection);
-
-    if (newSelectedIds.length === 0) {
-      setRowSelection({});
-      setSelectionType(null);
-      return;
-    }
-
-    let currentSelectionType = selectionType;
-    if (currentSelectionType === null) {
-      const firstSelectedRow = data.find((row) => row.id === newSelectedIds[0]);
-      if (firstSelectedRow) {
-        currentSelectionType = firstSelectedRow.validated;
-        setSelectionType(currentSelectionType);
-      } else {
-        return;
-      }
-    }
-
-    const finalSelection: { [key: string]: boolean } = {};
-    const currentPageIds = new Set(data.map((row) => row.id));
-
-    for (const id of newSelectedIds) {
-      if (currentPageIds.has(id)) {
-        const row = data.find((r) => r.id === id);
-        if (row && row.validated === currentSelectionType) {
-          finalSelection[id] = true;
-        }
-      } else {
-        finalSelection[id] = true;
-      }
-    }
-
-    setRowSelection(finalSelection);
-  };
+  } = useEditionsTable();
 
   const columns = React.useMemo(() => {
-    const columnHelper = createColumnHelper<Educator>();
+    const columnHelper = createColumnHelper<Edition>();
     return [
+      columnHelper.accessor("name", {
+        header: "Nome da Edição",
+        cell: (info) => (
+          <span className="font-medium text-zinc-800">{info.getValue()}</span>
+        ),
+      }),
+      columnHelper.accessor("year", {
+        header: "Ano",
+        cell: (info) => info.getValue(),
+      }),
       columnHelper.display({
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()}
-            indeterminate={table.getIsSomePageRowsSelected()}
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Selecionar todas as linhas"
-          />
-        ),
-        cell: ({ row }) => {
-          return (
-            <Checkbox
-              checked={row.getIsSelected()}
-              disabled={!row.getCanSelect()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Selecionar linha"
-            />
-          );
-        },
+        id: "status",
+        header: "Status",
+        cell: ({ row }) => getEditionStatus(row.original),
       }),
-      columnHelper.accessor("siape", {
-        header: "Siape",
-        cell: (info) => info.getValue() || <Badge>N/A</Badge>,
-      }),
-      columnHelper.accessor("socialName", {
-        header: "Nome Social",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("email", {
-        header: "Email",
-        cell: (info) => info.getValue() || <Badge>N/A</Badge>,
-      }),
-      columnHelper.accessor("role", {
-        header: "Função",
+      columnHelper.display({
+        id: "registrationPeriod",
+        header: "Período de Inscrição",
         cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            {row.original.validated ? (
-              <Badge color="border-green-300 text-green-700">
-                {row.original.role}
-              </Badge>
-            ) : (
-              <Badge color="border-red-500 text-red-800">Pendente</Badge>
-            )}
-          </div>
+          <span>
+            {`${formatDate(row.original.registrationStartDate)} - ${formatDate(row.original.registrationEndDate)}`}
+          </span>
         ),
       }),
-      columnHelper.accessor("institutionName", {
-        header: "Instituição",
-        cell: (info) => info.getValue(),
+      columnHelper.display({
+        id: "realizationPeriod",
+        header: "Período de Realização",
+        cell: ({ row }) => (
+          <span>
+            {`${formatDate(row.original.startDate)} - ${formatDate(row.original.endDate)}`}
+          </span>
+        ),
       }),
       columnHelper.display({
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <ActionsPopover>
-            <button
-              className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-              onClick={() => redirectTo(`/educador/${row.original.id}`)}
-            >
-              <div className="flex h-5 w-5 items-center justify-center">
-                <Pencil className="h-4 w-4 text-zinc-600" />
-              </div>
-              <span>Editar</span>
-            </button>
-            {row.original.validated ? (
-              <button
-                className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                onClick={() => bulkUnvalidate([row.original.id])}
-              >
-                <div className="flex h-5 w-5 items-center justify-center">
-                  <Undo2 className="h-4 w-4 text-zinc-600" />
-                </div>
-                <span>Desvalidar Cadastro</span>
-              </button>
-            ) : (
-              <button
-                className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                onClick={() => validateEducators([row.original.id])}
-              >
-                <div className="flex h-5 w-5 items-center justify-center">
-                  <CheckSquare className="h-4 w-4 text-zinc-600" />
-                </div>
-                <span>Validar Cadastro</span>
-              </button>
-            )}
-          </ActionsPopover>
+          <div className="text-right">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="rounded p-1 hover:bg-zinc-100">
+                  <EllipsisVertical className="h-5 w-5 text-zinc-600" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+                  onClick={() => redirectTo(`/edicao/${row.original.id}`)}
+                >
+                  Editar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         ),
       }),
     ];
@@ -184,15 +154,7 @@ export const EditionTable = () => {
     pageCount,
     state: {
       pagination,
-      rowSelection,
     },
-    enableRowSelection: (row) => {
-      if (selectionType === null) {
-        return true;
-      }
-      return row.original.validated === selectionType;
-    },
-    onRowSelectionChange: handleRowSelectionChange,
     manualPagination: true,
     onPaginationChange: (updater) => {
       const newPagination =
@@ -203,48 +165,22 @@ export const EditionTable = () => {
       });
     },
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
     getRowId: (row) => row.id,
   });
 
   const sortOptions = [
-    { label: "Nome (A-Z)", value: "socialName,asc" },
-    { label: "Nome (A-Z)", value: "socialName,asc" },
-    { label: "Nome (Z-A)", value: "socialName,desc" },
-    { label: "Instituição (A-Z)", value: "institutionName,asc" },
-    { label: "Instituição (Z-A)", value: "institutionName,desc" },
+    { label: "Ano (Mais Recente)", value: "year,desc" },
+    { label: "Ano (Mais Antigo)", value: "year,asc" },
+    { label: "Nome (A-Z)", value: "name,asc" },
+    { label: "Nome (Z-A)", value: "name,desc" },
   ];
 
   const pageSizeOptions = [
-    { label: "10", value: 10 },
     { label: "5", value: 5 },
     { label: "10", value: 10 },
     { label: "20", value: 20 },
     { label: "50", value: 50 },
   ];
-
-  const handleValidateSelected = () => {
-    const selectedIds = Object.keys(rowSelection);
-    if (selectedIds.length === 0) return;
-    validateEducators(selectedIds, {
-      onSuccess: () => {
-        table.resetRowSelection();
-      },
-    });
-  };
-
-  const handleUnvalidateSelected = () => {
-    const selectedIds = Object.keys(rowSelection);
-    if (selectedIds.length === 0) return;
-    bulkUnvalidate(selectedIds, {
-      onSuccess: () => {
-        table.resetRowSelection();
-      },
-    });
-  };
-
-  const selectedRowCount = Object.keys(rowSelection).length;
 
   return (
     <div className="flex flex-col gap-4 md:gap-8">
@@ -255,37 +191,12 @@ export const EditionTable = () => {
               <SearchInput
                 value={globalFilter}
                 onChange={(e) => handleURLChange({ q: e.target.value })}
-                placeholder="Buscar educador..."
+                placeholder="Buscar edição por nome..."
                 showClearIcon={true}
                 onClear={() => handleURLChange({ q: "" })}
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-              {selectedRowCount > 0 && selectionType !== null && (
-                <>
-                  {selectionType === false ? (
-                    <Button
-                      icon={<CheckSquare className="h-4 w-4" />}
-                      onClick={handleValidateSelected}
-                      disabled={isUpdating}
-                    >
-                      {isUpdating
-                        ? "Validando..."
-                        : `Validar (${selectedRowCount})`}
-                    </Button>
-                  ) : (
-                    <Button
-                      icon={<Undo2 className="h-4 w-4" />}
-                      onClick={handleUnvalidateSelected}
-                      disabled={isUnvalidating}
-                    >
-                      {isUnvalidating
-                        ? "Desvalidando..."
-                        : `Desvalidar (${selectedRowCount})`}
-                    </Button>
-                  )}
-                </>
-              )}
               <Button
                 icon={<ListFilterPlus />}
                 type="button"
@@ -324,10 +235,7 @@ export const EditionTable = () => {
               </thead>
               <tbody className="bg-white">
                 {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className={`odd:bg-white even:bg-zinc-200/50 ${row.getIsSelected() ? "bg-green-100" : ""}`}
-                  >
+                  <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="p-2 text-left">
                         {flexRender(
@@ -341,7 +249,7 @@ export const EditionTable = () => {
                 {table.getRowModel().rows.length === 0 && !isLoading && (
                   <tr>
                     <td colSpan={columns.length} className="p-4 text-center">
-                      Nenhum registro encontrado.
+                      Nenhuma edição encontrada.
                     </td>
                   </tr>
                 )}
