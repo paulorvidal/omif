@@ -1,13 +1,24 @@
 import { ChevronRight, Info } from "lucide-react";
+import { useNavigate } from "react-router";
 
 type NoticeProps = {
+  id: string;
   title: string;
   date: string;
 };
 
-export const Notice = ({ title, date }: NoticeProps) => {
+export const Notice = ({ id, title, date }: NoticeProps) => {
+  const navigate = useNavigate();
+
+  const handleNavigateToNoticeDetails = () => {
+    navigate("/aviso/" + id);
+  };
+
   return (
-    <div className="flex w-full min-w-full flex-1 items-center justify-between gap-4 rounded-md bg-slate-50 p-4 duration-500 hover:bg-slate-50/50 focus:bg-slate-50/50 sm:min-w-96 md:p-8">
+    <div
+      className="flex w-full min-w-full flex-1 items-center justify-between gap-4 rounded-md bg-slate-50 p-4 duration-500 hover:bg-slate-50/50 focus:bg-slate-50/50 sm:min-w-96 md:p-8"
+      onClick={handleNavigateToNoticeDetails}
+    >
       <div className="flex items-center gap-4">
         <Info className="size-8 text-blue-500" />
         <div className="flex flex-col justify-center">

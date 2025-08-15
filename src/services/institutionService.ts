@@ -1,5 +1,5 @@
 import api from "./api";
-import type { PageParams, PageResponse } from "./defaultTypes";
+import type { PageParams, PageResponse } from "../types/defaultTypes";
 
 export type Institution = {
   id: string;

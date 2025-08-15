@@ -21,12 +21,12 @@ import { Students } from "./pages/Students";
 import { Edition } from "./pages/Edition";
 import { Editions } from "./pages/Editions";
 import { Notice } from "./pages/Notice";
-import { VerifyEmailPage } from './pages/VerifyEmailPage';
-import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage"
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage";
 import { Educators } from "./pages/Educators";
 import { Steps } from "./pages/Steps";
-import { Profile } from "./pages/Profile"
-
+import { Profile } from "./pages/Profile";
+import { NoticeDetails } from "./pages/NoticeDetails";
 
 const SetupEvents = () => {
   const navigate = useNavigate();
@@ -88,7 +88,10 @@ export const App = () => {
           <Route path="/educador" element={<Educator />} />
           <Route path="/estudante" element={<Student />} />
           <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
-          <Route path="/password-recovery/:token" element={<PasswordRecoveryPage />} />
+          <Route
+            path="/password-recovery/:token"
+            element={<PasswordRecoveryPage />}
+          />
 
           <Route
             path="/dashboard"
@@ -103,6 +106,14 @@ export const App = () => {
             element={
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Notice />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/aviso/:id"
+            element={
+              <PrivateRoute>
+                <NoticeDetails />
               </PrivateRoute>
             }
           />
