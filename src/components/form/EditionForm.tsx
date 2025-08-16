@@ -53,22 +53,6 @@ export const EditionForm = ({ editionId }: Props) => {
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Field
-          label="Início da Vigência:"
-          type="datetime-local"
-          register={register("startDate")}
-          error={errors.startDate?.message}
-          helpText="Data e hora em que a edição se torna ativa."
-        />
-        <Field
-          label="Fim da Vigência:"
-          type="datetime-local"
-          register={register("endDate")}
-          error={errors.endDate?.message}
-          helpText="Data e hora em que a edição será encerrada."
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Field
           label="Início das Inscrições:"
           type="datetime-local"
           register={register("registrationStartDate")}

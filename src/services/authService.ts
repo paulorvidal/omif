@@ -27,7 +27,7 @@ export const requestPasswordRecovery = async (
   identifier: string
 ): Promise<PasswordRecovery> => {
   const response = await api.post<PasswordRecovery>('/auth/generate-password-recovery', {
-    identifier, 
+    identifier,
   });
   return response.data;
 };

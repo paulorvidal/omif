@@ -20,13 +20,8 @@ const EditionFormSchema = z.object({
     name: z.string().nonempty("O nome é obrigatório"),
     year: z.coerce.number().min(2000, "O ano deve ser válido"),
     minimumWage: z.string().nonempty("O salário mínimo é obrigatório"),
-    startDate: z.string().nonempty("A data de início da vigência é obrigatória"),
-    endDate: z.string().nonempty("A data de fim da vigência é obrigatória"),
     registrationStartDate: z.string().nonempty("A data de início das inscrições é obrigatória"),
     registrationEndDate: z.string().nonempty("A data de fim das inscrições é obrigatória"),
-}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
-    message: "O fim da vigência deve ser após o início.",
-    path: ["endDate"],
 }).refine(data => new Date(data.registrationEndDate) > new Date(data.registrationStartDate), {
     message: "O fim das inscrições deve ser após o início.",
     path: ["registrationEndDate"],
@@ -53,8 +48,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
             name: "",
             year: new Date().getFullYear(),
             minimumWage: "",
-            startDate: "",
-            endDate: "",
             registrationStartDate: "",
             registrationEndDate: "",
         },
@@ -74,8 +67,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
                 name: editionData.name,
                 year: editionData.year,
                 minimumWage: String(editionData.minimumWage).replace('.', ','),
-                startDate: formatDateForInput(editionData.startDate),
-                endDate: formatDateForInput(editionData.endDate),
                 registrationStartDate: formatDateForInput(editionData.registrationStartDate),
                 registrationEndDate: formatDateForInput(editionData.registrationEndDate),
             });

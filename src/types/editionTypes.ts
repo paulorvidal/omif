@@ -24,8 +24,6 @@ export type CreateEditionRequest = {
   name: string;
   year: number;
   minimumWage: string;
-  startDate: string;
-  endDate: string;
   registrationStartDate: string;
   registrationEndDate: string;
 };
@@ -35,8 +33,6 @@ export type UpdateEditionRequest = {
   name: string;
   year: number;
   minimumWage: string;
-  startDate: string;
-  endDate: string;
   registrationStartDate: string;
   registrationEndDate: string;
 };
@@ -55,7 +51,5 @@ export interface Edition {
   year: number;
   registrationStartDate: string;
   registrationEndDate: string;
-  startDate: string;
-  endDate: string;
   steps: Step[];
 }

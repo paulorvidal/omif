@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { fetchEditions } from "../services/editionService";
-import { getMyData } from "../services/educatorService"; 
+import { getMyData } from "../services/educatorService";
 import { showToast } from "../utils/events";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -39,8 +39,8 @@ export const useNavbar = () => {
     const { data: userData, isLoading: isUserDataLoading } = useQuery({
         queryKey: ["myData"],
         queryFn: getMyData,
-        staleTime: 1000 * 60 * 60, 
-        refetchOnWindowFocus: false, 
+        staleTime: 1000 * 60 * 60,
+        refetchOnWindowFocus: false,
     });
 
     const loadOptions = async (inputValue: string) => {
@@ -86,13 +86,21 @@ export const useNavbar = () => {
 
     const placeholder = localStorage.getItem("edition") ?? currentYear.toString();
 
-    // Retorne os dados do usuário e o estado de loading
+    const getInitials = (name: string | undefined): string => {
+        if (!name) return "?"; 
+        const names = name.split(' ');
+        const firstInitial = names[0][0];
+        const lastInitial = names.length > 1 ? names[names.length - 1][0] : '';
+        return `${firstInitial}${lastInitial}`.toUpperCase();
+    };
+
     return {
         control,
         loadOptions,
         placeholder,
         classNames,
-        userData, // <-- Os dados do usuário (ex: { id, socialName })
-        isUserDataLoading, // <-- Um booleano para saber se está carregando
+        userData,
+        isUserDataLoading,
+        getInitials
     };
 };

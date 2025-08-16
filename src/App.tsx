@@ -26,6 +26,7 @@ import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage"
 import { Educators } from "./pages/Educators";
 import { Steps } from "./pages/Steps";
 import { Profile } from "./pages/Profile"
+import { MainLayout } from "./components/ui/MainLayout";
 
 
 const SetupEvents = () => {
@@ -91,93 +92,101 @@ export const App = () => {
           <Route path="/password-recovery/:token" element={<PasswordRecoveryPage />} />
 
           <Route
-            path="/dashboard"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <MainLayout />
               </PrivateRoute>
             }
-          />
-          <Route
-            path="/aviso"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Notice />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/instituicoes"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Institutions />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/instituicao/:id"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Institution />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/instituicao"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Institution />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/estudantes"
-            element={
-              <PrivateRoute>
-                <Students />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/edicoes"
-            element={
-              <PrivateRoute>
-                <Editions />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/edicao"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Edition />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/etapas/:id"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Steps />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/educadores"
-            element={
-              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <Educators />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/perfil"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
+          >
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/aviso"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Notice />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/instituicoes"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Institutions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/instituicao/:id"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Institution />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/instituicao"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Institution />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/estudantes"
+              element={
+                <PrivateRoute>
+                  <Students />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/edicoes"
+              element={
+                <PrivateRoute>
+                  <Editions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/edicao"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Edition />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/etapas/:id"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Steps />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/educadores"
+              element={
+                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                  <Educators />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/perfil"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+          </Route>
         </Routes>
         <Toaster richColors />
       </BrowserRouter>

@@ -1,17 +1,18 @@
 import { Controller } from "react-hook-form";
 import AsyncSelect from "react-select/async";
-import { Calendar, CircleUserRound } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { NavLink } from "react-router";
 import { useNavbar } from "../../hooks/useNavbar";
 
 export const Navbar = () => {
-  const { 
-    control, 
-    loadOptions, 
-    placeholder, 
-    classNames, 
-    userData, 
-    isUserDataLoading 
+  const {
+    control,
+    loadOptions,
+    placeholder,
+    classNames,
+    userData,
+    isUserDataLoading,
+    getInitials
   } = useNavbar();
 
   return (
@@ -44,13 +45,25 @@ export const Navbar = () => {
         className="flex cursor-pointer items-center rounded-sm duration-300 hover:bg-zinc-200 focus:bg-zinc-200 sm:ps-2"
       >
         <p className="hidden sm:block">
-          {isUserDataLoading 
-            ? 'Name' 
+          {isUserDataLoading
+            ? 'Name'
             : (userData?.socialName || 'Meu Perfil')
           }
         </p>
-        <div className="h-10 w-10 shrink-0">
-          <CircleUserRound className="h-10 w-10 p-2" />
+        <div className="h-10 w-10 shrink-0 p-1">
+          {userData && userData.profilePictureUrl ? (
+            <img
+              src={userData.profilePictureUrl}
+              alt="Foto de Perfil"
+              className="h-full w-full rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center rounded-full bg-green-500">
+              <span className="font-bold text-white">
+                {getInitials(userData?.socialName)}
+              </span>
+            </div>
+          )}
         </div>
       </NavLink>
     </div>

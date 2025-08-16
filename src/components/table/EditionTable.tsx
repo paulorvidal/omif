@@ -9,15 +9,10 @@ import {
   ListFilterPlus,
   EllipsisVertical,
   Pencil,
-  Plus,
-  CalendarClock,
-  CalendarPlus,
-  CirclePlay,
-  CheckCircle,
+  Plus
 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEditionsTable } from "../../hooks/useEditionTable";
-import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
@@ -37,43 +32,7 @@ const formatDate = (dateString?: string): string => {
   return new Date(dateString).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 };
 
-const getEditionStatus = (edition: Edition) => {
-  const now = new Date();
-  const registrationStart = new Date(edition.registrationStartDate);
-  const registrationEnd = new Date(edition.registrationEndDate);
-  const start = new Date(edition.startDate);
-  const end = new Date(edition.endDate);
 
-  if (now >= registrationStart && now <= registrationEnd) {
-    return (
-      <Badge color="border-sky-300 text-sky-700 bg-sky-50">
-        <CalendarPlus className="mr-1 h-3 w-3" /> Inscrições Abertas
-      </Badge>
-    );
-  }
-  if (now < start) {
-    return (
-      <Badge color="border-gray-300 text-gray-700 bg-gray-50">
-        <CalendarClock className="mr-1 h-3 w-3" /> Em Breve
-      </Badge>
-    );
-  }
-  if (now >= start && now <= end) {
-    return (
-      <Badge color="border-green-300 text-green-700 bg-green-50">
-        <CirclePlay className="mr-1 h-3 w-3" /> Acontecendo
-      </Badge>
-    );
-  }
-  if (now > end) {
-    return (
-      <Badge color="border-gray-300 text-gray-700 bg-gray-50">
-        <CheckCircle className="mr-1 h-3 w-3" /> Finalizada
-      </Badge>
-    );
-  }
-  return <Badge>Planejada</Badge>;
-};
 
 export const EditionTable = () => {
   const {
@@ -91,18 +50,11 @@ export const EditionTable = () => {
     return [
       columnHelper.accessor("name", {
         header: "Nome da Edição",
-        cell: (info) => (
-          <span className="font-medium text-zinc-800">{info.getValue()}</span>
-        ),
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("year", {
         header: "Ano",
         cell: (info) => info.getValue(),
-      }),
-      columnHelper.display({
-        id: "status",
-        header: "Status",
-        cell: ({ row }) => getEditionStatus(row.original),
       }),
       columnHelper.display({
         id: "registrationPeriod",
@@ -110,15 +62,6 @@ export const EditionTable = () => {
         cell: ({ row }) => (
           <span>
             {`${formatDate(row.original.registrationStartDate)} - ${formatDate(row.original.registrationEndDate)}`}
-          </span>
-        ),
-      }),
-      columnHelper.display({
-        id: "realizationPeriod",
-        header: "Período de Realização",
-        cell: ({ row }) => (
-          <span>
-            {`${formatDate(row.original.startDate)} - ${formatDate(row.original.endDate)}`}
           </span>
         ),
       }),

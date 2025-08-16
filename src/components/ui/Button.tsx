@@ -7,6 +7,7 @@ type ButtonProps = {
   secondary?: boolean;
   outline?: boolean;
   neutral?: boolean; 
+  destructive?: boolean;
 } & ComponentProps<"button">;
 
 export const Button = ({
@@ -16,6 +17,7 @@ export const Button = ({
   secondary,
   outline,
   neutral,
+  destructive,
   ...props
 }: ButtonProps) => {
   const baseClasses =
@@ -31,6 +33,9 @@ export const Button = ({
   }  else if (neutral) {
       variantClasses =
       "h-9 px-3 bg-zinc-300 text-zinc-700 hover:bg-zinc-400 active:bg-zinc-500";
+  } else if (destructive) { 
+    variantClasses =
+      "h-12 px-4 border-2 border-red-600 text-red-600 font-semibold hover:border-red-500 hover:text-red-500 active:border-red-500 active:text-red-500";
   } else {
     variantClasses =
       "h-12 px-4 bg-green-600 text-white font-semibold hover:bg-green-500 active:bg-green-500";

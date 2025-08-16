@@ -118,9 +118,52 @@ export const unvalidateEducators = async (educatorIds: string[]) => {
 export type GetMyDataEducatorResponse = {
   id: string;
   socialName: string;
+  profilePicture: string | null;
+  profilePictureUrl?: string;
 };
 
-export const getMyData = async () => {
-  const resp = await api.get<GetMyDataEducatorResponse>(`/educators/me`);
-  return resp.data;
+export const getMyData = async (): Promise<GetMyDataEducatorResponse> => {
+  const { data: userData } = await api.get<GetMyDataEducatorResponse>("/educators/me");
+
+  const localImageUrl = await getPrivateImageUrl(userData.profilePicture);
+
+  if (localImageUrl) {
+    userData.profilePictureUrl = localImageUrl;
+  }
+
+  return userData;
+};
+
+
+export const getPrivateImageUrl = async (fullUrl: string | null): Promise<string | null> => {
+  if (!fullUrl) {
+    return null;
+  }
+
+  try {
+    const response = await api.get(fullUrl, {
+      responseType: "blob", 
+    });
+    return URL.createObjectURL(response.data);
+  } catch (error) {
+    console.error("Falha ao buscar a imagem privada:", error);
+    return null;
+  }
+};
+
+export const deleteMyProfilePicture = async (id: string) => {
+  const response = await api.delete(`/educators/${id}/profile-picture`);
+  return response.data;
+};
+
+export const saveMyProfilePicture = async (pictureFile: File, id: string) => {
+  const formData = new FormData();
+  formData.append("picture", pictureFile);
+
+  const response = await api.post(`/educators/${id}/profile-picture`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
 };
