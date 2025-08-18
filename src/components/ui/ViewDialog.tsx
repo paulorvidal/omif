@@ -12,9 +12,12 @@ export interface ViewDialogProps {
   onClose: () => void;
 }
 
-export function ViewDialog(props: ViewDialogProps) {
-  const { open, title, htmlContent, onClose } = props;
-
+export function ViewDialog({
+  open,
+  title,
+  htmlContent,
+  onClose,
+}: ViewDialogProps) {
   return (
     <Dialog
       disableScrollLock

@@ -6,7 +6,7 @@ import {
 } from "../services/noticeService";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import type { PageResponse } from "../services/defaultTypes";
+import type { PageResponse } from "../types/defaultTypes";
 import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
 import { formatDate } from "../utils/formatDate";

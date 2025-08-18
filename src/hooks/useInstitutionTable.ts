@@ -8,7 +8,7 @@ import {
   findAllInstitutions,
   type FindAllInstitutionsResponse,
 } from "../services/institutionService";
-import type { PageResponse } from "../services/defaultTypes";
+import type { PageResponse } from "../types/defaultTypes";
 import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
 

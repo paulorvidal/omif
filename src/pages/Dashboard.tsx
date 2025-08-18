@@ -89,6 +89,7 @@ export const Dashboard = () => {
                     {data.map((notice) => (
                       <Notice
                         key={notice.id}
+                        id={notice.id}
                         title={notice.title}
                         date={notice.timestamp}
                       />

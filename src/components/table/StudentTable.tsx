@@ -15,7 +15,7 @@ import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
 import { Edit } from "lucide-react";
 import { showToast } from "../../utils/events";
-import type { PageResponse } from "../../services/defaultTypes";
+import type { PageResponse } from "../../types/defaultTypes";
 
 type StudentColumns = {
   id: string;
