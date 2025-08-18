@@ -1,112 +1,140 @@
-import { useState } from "react";
 import { H2 } from "../components/ui/H2";
-import { Pencil } from "lucide-react";
 import { Badge } from "../components/ui/Badge";
 import { ProfilePictureEditDialog } from "../components/ui/ProfilePictureEditDialog";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { saveMyProfilePicture, deleteMyProfilePicture, getMyData } from "../services/educatorService";
-import { showToast } from "../utils/events";
 import { ProgressDialog } from "../components/ui/ProgressDialog";
+import { Field } from "../components/ui/Field";
+import { Button } from "../components/ui/Button";
+import { useProfile } from "../hooks/useProfile";
+import { getInitials } from "../utils/formatters";
+import { InfoItem } from "../components/ui/InfoItem";
+import { AtSign, KeyRound, Building2, Pencil } from "lucide-react";
 
-
-const getInitials = (name: string | undefined): string => {
-    if (!name) return "?";
-    const names = name.split(' ');
-    const firstInitial = names[0][0];
-    const lastInitial = names.length > 1 ? names[names.length - 1][0] : '';
-    return `${firstInitial}${lastInitial}`.toUpperCase();
-};
 
 export const Profile = () => {
-    const { data: user, isLoading } = useQuery({
-        queryKey: ["myData"],
-        queryFn: getMyData,
-    });
-
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const queryClient = useQueryClient();
-
-    const { mutate: uploadPicture, isPending: isSaving } = useMutation({
-        mutationFn: (variables: { pictureFile: File; id: string }) => 
-            saveMyProfilePicture(variables.pictureFile, variables.id),
-        onSuccess: () => {
-            showToast("Foto de perfil atualizada com sucesso!", "success");
-            queryClient.invalidateQueries({ queryKey: ["myData"] });
-            setIsEditDialogOpen(false);
-        },
-        onError: (error) => {
-            showToast(`Erro ao salvar a foto: ${error.message}`, "error");
-        },
-    });
-
-    const { mutate: deletePicture, isPending: isDeleting } = useMutation({
-        mutationFn: (id: string) => deleteMyProfilePicture(id),
-        onSuccess: () => {
-            showToast("Foto de perfil excluída com sucesso!", "success");
-            queryClient.invalidateQueries({ queryKey: ["myData"] });
-            setIsEditDialogOpen(false);
-        },
-        onError: (error) => {
-            showToast(`Erro ao excluir a foto: ${error.message}`, "error");
-        },
-    });
-
-    const handleSave = (file: File) => {
-        if (user?.id) {
-            uploadPicture({ pictureFile: file, id: user.id });
-        }
-    };
-
-    const handleDelete = () => {
-        if (user?.id) { 
-            deletePicture(user.id);
-        }
-    };
-    
+    const {
+        user,
+        isLoading,
+        isSavingPicture,
+        isDeletingPicture,
+        register,
+        errors,
+        handleProfileSubmit,
+        handleResetForm,
+        isEditDialogOpen,
+        openPictureEditDialog,
+        closePictureEditDialog,
+        handleSavePicture,
+        handleDeletePicture,
+    } = useProfile();
 
     return (
         <div className="flex w-full flex-col gap-4 p-4 md:ms-14 md:gap-8 md:p-8">
             <H2>Perfil</H2>
             <div className="flex w-full h-full flex-col gap-4 md:flex-row md:gap-8">
-                <div className="flex w-full flex-col items-center text-center gap-2 rounded-md bg-zinc-50 p-4 sm:p-8 md:w-auto md:gap-4">
+                <div className="flex w-full flex-col items-center text-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:w-96 md:flex-shrink-0">
                     <div className="relative w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
                         {user?.profilePictureUrl ? (
-                            <img
-                                className="h-full w-full rounded-full object-cover"
-                                src={user.profilePictureUrl}
-                                alt="Foto de Perfil"
-                            />
+                            <img className="h-full w-full rounded-full object-cover" src={user.profilePictureUrl} alt="Foto de Perfil" />
                         ) : (
                             <div className="flex h-full w-full items-center justify-center rounded-full bg-green-500">
-                                <span className="text-4xl font-bold text-white md:text-5xl">
-                                    {getInitials(user?.name)}
-                                </span>
+                                <span className="text-4xl font-bold text-white md:text-5xl">{getInitials(user?.name)}</span>
                             </div>
                         )}
-                        <button
-                            onClick={() => setIsEditDialogOpen(true)}
-                            className="absolute bottom-0 right-0 rounded-full bg-white p-2 shadow-md transition-transform hover:scale-110"
-                            aria-label="Editar foto de perfil"
-                        >
+                        <button onClick={openPictureEditDialog} className="absolute bottom-0 right-0 rounded-full bg-white p-2 shadow-md transition-transform hover:scale-110" aria-label="Editar foto de perfil">
                             <Pencil className="h-5 w-5 text-gray-700" />
                         </button>
                     </div>
-                    <p className="font-semibold">{user?.name}</p>
+                    <p className="font-semibold">{user?.socialName}</p>
                     <Badge>{user?.role}</Badge>
-                </div>
-                <div className="flex w-full grow justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8">
-                    <div className="w-full">
+                    <div className="mt-4 w-full pt-4 text-left flex flex-col gap-2">
+                        <InfoItem
+                            label="E-mail"
+                            value={user?.email}
+                            icon={<AtSign size={20} />}
+                            onEdit={() => { }}
+                        />
+                        <InfoItem
+                            label="Senha"
+                            value="********"
+                            icon={<KeyRound size={20} />}
+                            onEdit={() => { }}
+                        />
+                        <InfoItem
+                            label="Instituição"
+                            value={user?.institution?.name}
+                            icon={<Building2 size={20} />}
+                            onEdit={() => { }}
+                        />
                     </div>
                 </div>
+                <div className="flex w-full grow justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8">
+                    <form onSubmit={handleProfileSubmit} className="w-full flex flex-col justify-center gap-4">
+                        <H2>Informações Pessoais</H2>
+                        <Field
+                            label="Nome:"
+                            type="text"
+                            placeholder="Digite seu nome completo"
+                            register={register("name")}
+                            error={errors.name?.message}
+                        />
+                        <Field
+                            label="Nome Social:"
+                            type="text"
+                            placeholder="Como prefere ser chamado"
+                            register={register("socialName")}
+                            error={errors.socialName?.message}
+                        />
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                            <Field
+                                label="CPF:"
+                                type="text"
+                                placeholder="Digite seu CPF" 
+                                mask="999.999.999-99"
+                                register={register("cpf")}
+                                error={errors.cpf?.message}
+                            />
+                            <Field
+                                label="Data de Nascimento:"
+                                type="date"
+                                register={register("dateOfBirth")}
+                                error={errors.dateOfBirth?.message}
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                            <Field
+                                label="SIAPE:"
+                                type="text"
+                                placeholder="Digite seu SIAPE"
+                                register={register("siape")}
+                                error={errors.siape?.message}
+                            />
+                            <Field
+                                label="Telefone:"
+                                type="text"
+                                placeholder="(00)00000-0000" 
+                                mask={["(99)9999-9999", "(99)99999-9999"]}
+                                register={register("phoneNumber")}
+                                error={errors.phoneNumber?.message}
+                            />
+                        </div>
+                        <div className="grow"></div>
+                        <div className="flex justify-between pt-4">
+                            <Button secondary type="button" onClick={handleResetForm}>Limpar</Button>
+                            <Button type="submit" disabled={isLoading}>
+                                Salvar Alterações
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            
-            <ProfilePictureEditDialog 
+
+            <ProfilePictureEditDialog
                 open={isEditDialogOpen}
-                onClose={() => setIsEditDialogOpen(false)}
-                onSave={handleSave}
-                onDelete={handleDelete}
-                isSaving={isSaving}
-                isDeleting={isDeleting}
+                onClose={closePictureEditDialog}
+                onSave={handleSavePicture}
+                onDelete={handleDeletePicture}
+                isSaving={isSavingPicture}
+                isDeleting={isDeletingPicture}
                 hasCurrentPicture={!!user?.profilePictureUrl}
             />
             <ProgressDialog open={isLoading} />

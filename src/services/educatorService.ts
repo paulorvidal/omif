@@ -1,23 +1,16 @@
 import api from "./api";
+import type {
+  CreateEducatorRequest,
+  CreateEducatorResponse,
+  Educator,
+  PageResponse,
+  FindAllEducatorsParams,
+  FindAllEducatorsResponse,
+  GetMyDataEducatorResponse,
+  ProfileData,
+  
+} from "../types/educatorTypes"
 
-
-export type CreateEducatorRequest = {
-  name: string;
-  socialName: string;
-  cpf: string;
-  email: string;
-  password: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  siape: string;
-  institutionId: string;
-  captchaToken: string;
-};
-
-export type CreateEducatorResponse = {
-  id: string;
-  message?: string;
-};
 
 export const createEducator = async (
   data: CreateEducatorRequest,
@@ -26,10 +19,7 @@ export const createEducator = async (
   return response.data;
 };
 
-export type Educator = {
-  id: string;
-  socialName: string;
-};
+
 
 export async function fetchEducators(
   input: string,
@@ -52,32 +42,6 @@ export async function fetchEducators(
   }));
 }
 
-export type PageResponse<T> = {
-  content: T[];
-  totalPages: number;
-  totalElements?: number;
-  size?: number;
-  number?: number;
-};
-
-
-export type FindAllEducatorsResponse = {
-  id: string;
-  siape: string;
-  socialName: string;
-  email: string;
-  role: string;
-  phoneNumber: string;
-  validated: boolean;
-  institutionName: string;
-};
-
-interface FindAllEducatorsParams {
-  page: number;
-  size: number;
-  q?: string;
-  sort?: string;
-};
 
 export const findAllEducators = async (
   page: number,
@@ -115,12 +79,6 @@ export const unvalidateEducators = async (educatorIds: string[]) => {
   return response.data;
 };
 
-export type GetMyDataEducatorResponse = {
-  id: string;
-  socialName: string;
-  profilePicture: string | null;
-  profilePictureUrl?: string;
-};
 
 export const getMyData = async (): Promise<GetMyDataEducatorResponse> => {
   const { data: userData } = await api.get<GetMyDataEducatorResponse>("/educators/me");
@@ -165,5 +123,13 @@ export const saveMyProfilePicture = async (pictureFile: File, id: string) => {
       "Content-Type": "multipart/form-data",
     },
   });
+  return response.data;
+};
+
+export const saveMyProfileData = async (
+  id: string,
+  data: Partial<ProfileData>
+): Promise<GetMyDataEducatorResponse> => { 
+  const response = await api.patch(`/educators/${id}`, data);
   return response.data;
 };

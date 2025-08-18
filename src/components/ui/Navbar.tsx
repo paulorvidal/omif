@@ -3,6 +3,7 @@ import AsyncSelect from "react-select/async";
 import { Calendar } from "lucide-react";
 import { NavLink } from "react-router";
 import { useNavbar } from "../../hooks/useNavbar";
+import { getInitials } from "../../utils/formatters";
 
 export const Navbar = () => {
   const {
@@ -11,8 +12,7 @@ export const Navbar = () => {
     placeholder,
     classNames,
     userData,
-    isUserDataLoading,
-    getInitials
+    isUserDataLoading
   } = useNavbar();
 
   return (
@@ -44,9 +44,12 @@ export const Navbar = () => {
         to="/perfil"
         className="flex cursor-pointer items-center rounded-sm duration-300 hover:bg-zinc-200 focus:bg-zinc-200 sm:ps-2"
       >
-        <p className="hidden sm:block">
+        <p
+          className="hidden sm:block truncate max-w-[200px]"
+          title={userData?.socialName || 'Meu Perfil'}
+        >
           {isUserDataLoading
-            ? 'Name'
+            ? 'Carregando...'
             : (userData?.socialName || 'Meu Perfil')
           }
         </p>
