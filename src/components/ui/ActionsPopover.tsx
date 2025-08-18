@@ -1,18 +1,18 @@
 import * as Popover from "@radix-ui/react-popover";
 import { EllipsisVertical } from "lucide-react";
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-type ButtonsPopoverProps = {
+type ActionsPopoverProps = {
   children: ReactNode;
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
 };
 
-export const ActionsPopover: FC<ButtonsPopoverProps> = ({
+export const ActionsPopover = ({
   children,
   side = "bottom",
   align = "end",
-}) => {
+}: ActionsPopoverProps) => {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
