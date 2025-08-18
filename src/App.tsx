@@ -26,7 +26,6 @@ import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage";
 import { Educators } from "./pages/Educators";
 import { Steps } from "./pages/Steps";
 import { Profile } from "./pages/Profile";
-import { NoticeDetails } from "./pages/NoticeDetails";
 
 const SetupEvents = () => {
   const navigate = useNavigate();
@@ -106,14 +105,6 @@ export const App = () => {
             element={
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <Notice />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/aviso/:id"
-            element={
-              <PrivateRoute>
-                <NoticeDetails />
               </PrivateRoute>
             }
           />
