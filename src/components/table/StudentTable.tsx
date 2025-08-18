@@ -13,9 +13,10 @@ import {
 import { useDebounce } from "../../hooks/useDebounce";
 import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
-import { Edit } from "lucide-react";
-import { showToast } from "../../utils/events";
+import { Pencil } from "lucide-react";
+import { redirectTo, showToast } from "../../utils/events";
 import type { PageResponse } from "../../types/defaultTypes";
+import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
 type StudentColumns = {
   id: string;
@@ -42,18 +43,17 @@ const columns = [
   }),
   columnHelper.display({
     id: "actions",
-    header: "Ações",
-    cell: () => {
-      //cell: ({ row }) => {
-      //const student = row.original;
+    header: "",
+    cell: ({ row }) => {
       return (
-        <button
-          onClick={() => {}}
-          className="flex items-center gap-1 text-green-600 hover:text-green-800"
-          title="Editar estudante"
-        >
-          <Edit size={16} />
-        </button>
+        <ActionsPopover>
+          <ActionsPopoverItem
+            icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+            onClick={() => redirectTo(`/estudante/${row.original.id}`)}
+          >
+            Editar
+          </ActionsPopoverItem>
+        </ActionsPopover>
       );
     },
   }),
@@ -70,7 +70,6 @@ export const StudentTable = () => {
   });
 
   const [globalFilter, setGlobalFilter] = useState("");
-  //criei uma hook para colocar delay quando o usuario digita para nao fazer tantas requisições
   const debouncedFilter = useDebounce(globalFilter, 400);
 
   useEffect(() => {

@@ -18,7 +18,7 @@ import { SearchInput } from "../ui/SearchInput";
 import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../ui/SelectField";
 import { Checkbox } from "../ui/Checkbox";
-import { ActionsPopover } from "../ui/ActionsPopover";
+import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
 export const EducatorTable = () => {
   const {
@@ -142,35 +142,26 @@ export const EducatorTable = () => {
         header: "",
         cell: ({ row }) => (
           <ActionsPopover>
-            <button
-              className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            <ActionsPopoverItem
+              icon={<Pencil className="h-4 w-4 text-zinc-600" />}
               onClick={() => redirectTo(`/educador/${row.original.id}`)}
             >
-              <div className="flex h-5 w-5 items-center justify-center">
-                <Pencil className="h-4 w-4 text-zinc-600" />
-              </div>
-              <span>Editar</span>
-            </button>
+              Editar
+            </ActionsPopoverItem>
             {row.original.validated ? (
-              <button
-                className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              <ActionsPopoverItem
+                icon={<Undo2 className="h-4 w-4 text-zinc-600" />}
                 onClick={() => bulkUnvalidate([row.original.id])}
               >
-                <div className="flex h-5 w-5 items-center justify-center">
-                  <Undo2 className="h-4 w-4 text-zinc-600" />
-                </div>
-                <span>Desvalidar Cadastro</span>
-              </button>
+                Desvalidar Cadastro
+              </ActionsPopoverItem>
             ) : (
-              <button
-                className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              <ActionsPopoverItem
+                icon={<CheckSquare className="h-4 w-4 text-zinc-600" />}
                 onClick={() => validateEducators([row.original.id])}
               >
-                <div className="flex h-5 w-5 items-center justify-center">
-                  <CheckSquare className="h-4 w-4 text-zinc-600" />
-                </div>
-                <span>Validar Cadastro</span>
-              </button>
+                Validar Cadastro
+              </ActionsPopoverItem>
             )}
           </ActionsPopover>
         ),

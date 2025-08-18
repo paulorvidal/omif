@@ -22,7 +22,7 @@ import { SearchInput } from "../ui/SearchInput";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../ui/SelectField";
-import { ActionsPopover } from "../ui/ActionsPopover";
+import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
 export const InstitutionTable = () => {
   const {
@@ -82,24 +82,18 @@ export const InstitutionTable = () => {
         header: "",
         cell: ({ row }) => (
           <ActionsPopover>
-            <button
-              className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            <ActionsPopoverItem
+              icon={<Pencil className="h-4 w-4 text-zinc-600" />}
               onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
             >
-              <div className="flex h-5 w-5 items-center justify-center">
-                <Pencil className="h-4 w-4 text-zinc-600" />
-              </div>
-              <span>Editar</span>
-            </button>
-            <button
-              className="flex w-full items-center gap-2 rounded-sm p-2 text-sm outline-none select-none hover:bg-zinc-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              Editar
+            </ActionsPopoverItem>
+            <ActionsPopoverItem
+              icon={<Trash className="h-4 w-4 text-zinc-600" />}
               onClick={() => handleDeleteClick(row.original.id)}
             >
-              <div className="flex h-5 w-5 items-center justify-center">
-                <Trash className="h-4 w-4 text-zinc-600" />
-              </div>
-              <span>Deletar</span>
-            </button>
+              Deletar
+            </ActionsPopoverItem>
           </ActionsPopover>
         ),
       }),
