@@ -2,8 +2,7 @@ import axios, { type AxiosError } from "axios";
 import { redirectTo } from "../utils/events";
 import { ApiError } from "./apiError";
 
-// const apiUrl = "http://89.116.73.16:8080";
-const apiUrl = "http://localhost:8080";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 type BackendErrorResponse = {
   timestamp: string;
