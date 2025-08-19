@@ -1,6 +1,6 @@
 import React from "react";
 import { useStepsForm } from "../../hooks/useStepsForm";
-import { ProgressDialog } from "../ui/ProgressDialog";
+import { ProgressDialog } from "../dialog/ProgressDialog";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 
@@ -10,16 +10,24 @@ interface StepsFormProps {
 
 export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
   const {
-    editionData, isLoading, isError, isSaving,
-    register, handleSubmit, onSubmit, errors, handleReset
+    editionData,
+    isLoading,
+    isError,
+    isSaving,
+    register,
+    handleSubmit,
+    onSubmit,
+    errors,
+    handleReset,
   } = useStepsForm(editionId);
 
   if (isError) {
-    return <p style={{ color: "red" }}>Ocorreu um erro ao carregar os dados.</p>;
+    return (
+      <p style={{ color: "red" }}>Ocorreu um erro ao carregar os dados.</p>
+    );
   }
 
   return (
-
     <form
       className="flex w-full flex-col justify-center gap-4"
       onSubmit={handleSubmit(onSubmit)}
@@ -35,7 +43,10 @@ export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
         )}
       </div>
 
-      <fieldset disabled={isLoading || isSaving} className="mt-4 border-none p-0">
+      <fieldset
+        disabled={isLoading || isSaving}
+        className="mt-4 border-none p-0"
+      >
         <h3>Etapas da Edição</h3>
 
         <div className="mt-4 mb-4 rounded-lg border border-gray-300 p-4">
@@ -69,7 +80,6 @@ export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
               error={errors.steps?.[0]?.endDateForReleaseOfNote?.message}
             />
           </div>
-
         </div>
 
         <div className="rounded-lg border border-gray-300 p-4">
@@ -89,10 +99,8 @@ export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
               error={errors.steps?.[1]?.endDate?.message}
             />
           </div>
-
         </div>
       </fieldset>
-
 
       <div className="flex justify-between">
         <Button secondary type="button" onClick={handleReset}>
@@ -101,7 +109,6 @@ export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
         <Button type="submit">Salvar</Button>
       </div>
       <ProgressDialog open={isLoading || isSaving} />
-
     </form>
   );
 };

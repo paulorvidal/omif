@@ -28,7 +28,7 @@ export const InstitutionForm = ({ institutionId }: Props) => {
         <Field
           label="Nome:"
           type="text"
-          placeholder="Digite o nome da instituição"
+          placeholder="Ex: NOME DA INSTITUIÇÃO"
           register={register("name")}
           error={errors.name?.message}
           helpText="Informe o nome da instituição"
@@ -36,7 +36,7 @@ export const InstitutionForm = ({ institutionId }: Props) => {
         <Field
           label="INEP:"
           type="text"
-          placeholder="Digite o INEP da instituição"
+          placeholder="Ex: 00000000"
           register={register("inep")}
           error={errors.inep?.message}
           helpText="Informe o INEP da instituição"
@@ -47,7 +47,7 @@ export const InstitutionForm = ({ institutionId }: Props) => {
         <Field
           label="E-mail:"
           type="text"
-          placeholder="Digite o e‑mail da instituição"
+          placeholder="Ex: instituicao@email.com"
           register={register("email1")}
           error={errors.email1?.message}
           helpText="Usaremos para comunicações importantes."
@@ -55,11 +55,11 @@ export const InstitutionForm = ({ institutionId }: Props) => {
         <Field
           label="Telefone:"
           type="text"
-          placeholder="Digite o telefone."
-          mask={["(99)9999-9999", "(99)99999-9999"]}
+          placeholder="Ex: (00) 00000-0000"
+          mask={["(99) 9999-9999", "(99) 99999-9999"]}
           register={register("phoneNumber")}
           error={errors.phoneNumber?.message}
-          helpText="Formato (XX)XXXXX-XXXX"
+          helpText="Formato (XX) XXXXX-XXXX"
         />
       </div>
 
@@ -67,14 +67,14 @@ export const InstitutionForm = ({ institutionId }: Props) => {
         <Field
           label="E-mail reserva:"
           type="text"
-          placeholder="Digite o e‑mail reserva"
+          placeholder="Ex: instituicao@email.com"
           register={register("email2")}
           error={errors.email2?.message}
         />
         <Field
           label="E-mail reserva:"
           type="text"
-          placeholder="Digite o e‑mail reserva"
+          placeholder="Ex: instituicao@email.com"
           register={register("email3")}
           error={errors.email3?.message}
         />
@@ -84,7 +84,7 @@ export const InstitutionForm = ({ institutionId }: Props) => {
         <AsyncSelectField
           name="coordinator"
           label="Coordenador:"
-          placeholder="Selecione um educador"
+          placeholder="Ex: Nome do Coordenador"
           control={control}
           loadOptions={loadEducatorOptions}
           error={errors.coordinator?.message}

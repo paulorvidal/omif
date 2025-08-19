@@ -19,8 +19,8 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
-import { ConfirmDialog } from "../ui/ConfirmDialog";
-import { DialogForm } from "../ui/GenericDialog";
+import { ConfirmDialog } from "../dialog/ConfirmDialog";
+import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../ui/SelectField";
 import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 

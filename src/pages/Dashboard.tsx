@@ -4,8 +4,8 @@ import { ExternalLink, ListFilterPlus, Plus } from "lucide-react";
 import { redirectTo } from "../utils/events";
 import { Notice } from "../components/ui/Notice";
 import { useNoticeTable } from "../hooks/useNoticeTable";
-import { ProgressDialog } from "../components/ui/ProgressDialog";
-import { DialogForm } from "../components/ui/GenericDialog";
+import { ProgressDialog } from "../components/dialog/ProgressDialog";
+import { DialogForm } from "../components/dialog/GenericDialog";
 import { SelectField } from "../components/ui/SelectField";
 import { SearchInput } from "../components/ui/SearchInput";
 import { Pagination } from "../components/ui/Pagination";
@@ -40,7 +40,7 @@ export const Dashboard = () => {
   ];
 
   return (
-    <div className="flex w-full h-full">
+    <div className="flex h-full w-full">
       <ProgressDialog open={isLoading} />
       <div className="flex w-full flex-col gap-4 p-4 md:ms-14 md:gap-8 md:p-8">
         <div className="flex w-full items-center justify-between">

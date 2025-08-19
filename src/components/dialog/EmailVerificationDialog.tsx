@@ -3,7 +3,7 @@ import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import { MailCheck, X } from "lucide-react";
-import { Button } from "./Button";
+import { Button } from "../ui/Button";
 
 export interface EmailVerificationDialogProps {
   open: boolean;

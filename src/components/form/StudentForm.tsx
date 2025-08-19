@@ -189,7 +189,7 @@ export const StudentForm = () => {
       <Field
         label="Nome:"
         type="text"
-        placeholder="Digite seu nome"
+        placeholder="Ex: Nome Completo"
         register={register("name")}
         error={errors.name?.message}
       />
@@ -197,7 +197,7 @@ export const StudentForm = () => {
         <Field
           label="CPF:"
           type="text"
-          placeholder="Digite seu CPF"
+          placeholder="Ex: 000.000.000-00"
           mask="999.999.999-99"
           register={register("cpf")}
           error={errors.cpf?.message}
@@ -205,7 +205,6 @@ export const StudentForm = () => {
         <Field
           label="Data de Nascimento:"
           type="date"
-          placeholder="Digite sua data de nascimento"
           register={register("birthDate")}
           error={errors.birthDate?.message}
         />
@@ -214,14 +213,14 @@ export const StudentForm = () => {
         <Field
           label="E-mail:"
           type="text"
-          placeholder="Digite seu e-mail"
+          placeholder="Ex: nome@email.com"
           register={register("email")}
           error={errors.email?.message}
         />
         <Field
           label="Nome da mãe:"
           type="text"
-          placeholder="Digite o nome da sua mãe"
+          placeholder="Ex: Nome Completo da Mãe"
           register={register("motherName")}
           error={errors.motherName?.message}
         />
@@ -294,7 +293,7 @@ export const StudentForm = () => {
       <AsyncSelectField
         name="institution"
         label="Instituição:"
-        placeholder="Selecione uma instituição"
+        placeholder="Ex: NOME DA INSTITUIÇÃO"
         control={control}
         loadOptions={fetchInstitutions}
         error={errors.institution?.message}

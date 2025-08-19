@@ -3,11 +3,11 @@ import { A } from "../components/ui/A";
 import { Button } from "../components/ui/Button";
 import { H1 } from "../components/ui/H1";
 import { Field } from "../components/ui/Field";
-import { ProgressDialog } from "../components/ui/ProgressDialog";
-import { EmailVerificationDialog } from "../components/ui/EmailVerificationDialog";
-import { AccountApprovalDialog } from "../components/ui/AccountApprovalDialog";
+import { ProgressDialog } from "../components/dialog/ProgressDialog";
+import { EmailVerificationDialog } from "../components/dialog/EmailVerificationDialog";
+import { AccountApprovalDialog } from "../components/dialog/AccountApprovalDialog";
 import Captcha from "../components/ui/Captcha";
-import { PasswordRecoveryDialog } from "../components/ui/PasswordRecoveryDialog";
+import { PasswordRecoveryDialog } from "../components/dialog/PasswordRecoveryDialog";
 
 export const Login = () => {
   const {
@@ -31,7 +31,7 @@ export const Login = () => {
     closePasswordRecoveryDialog,
     handlePasswordRecoverySubmit,
     isSendingPasswordRecovery,
-    maskedEmailForRecovery
+    maskedEmailForRecovery,
   } = useLogin();
 
   return (
@@ -111,7 +111,7 @@ export const Login = () => {
         onClose={closePasswordRecoveryDialog}
         onSubmit={handlePasswordRecoverySubmit}
         isSending={isSendingPasswordRecovery}
-        maskedEmail={maskedEmailForRecovery} 
+        maskedEmail={maskedEmailForRecovery}
       />
     </div>
   );

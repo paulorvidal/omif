@@ -4,7 +4,7 @@ import { AsyncSelectField } from "../ui/AsyncSelectField";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 import Captcha from "../ui/Captcha";
-import { ProgressDialog } from "../ui/ProgressDialog";
+import { ProgressDialog } from "../dialog/ProgressDialog";
 
 export const EducatorForm = () => {
   const {
@@ -28,14 +28,14 @@ export const EducatorForm = () => {
         <Field
           label="Nome:"
           type="text"
-          placeholder="Digite seu nome completo"
+          placeholder="Ex: Nome Completo"
           register={register("name")}
           error={errors.name?.message}
         />
         <Field
           label="Nome Social (Opcional):"
           type="text"
-          placeholder="Como prefere ser chamado"
+          placeholder="Ex: Nome"
           register={register("socialName")}
           error={errors.socialName?.message}
         />
@@ -45,7 +45,7 @@ export const EducatorForm = () => {
         <Field
           label="CPF:"
           type="text"
-          placeholder="Digite seu CPF"
+          placeholder="Ex: 000.000.000-00"
           mask="999.999.999-99"
           register={register("cpf")}
           error={errors.cpf?.message}
@@ -62,14 +62,14 @@ export const EducatorForm = () => {
         <Field
           label="E-mail:"
           type="email"
-          placeholder="Digite seu e-mail"
+          placeholder="Ex: nome@email.com"
           register={register("email")}
           error={errors.email?.message}
         />
         <Field
           label="Confirme seu e-mail:"
           type="email"
-          placeholder="Digite seu e-mail novamente"
+          placeholder="Ex: nome@email.com"
           register={register("confirmEmail")}
           error={errors.confirmEmail?.message}
         />
@@ -96,15 +96,15 @@ export const EducatorForm = () => {
         <Field
           label="SIAPE:"
           type="text"
-          placeholder="Digite seu SIAPE"
+          placeholder="Ex: 0"
           register={register("siape")}
           error={errors.siape?.message}
         />
         <Field
           label="Telefone:"
           type="text"
-          placeholder="(00)00000-0000"
-          mask={["(99)9999-9999", "(99)99999-9999"]}
+          placeholder="Ex: (00) 00000-0000"
+          mask={["(99) 9999-9999", "(99) 99999-9999"]}
           register={register("phoneNumber")}
           error={errors.phoneNumber?.message}
         />
@@ -113,7 +113,7 @@ export const EducatorForm = () => {
       <AsyncSelectField
         name="institution"
         label="Instituição:"
-        placeholder="Selecione uma instituição"
+        placeholder="Ex: NOME DA INSTITUIÇÃO"
         control={control}
         loadOptions={fetchInstitutions}
         error={errors.institution?.message}

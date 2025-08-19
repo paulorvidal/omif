@@ -1,7 +1,7 @@
 import { useEditionForm } from "../../hooks/useEditionForm";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
-import { ProgressDialog } from "../ui/ProgressDialog";
+import { ProgressDialog } from "../dialog/ProgressDialog";
 
 type Props = {
   editionId?: string;
@@ -67,9 +67,14 @@ export const EditionForm = ({ editionId }: Props) => {
           helpText="Prazo final para recebimento de novas inscrições."
         />
       </div>
-      
+
       <div className="mt-6 flex justify-between">
-        <Button secondary type="button" onClick={handleReset} disabled={isLoading}>
+        <Button
+          secondary
+          type="button"
+          onClick={handleReset}
+          disabled={isLoading}
+        >
           Limpar
         </Button>
         <Button type="submit" disabled={isLoading}>

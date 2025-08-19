@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNoticeForm } from "../hooks/useNoticeForm";
-import { ProgressDialog } from "../components/ui/ProgressDialog";
+import { ProgressDialog } from "../components/dialog/ProgressDialog";
 import { H2 } from "../components/ui/H2";
-import { ViewDialog } from "../components/ui/ViewDialog";
+import { ViewDialog } from "../components/dialog/ViewDialog";
 import { Controller } from "react-hook-form";
 import { TextEditor } from "../components/ui/TextEditor";
 import { Button } from "../components/ui/Button";
 import { SendHorizonal, Eye } from "lucide-react";
 import DOMPurify from "dompurify";
-import { ConfirmDialog } from "../components/ui/ConfirmDialog";
+import { ConfirmDialog } from "../components/dialog/ConfirmDialog";
 import { Field } from "../components/ui/Field";
 import { SelectField } from "../components/ui/SelectField";
 

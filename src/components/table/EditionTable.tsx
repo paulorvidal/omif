@@ -5,17 +5,13 @@ import {
   useReactTable,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import {
-  ListFilterPlus,
-  Pencil,
-  Plus
-} from "lucide-react";
+import { ListFilterPlus, Pencil, Plus } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEditionsTable } from "../../hooks/useEditionTable";
 import { Button } from "../ui/Button";
 import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
-import { DialogForm } from "../ui/GenericDialog";
+import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../ui/SelectField";
 
 import type { Edition } from "../../types/editionTypes";
@@ -25,8 +21,6 @@ const formatDate = (dateString?: string): string => {
   if (!dateString) return "N/A";
   return new Date(dateString).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 };
-
-
 
 export const EditionTable = () => {
   const {
