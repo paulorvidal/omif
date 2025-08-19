@@ -7,13 +7,7 @@ import {
   getFilteredRowModel,
   getFacetedRowModel,
 } from "@tanstack/react-table";
-import {
-  ListFilterPlus,
-  EllipsisVertical,
-  Pencil,
-  CheckSquare,
-  Undo2,
-} from "lucide-react";
+import { ListFilterPlus, Pencil, CheckSquare, Undo2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEducatorTable } from "../../hooks/useEducatorTable";
 import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
@@ -23,13 +17,8 @@ import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
 import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../ui/SelectField";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/DropdownMenu";
 import { Checkbox } from "../ui/Checkbox";
+import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
 export const EducatorTable = () => {
   const {
@@ -152,36 +141,29 @@ export const EducatorTable = () => {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="rounded p-1 hover:bg-zinc-100">
-                <EllipsisVertical className="h-5 w-5 text-zinc-600" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-                onClick={() => redirectTo(`/educador/${row.original.id}`)}
+          <ActionsPopover>
+            <ActionsPopoverItem
+              icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+              onClick={() => redirectTo(`/educador/${row.original.id}`)}
+            >
+              Editar
+            </ActionsPopoverItem>
+            {row.original.validated ? (
+              <ActionsPopoverItem
+                icon={<Undo2 className="h-4 w-4 text-zinc-600" />}
+                onClick={() => bulkUnvalidate([row.original.id])}
               >
-                Editar
-              </DropdownMenuItem>
-              {row.original.validated ? (
-                <DropdownMenuItem
-                  icon={<Undo2 className="h-4 w-4 text-zinc-600" />}
-                  onClick={() => bulkUnvalidate([row.original.id])}
-                >
-                  Desvalidar Cadastro
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  icon={<CheckSquare className="h-4 w-4 text-zinc-600" />}
-                  onClick={() => validateEducators([row.original.id])}
-                >
-                  Validar Cadastro
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                Desvalidar Cadastro
+              </ActionsPopoverItem>
+            ) : (
+              <ActionsPopoverItem
+                icon={<CheckSquare className="h-4 w-4 text-zinc-600" />}
+                onClick={() => validateEducators([row.original.id])}
+              >
+                Validar Cadastro
+              </ActionsPopoverItem>
+            )}
+          </ActionsPopover>
         ),
       }),
     ];

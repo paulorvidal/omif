@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-table";
 import {
   ListFilterPlus,
-  EllipsisVertical,
   Pencil,
   Plus
 } from "lucide-react";
@@ -18,14 +17,9 @@ import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
 import { DialogForm } from "../ui/GenericDialog";
 import { SelectField } from "../ui/SelectField";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/DropdownMenu";
 
 import type { Edition } from "../../types/editionTypes";
+import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
 const formatDate = (dateString?: string): string => {
   if (!dateString) return "N/A";
@@ -69,23 +63,14 @@ export const EditionTable = () => {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <div className="text-right">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="rounded p-1 hover:bg-zinc-100">
-                  <EllipsisVertical className="h-5 w-5 text-zinc-600" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-                  onClick={() => redirectTo(`/edicao/${row.original.id}`)}
-                >
-                  Editar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <ActionsPopover>
+            <ActionsPopoverItem
+              icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+              onClick={() => redirectTo(`/edicao/${row.original.id}`)}
+            >
+              Editar
+            </ActionsPopoverItem>
+          </ActionsPopover>
         ),
       }),
     ];
@@ -168,9 +153,9 @@ export const EditionTable = () => {
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                       </th>
                     ))}
                   </tr>

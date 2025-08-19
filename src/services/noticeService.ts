@@ -1,5 +1,5 @@
 import api from "./api";
-import type { PageParams, PageResponse } from "./defaultTypes";
+import type { PageParams, PageResponse } from "../types/defaultTypes";
 
 export type FindAllNoticesResponse = {
   id: string;
@@ -16,6 +16,12 @@ export type CreateNoticeRequest = {
 
 export type CreateNoticeResponse = {
   message: string;
+};
+
+export type FindNoticesResponse = {
+  title: string;
+  content: string;
+  timestamp: string;
 };
 
 export const findAllNotices = async (
@@ -44,6 +50,11 @@ export const findAllNotices = async (
 export const createNotice = async (
   data: CreateNoticeRequest,
 ): Promise<CreateNoticeResponse> => {
-   const response = await api.post<CreateNoticeResponse>("/notices", data);
+  const response = await api.post<CreateNoticeResponse>("/notices", data);
+  return response.data;
+};
+
+export const getNoticeById = async (id: string) => {
+  const response = await api.get<FindNoticesResponse>(`/notices/${id}`);
   return response.data;
 };
