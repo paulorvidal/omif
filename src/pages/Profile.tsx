@@ -8,7 +8,8 @@ import { useProfile } from "../hooks/useProfile";
 import { getInitials } from "../utils/formatters";
 import { InfoItem } from "../components/ui/InfoItem";
 import { AtSign, KeyRound, Building2, Pencil } from "lucide-react";
-
+import { ChangePasswordDialog } from "../components/ui/ChangePasswordDialog";
+import { ChangeEmailDialog } from "../components/ui/ChangeEmailDialog";
 
 export const Profile = () => {
     const {
@@ -25,6 +26,16 @@ export const Profile = () => {
         closePictureEditDialog,
         handleSavePicture,
         handleDeletePicture,
+        isPasswordDialogOpen,
+        openPasswordDialog,
+        closePasswordDialog,
+        handleChangePassword,
+        isChangingPassword,
+        isEmailDialogOpen,
+        openEmailDialog,
+        closeEmailDialog,
+        handleChangeEmail,
+        isChangingEmail,
     } = useProfile();
 
     return (
@@ -51,13 +62,13 @@ export const Profile = () => {
                             label="E-mail"
                             value={user?.email}
                             icon={<AtSign size={20} />}
-                            onEdit={() => { }}
+                            onEdit={openEmailDialog}
                         />
                         <InfoItem
                             label="Senha"
                             value="********"
                             icon={<KeyRound size={20} />}
-                            onEdit={() => { }}
+                            onEdit={openPasswordDialog}
                         />
                         <InfoItem
                             label="Instituição"
@@ -88,7 +99,7 @@ export const Profile = () => {
                             <Field
                                 label="CPF:"
                                 type="text"
-                                placeholder="Digite seu CPF" 
+                                placeholder="Digite seu CPF"
                                 mask="999.999.999-99"
                                 register={register("cpf")}
                                 error={errors.cpf?.message}
@@ -111,7 +122,7 @@ export const Profile = () => {
                             <Field
                                 label="Telefone:"
                                 type="text"
-                                placeholder="(00)00000-0000" 
+                                placeholder="(00)00000-0000"
                                 mask={["(99)9999-9999", "(99)99999-9999"]}
                                 register={register("phoneNumber")}
                                 error={errors.phoneNumber?.message}
@@ -119,7 +130,7 @@ export const Profile = () => {
                         </div>
                         <div className="grow"></div>
                         <div className="flex justify-between pt-4">
-                            <Button secondary type="button" onClick={handleResetForm}>Limpar</Button>
+                            <Button secondary type="button" onClick={handleResetForm}>Desfazer  </Button>
                             <Button type="submit" disabled={isLoading}>
                                 Salvar Alterações
                             </Button>
@@ -137,6 +148,20 @@ export const Profile = () => {
                 isDeleting={isDeletingPicture}
                 hasCurrentPicture={!!user?.profilePictureUrl}
             />
+            <ChangePasswordDialog
+                open={isPasswordDialogOpen}
+                onClose={closePasswordDialog}
+                onSave={handleChangePassword}
+                isSaving={isChangingPassword}
+            />
+            <ChangeEmailDialog
+                open={isEmailDialogOpen}
+                onClose={closeEmailDialog}
+                onSave={handleChangeEmail}
+                isSaving={isChangingEmail}
+                currentEmail={user?.email}
+            />
+
             <ProgressDialog open={isLoading} />
         </div>
     );

@@ -71,3 +71,8 @@ export type ProfileData = {
   siape?: string;
   phoneNumber?: string;
 };
+
+export type ChangePasswordPayload = {
+  password: string;      
+  newPassword: string; 
+}

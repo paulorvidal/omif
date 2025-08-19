@@ -8,7 +8,7 @@ import type {
   FindAllEducatorsResponse,
   GetMyDataEducatorResponse,
   ProfileData,
-  
+  ChangePasswordPayload
 } from "../types/educatorTypes"
 
 
@@ -131,5 +131,13 @@ export const saveMyProfileData = async (
   data: Partial<ProfileData>
 ): Promise<GetMyDataEducatorResponse> => { 
   const response = await api.patch(`/educators/${id}`, data);
+  return response.data;
+};
+
+export const changePassword = async (
+  id: string,
+  data: ChangePasswordPayload
+): Promise<GetMyDataEducatorResponse> => {
+  const response = await api.put(`/educators/${id}/change-password`, data);
   return response.data;
 };

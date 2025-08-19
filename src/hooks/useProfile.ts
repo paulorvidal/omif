@@ -7,11 +7,18 @@ import {
     getMyData,
     saveMyProfileData,
     saveMyProfilePicture,
-    deleteMyProfilePicture
+    deleteMyProfilePicture,
+    changePassword
 } from "../services/educatorService";
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 import { fetchInstitutions } from "../services/institutionService";
+import {
+    type ChangePasswordFormData,
+} from "../components/ui/ChangePasswordDialog";
+import {
+    type ChangeEmailFormData,
+} from "../components/ui/ChangeEmailDialog";
 
 const profileSchema = z.object({
     name: z.string().min(3, "O nome completo é obrigatório"),
@@ -19,13 +26,13 @@ const profileSchema = z.object({
     cpf: z.string().length(14, "CPF inválido. Ex: 999.999.999-99"),
     dateOfBirth: z.string().min(1, "Data de nascimento é obrigatória"),
     siape: z.string().min(1, "SIAPE é obrigatório"),
-     phoneNumber: z
-            .string()
-            .nonempty("O telefone é obrigatório")
-            .regex(
-                /^\(\d{2}\)\s?9?\d{4}-\d{4}$/,
-                "O número deve estar no formato (XX)9XXXX-XXXX ou (XX)XXXX-XXXX."
-            ),
+    phoneNumber: z
+        .string()
+        .nonempty("O telefone é obrigatório")
+        .regex(
+            /^\(\d{2}\)\s?9?\d{4}-\d{4}$/,
+            "O número deve estar no formato (XX)9XXXX-XXXX ou (XX)XXXX-XXXX."
+        ),
 });
 
 
@@ -34,6 +41,8 @@ export type ProfileFormData = z.infer<typeof profileSchema>;
 export const useProfile = () => {
     const queryClient = useQueryClient();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
 
     const {
         register,
@@ -57,7 +66,7 @@ export const useProfile = () => {
     }, [user, reset]);
 
     const profileUpdateMutation = useMutation({
-        mutationFn: (variables: { id: string, data: Partial<ProfileFormData> }) => 
+        mutationFn: (variables: { id: string, data: Partial<ProfileFormData> }) =>
             saveMyProfileData(variables.id, variables.data),
         onSuccess: () => {
             showToast("Dados do perfil atualizados com sucesso!", "success");
@@ -105,6 +114,43 @@ export const useProfile = () => {
         },
     });
 
+    const passwordChangeMutation = useMutation({
+        mutationFn: (variables: { id: string, data: ChangePasswordFormData }) => {
+            const payload = {
+                password: variables.data.currentPassword,
+                newPassword: variables.data.newPassword,
+            };
+            return changePassword(variables.id, payload);
+        },
+        onSuccess: () => {
+            showToast("Senha alterada com sucesso!", "success");
+            setIsPasswordDialogOpen(false);
+        },
+        onError: (error) => {
+            if (error instanceof ApiError) {
+                showToast(error.message, "error");
+            } else {
+                showToast("Erro ao alterar a senha.", "error");
+            }
+        },
+    });
+
+    const emailChangeMutation = useMutation({
+        mutationFn: (data: ChangeEmailFormData) => changeMyEmail(data),
+        onSuccess: () => {
+            showToast("E-mail alterado com sucesso!", "success");
+            queryClient.invalidateQueries({ queryKey: ["myData"] });
+            setIsEmailDialogOpen(false);
+        },
+        onError: (error) => {
+            if (error instanceof ApiError) {
+                showToast(error.message, "error");
+            } else {
+                showToast("Erro ao alterar o e-mail.", "error");
+            }
+        },
+    });
+
     const onSubmit = (data: ProfileFormData) => {
         if (!isDirty) {
             showToast("Seus dados já estão atualizados.", "info");
@@ -124,7 +170,7 @@ export const useProfile = () => {
             return;
         }
 
-       if (user?.id) {
+        if (user?.id) {
             profileUpdateMutation.mutate({ id: user.id, data: dirtyData });
         } else {
             showToast("Erro: ID do usuário não encontrado.", "error");
@@ -159,6 +205,18 @@ export const useProfile = () => {
         return data;
     };
 
+     const handleChangePassword = (data: ChangePasswordFormData) => {
+        if (user?.id) {
+            passwordChangeMutation.mutate({ id: user.id, data });
+        } else {
+            showToast("Erro: ID do usuário não encontrado.", "error");
+        }
+    };
+
+    const handleChangeEmail = (data: ChangeEmailFormData) => {
+        emailChangeMutation.mutate(data);
+    };
+
     return {
         user,
         isLoading: isLoadingUser || profileUpdateMutation.isPending,
@@ -175,6 +233,16 @@ export const useProfile = () => {
         handleSavePicture,
         handleDeletePicture,
         loadInstitutions,
-        isDirty
+        isDirty,
+        isPasswordDialogOpen,
+        openPasswordDialog: () => setIsPasswordDialogOpen(true),
+        closePasswordDialog: () => setIsPasswordDialogOpen(false),
+        handleChangePassword,
+        isChangingPassword: passwordChangeMutation.isPending,
+        isEmailDialogOpen,
+        openEmailDialog: () => setIsEmailDialogOpen(true),
+        closeEmailDialog: () => setIsEmailDialogOpen(false),
+        handleChangeEmail,
+        isChangingEmail: emailChangeMutation.isPending,
     };
 };
