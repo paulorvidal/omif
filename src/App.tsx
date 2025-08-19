@@ -1,14 +1,6 @@
-import { useEffect, type JSX } from "react";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router";
-import { toast, Toaster } from "sonner";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { Toaster } from "sonner";
 
-import { setRedirectFunction, setToastFunction } from "./utils/events";
 import { ScrollToTop } from "./utils/ScrollToTop";
 
 import { Login } from "./pages/Login";
@@ -28,54 +20,8 @@ import { Steps } from "./pages/Steps";
 import { Profile } from "./pages/Profile"
 import { MainLayout } from "./components/ui/MainLayout";
 
-
-const SetupEvents = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setToastFunction((message, type = "info") => {
-      switch (type) {
-        case "error":
-          toast.error(message);
-          break;
-        case "warning":
-          toast.warning(message);
-          break;
-        case "success":
-          toast.success(message);
-          break;
-        default:
-          toast.info(message);
-      }
-    });
-
-    setRedirectFunction((path: string) => {
-      navigate(path);
-    });
-  }, [navigate]);
-
-  return null;
-};
-
-const PrivateRoute = ({
-  children,
-  allowedRoles,
-}: {
-  children: JSX.Element;
-  allowedRoles?: string[];
-}) => {
-  const token = localStorage.getItem("token");
-  const userRole = localStorage.getItem("role");
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-  if (allowedRoles && allowedRoles.length > 0) {
-    if (!userRole || !allowedRoles.includes(userRole)) {
-      return <Navigate to="/login" />;
-    }
-  }
-  return children;
-};
+import { SetupEvents } from "./utils/SetupEvents";
+import { PrivateRoute } from "./utils/PrivateRoute";
 
 export const App = () => {
   return (
