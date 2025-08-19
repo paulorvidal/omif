@@ -1,4 +1,3 @@
-import { Sidebar } from "../components/ui/Sidebar";
 import { Button } from "../components/ui/Button";
 import { H2 } from "../components/ui/H2";
 import { ExternalLink, ListFilterPlus, Plus } from "lucide-react";
@@ -41,9 +40,8 @@ export const Dashboard = () => {
   ];
 
   return (
-    <div className="flex pb-14 md:pb-0">
+    <div className="flex w-full h-full">
       <ProgressDialog open={isLoading} />
-      <Sidebar />
       <div className="flex w-full flex-col gap-4 p-4 md:ms-14 md:gap-8 md:p-8">
         <div className="flex w-full items-center justify-between">
           <H2>Avisos</H2>
