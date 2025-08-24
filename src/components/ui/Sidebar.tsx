@@ -11,14 +11,18 @@ import {
 import { redirectTo } from "../../utils/events";
 import { SidebarDesktop } from "./SidebarDesktop";
 import { SidebarMobile } from "./SidebarMobile";
+import { useQueryClient } from "@tanstack/react-query";
+
 
 export const Sidebar = () => {
   const role = localStorage.getItem("role") as string;
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-
+    localStorage.removeItem("edition");
+    queryClient.clear();
     redirectTo("/login");
   };
 
