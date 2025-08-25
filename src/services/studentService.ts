@@ -4,20 +4,18 @@ import type { ApiError } from "./apiError";
 import type { PageParams, PageResponse } from "../types/defaultTypes";
 
 export type CreateStudentRequest = {
-  email: string;
-  password: string;
-  name: string;
-  motherName: string;
-  birthDate: string;
-  auxilioBrasil: string;
-  grade: number;
-  elementarySchoolCompletionPlace: string;
-  incomeRange: string;
-  ethnicity: string;
-  socialName: string;
-  cpf: string;
-  gender: string;
   institutionId: string;
+  name: string;
+  socialName: string;
+  email: string;
+  cpf: string;
+  birthDate: string;
+  gender: string;
+  bolsaFamilia: string;
+  grade: number;
+  ethnicity: string;
+  completionElementarySchoolCategory: string;
+  incomeRange: string;
 };
 
 export type CreateStudentResponse = {
@@ -33,18 +31,17 @@ export type Institution = {
 export type FindAllStudentResponse = {
   institution: Institution;
   id: string;
-  email: string;
   name: string;
-  motherName: string;
-  birthDate: string;
-  auxilioBrasil: string;
-  grade: number;
-  elementarySchoolCompletionPlace: string;
-  incomeRange: string;
-  ethnicity: string;
   socialName: string;
+  email: string;
   cpf: string;
+  birthDate: string;
   gender: string;
+  bolsaFamilia: string;
+  grade: number;
+  ethnicity: string;
+  completionElementarySchoolCategory: string;
+  incomeRange: string;
 };
 
 export const createStudent = async (

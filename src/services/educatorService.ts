@@ -8,9 +8,8 @@ import type {
   FindAllEducatorsResponse,
   GetMyDataEducatorResponse,
   ProfileData,
-  ChangePasswordPayload
-} from "../types/educatorTypes"
-
+  ChangePasswordPayload,
+} from "../types/educatorTypes";
 
 export const createEducator = async (
   data: CreateEducatorRequest,
@@ -18,8 +17,6 @@ export const createEducator = async (
   const response = await api.post("/educators", data);
   return response.data;
 };
-
-
 
 export async function fetchEducators(
   input: string,
@@ -41,7 +38,6 @@ export async function fetchEducators(
     value: educator.id,
   }));
 }
-
 
 export const findAllEducators = async (
   page: number,
@@ -66,22 +62,22 @@ export const findAllEducators = async (
 };
 
 export const validateMultipleEducators = async (educatorIds: string[]) => {
-  const response = await api.post('/educators/validate', {
-    educatorIds: educatorIds
+  const response = await api.post("/educators/validate", {
+    educatorIds: educatorIds,
   });
   return response.data;
 };
 
 export const unvalidateEducators = async (educatorIds: string[]) => {
-  const response = await api.post('/educators/unvalidate', {
-    educatorIds: educatorIds
+  const response = await api.post("/educators/unvalidate", {
+    educatorIds: educatorIds,
   });
   return response.data;
 };
 
-
 export const getMyData = async (): Promise<GetMyDataEducatorResponse> => {
-  const { data: userData } = await api.get<GetMyDataEducatorResponse>("/educators/me");
+  const { data: userData } =
+    await api.get<GetMyDataEducatorResponse>("/educators/me");
 
   const localImageUrl = await getPrivateImageUrl(userData.profilePicture);
 
@@ -92,15 +88,16 @@ export const getMyData = async (): Promise<GetMyDataEducatorResponse> => {
   return userData;
 };
 
-
-export const getPrivateImageUrl = async (fullUrl: string | null): Promise<string | null> => {
+export const getPrivateImageUrl = async (
+  fullUrl: string | null,
+): Promise<string | null> => {
   if (!fullUrl) {
     return null;
   }
 
   try {
     const response = await api.get(fullUrl, {
-      responseType: "blob", 
+      responseType: "blob",
     });
     return URL.createObjectURL(response.data);
   } catch (error) {
@@ -118,25 +115,29 @@ export const saveMyProfilePicture = async (pictureFile: File, id: string) => {
   const formData = new FormData();
   formData.append("picture", pictureFile);
 
-  const response = await api.post(`/educators/${id}/profile-picture`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
+  const response = await api.post(
+    `/educators/${id}/profile-picture`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     },
-  });
+  );
   return response.data;
 };
 
 export const saveMyProfileData = async (
   id: string,
-  data: Partial<ProfileData>
-): Promise<GetMyDataEducatorResponse> => { 
+  data: Partial<ProfileData>,
+): Promise<GetMyDataEducatorResponse> => {
   const response = await api.patch(`/educators/${id}`, data);
   return response.data;
 };
 
 export const changePassword = async (
   id: string,
-  data: ChangePasswordPayload
+  data: ChangePasswordPayload,
 ): Promise<GetMyDataEducatorResponse> => {
   const response = await api.put(`/educators/${id}/change-password`, data);
   return response.data;

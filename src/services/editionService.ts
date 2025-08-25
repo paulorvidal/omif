@@ -6,14 +6,9 @@ import type {
   CreateEditionResponse,
   EditionWithSteps,
   PageResponse,
-  Edition
-} from "../types/editionTypes"
-import type {
-  Step,
-  CreateStepDTO
-} from "../types/stepsTypes";
-
-
+  Edition,
+} from "../types/editionTypes";
+import type { Step, CreateStepDTO } from "../types/stepsTypes";
 
 export async function fetchEditions(
   input: string,
@@ -35,7 +30,6 @@ export async function fetchEditions(
   }));
 }
 
-
 export const createEdition = async (
   data: CreateEditionRequest,
 ): Promise<CreateEditionResponse> => {
@@ -56,16 +50,18 @@ export const getEditionById = async (id: string) => {
 };
 
 export const getEditionWithSteps = async (
-  editionId: string
+  editionId: string,
 ): Promise<EditionWithSteps> => {
-  const response = await api.get<EditionWithSteps>(`/editions/${editionId}/steps`);
-  console.log(response.data)
+  const response = await api.get<EditionWithSteps>(
+    `/editions/${editionId}/steps`,
+  );
+  console.log(response.data);
   return response.data;
 };
 
 export const saveStepsForEdition = async (
   editionId: string,
-  steps: CreateStepDTO[]
+  steps: CreateStepDTO[],
 ): Promise<{ steps: Step[] }> => {
   const response = await api.post(`/editions/${editionId}/steps`, steps);
   return response.data;
@@ -75,7 +71,7 @@ export const findAllEditions = async (
   page: number,
   size: number,
   query: string,
-  sort: string
+  sort: string,
 ): Promise<PageResponse<Edition>> => {
   const params: { [key: string]: any } = {
     page,
@@ -87,7 +83,9 @@ export const findAllEditions = async (
     params.q = query;
   }
 
-  const response = await api.get<PageResponse<Edition>>("/editions", { params });
+  const response = await api.get<PageResponse<Edition>>("/editions", {
+    params,
+  });
 
   return response.data;
 };
