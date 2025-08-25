@@ -80,6 +80,7 @@ export const AsyncSelectField = <TFieldValues extends FieldValues>({
             placeholder={placeholder}
             classNames={classNames}
             components={{ IndicatorSeparator }}
+             menuPosition="fixed"
           />
         )}
       />

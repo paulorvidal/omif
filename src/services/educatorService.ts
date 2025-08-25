@@ -9,6 +9,7 @@ import type {
   GetMyDataEducatorResponse,
   ProfileData,
   ChangePasswordPayload,
+  ChangeInstitutionPayload,
 } from "../types/educatorTypes";
 
 export const createEducator = async (

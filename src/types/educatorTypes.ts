@@ -76,3 +76,7 @@ export type ChangePasswordPayload = {
   password: string;      
   newPassword: string; 
 }
+
+export type ChangeInstitutionPayload = {
+  institutionId: string;
+}
