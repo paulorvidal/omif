@@ -143,3 +143,12 @@ export const changePassword = async (
   const response = await api.put(`/educators/${id}/change-password`, data);
   return response.data;
 };
+
+export const changeInstitution = async (
+  id: string,
+  data: ChangeInstitutionPayload
+): Promise<GetMyDataEducatorResponse> => {
+  console.log(data)
+  const response = await api.put(`/educators/${id}/change-institution`, data);
+  return response.data;
+};
