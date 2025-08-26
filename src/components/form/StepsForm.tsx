@@ -1,14 +1,13 @@
-import React from "react";
+import { useParams } from "react-router-dom";
 import { useStepsForm } from "../../hooks/useStepsForm";
 import { ProgressDialog } from "../dialog/ProgressDialog";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 
-interface StepsFormProps {
-  editionId?: string;
-}
 
-export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
+export const StepsForm = () => {
+  const { id } = useParams<{ id?: string }>();
+  
   const {
     editionData,
     isLoading,
@@ -19,7 +18,7 @@ export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
     onSubmit,
     errors,
     handleReset,
-  } = useStepsForm(editionId);
+  } = useStepsForm(id);
 
   if (isError) {
     return (
@@ -29,7 +28,7 @@ export const StepsForm: React.FC<StepsFormProps> = ({ editionId }) => {
 
   return (
     <form
-      className="flex w-full flex-col justify-center gap-4"
+      className="flex w-full flex-col justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-6">

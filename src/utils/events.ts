@@ -4,12 +4,15 @@ let toastFunction: ((message: string, type?: ToastType) => void) | null = null;
 let redirectFunction: ((path: string) => void) | null = null;
 
 export const setToastFunction = (
-  fn: (message: string, type?: ToastType) => void,
+  fn: ((message: string, type?: ToastType) => void) | null, 
 ) => {
   toastFunction = fn;
 };
 
-export const setRedirectFunction = (fn: (path: string) => void) => {
+
+export const setRedirectFunction = (
+  fn: ((path: string) => void) | null 
+) => {
   redirectFunction = fn;
 };
 

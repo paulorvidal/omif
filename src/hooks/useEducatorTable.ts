@@ -12,7 +12,7 @@
   import type { PaginationState } from "@tanstack/react-table";
   import { ApiError } from "../services/apiError";
   import { useMutation, useQueryClient, useQuery, keepPreviousData } from '@tanstack/react-query';
-  import { useSearchParams } from "react-router";
+  import { useSearchParams } from "react-router-dom";
 
   type FilterFormValues = {
     sort: string;

@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { PasswordRecoveryForm } from "../components/form/PasswordRecoveryForm";
 
 export const PasswordRecoveryPage = () => {

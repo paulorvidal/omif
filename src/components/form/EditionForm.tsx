@@ -1,28 +1,28 @@
+import { useParams } from "react-router-dom";
 import { useEditionForm } from "../../hooks/useEditionForm";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 import { ProgressDialog } from "../dialog/ProgressDialog";
 
-type Props = {
-  editionId?: string;
-};
 
-export const EditionForm = ({ editionId }: Props) => {
+export const EditionForm = () => {
+  const { id } = useParams<{ id?: string }>();
+  const isEditMode = Boolean(id);
+
   const {
     errors,
-    isEditMode,
     isPending,
     isEditionLoading,
     register,
     handleFormSubmit,
     handleReset,
-  } = useEditionForm({ editionId });
+  } = useEditionForm({ editionId: id });
 
   const isLoading = isPending || (isEditMode && isEditionLoading);
 
   return (
     <form
-      className="flex w-full flex-col justify-center gap-4"
+      className="flex w-full flex-col justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8"
       onSubmit={handleFormSubmit}
     >
       <Field

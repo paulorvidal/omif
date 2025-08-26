@@ -39,6 +39,7 @@
     "react-image-crop": "^11.0.10",
     "react-input-mask": "^2.0.4",
     "react-router": "^7.6.0",
+    "react-router-dom": "^7.8.2",
     "react-select": "^5.10.1",
     "remask": "^1.2.2",
     "sonner": "^2.0.5",

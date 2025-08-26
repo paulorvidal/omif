@@ -88,7 +88,7 @@ export const useLogin = () => {
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.role);
         showToast("Login realizado com sucesso", "success");
-        redirectTo("/dashboard");
+        redirectTo("/avisos");
       } else {
         showToast("Resposta inválida do servidor", "error");
       }

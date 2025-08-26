@@ -1,144 +1,170 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { Toaster } from "sonner";
-
-import { ScrollToTop } from "./utils/ScrollToTop";
-
+import { RootLayout } from "./components/layout/RootLayout";
 import { Login } from "./pages/Login";
-import { Educator } from "./pages/Educator";
-import { Student } from "./pages/Student";
-import { Dashboard } from "./pages/Dashboard";
-import { Institutions } from "./pages/Institutions";
-import { Institution } from "./pages/Institution";
-import { Students } from "./pages/Students";
-import { Edition } from "./pages/Edition";
-import { Editions } from "./pages/Editions";
-import { Notice } from "./pages/Notice";
+import { EducatorForm } from "./components/form/EducatorForm";
+import { StudentForm } from "./components/form/StudentForm";
+import { MainLayout } from "./components/layout/MainLayout";
+import { PrivateRoute } from "./utils/PrivateRoute";
+import { Notices } from "./pages/Notices";
+import { NoticeForm } from "./components/form/NoticeForm";
+import { InstitutionTable } from "./components/table/InstitutionTable";
+import { InstitutionForm } from "./components/form/InstitutionForm";
+import { StudentTable } from "./components/table/StudentTable";
+import { EducatorTable } from "./components/table/EducatorTable";
+import { EditionForm } from "./components/form/EditionForm";
+import { EditionTable } from "./components/table/EditionTable";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage";
-import { Educators } from "./pages/Educators";
-import { Steps } from "./pages/Steps";
-import { Profile } from "./pages/Profile"
-import { MainLayout } from "./components/ui/MainLayout";
+import { StepsForm } from "./components/form/StepsForm";
+import { Profile } from "./pages/Profile";
 
-import { SetupEvents } from "./utils/SetupEvents";
-import { PrivateRoute } from "./utils/PrivateRoute";
+
+const router = createBrowserRouter([
+  {
+    element: <RootLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Navigate to="/login" replace />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/educador",
+        element: <EducatorForm />,
+      },
+      {
+        path: "/estudante",
+        element: <StudentForm />,
+      },
+      {
+        path: "/verify-email/:token",
+        element: <VerifyEmailPage />,
+      },
+      {
+        path: "/password-recovery/:token",
+        element: <PasswordRecoveryPage />,
+      },
+      {
+        element: (
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        ),
+        children: [
+          {
+            path: "/avisos",
+            element: <Notices />,
+            handle: { title: "Avisos", showBackButton: false },
+          },
+          {
+            path: "/aviso",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <NoticeForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Aviso" },
+          },
+          {
+            path: "/instituicoes",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <InstitutionTable />
+              </PrivateRoute>
+            ),
+            handle: { title: "Instituições" },
+          },
+          {
+            path: "/instituicao/:id",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <InstitutionForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Editar Instituição" },
+          },
+          {
+            path: "/instituicao",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <InstitutionForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Nova Instituição" },
+          },
+          {
+            path: "/estudantes",
+            element: (
+              <PrivateRoute>
+                <StudentTable />
+              </PrivateRoute>
+            ),
+            handle: { title: "Estudantes" },
+          },
+          {
+            path: "/edicoes",
+            element: (
+              <PrivateRoute>
+                <EditionTable />
+              </PrivateRoute>
+            ),
+            handle: { title: "Edições" },
+          },
+          {
+            path: "/edicao",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <EditionForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Nova Edição" },
+          },
+          {
+            path: "/etapas/:id",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <StepsForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Etapas" },
+          },
+          {
+            path: "/educadores",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <EducatorTable />
+              </PrivateRoute>
+            ),
+            handle: { title: "Educadores" },
+          },
+          {
+            path: "/perfil",
+            element: (
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            ),
+            handle: { title: "Perfil" },
+          },
+        ],
+      },
+    ],
+  },
+]);
 
 export const App = () => {
   return (
     <>
-      <BrowserRouter>
-        <SetupEvents />
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/educador" element={<Educator />} />
-          <Route path="/estudante" element={<Student />} />
-          <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
-          <Route
-            path="/password-recovery/:token"
-            element={<PasswordRecoveryPage />}
-          />
-
-          <Route
-            element={
-              <PrivateRoute>
-                <MainLayout />
-              </PrivateRoute>
-            }
-          >
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/aviso"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Notice />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/instituicoes"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Institutions />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/instituicao/:id"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Institution />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/instituicao"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Institution />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/estudantes"
-              element={
-                <PrivateRoute>
-                  <Students />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/edicoes"
-              element={
-                <PrivateRoute>
-                  <Editions />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/edicao"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Edition />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/etapas/:id"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Steps />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/educadores"
-              element={
-                <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                  <Educators />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/perfil"
-              element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              }
-            />
-          </Route>
-        </Routes>
-        <Toaster richColors />
-      </BrowserRouter>
+      <RouterProvider router={router} />
+      <Toaster richColors />
     </>
   );
 };

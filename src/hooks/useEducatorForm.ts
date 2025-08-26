@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createEducator } from "../services/educatorService";
+import { type CreateEducatorRequest } from "../types/educatorTypes";
 import { scrollToTop } from "../utils/scrollToTop";
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";

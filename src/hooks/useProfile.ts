@@ -4,24 +4,25 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    getMyData,
-    saveMyProfileData,
-    saveMyProfilePicture,
-    deleteMyProfilePicture,
-    changePassword,
-    changeInstitution
+  getMyData,
+  saveMyProfileData,
+  saveMyProfilePicture,
+  deleteMyProfilePicture,
+  changeEmail,
+  changePassword,
+  changeInstitution
 } from "../services/educatorService";
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 import { fetchInstitutions } from "../services/institutionService";
 import {
-    type ChangePasswordFormData,
+  type ChangePasswordFormData,
 } from "../components/dialog/ChangePasswordDialog";
 import {
-    type ChangeEmailFormData,
+  type ChangeEmailFormData,
 } from "../components/dialog/ChangeEmailDialog";
 import {
-    type ChangeInstitutionFormData, 
+  type ChangeInstitutionFormData,
 } from "../components/dialog/ChangeInstitutionDialog";
 
 const profileSchema = z.object({
@@ -42,11 +43,11 @@ const profileSchema = z.object({
 export type ProfileFormData = z.infer<typeof profileSchema>;
 
 export const useProfile = () => {
-    const queryClient = useQueryClient();
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-    const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-    const [isInstitutionDialogOpen, setIsInstitutionDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [isInstitutionDialogOpen, setIsInstitutionDialogOpen] = useState(false);
 
   const {
     register,
@@ -139,43 +140,44 @@ export const useProfile = () => {
     },
   });
 
-    const emailChangeMutation = useMutation({
-        mutationFn: (data: ChangeEmailFormData) => changeMyEmail(data),
-        onSuccess: () => {
-            showToast("E-mail alterado com sucesso!", "success");
-            queryClient.invalidateQueries({ queryKey: ["myData"] });
-            setIsEmailDialogOpen(false);
-        },
-        onError: (error) => {
-            if (error instanceof ApiError) {
-                showToast(error.message, "error");
-            } else {
-                showToast("Erro ao alterar o e-mail.", "error");
-            }
-        },
-    });
+  const emailChangeMutation = useMutation({
+    mutationFn: (variables: { id: string; data: ChangeEmailFormData }) =>
+      changeEmail(variables.id, variables.data),
+    onSuccess: () => {
+      showToast("E-mail alterado com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey: ["myData"] });
+      setIsEmailDialogOpen(false);
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        showToast(error.message, "error");
+      } else {
+        showToast("Erro ao alterar o e-mail.", "error");
+      }
+    },
+  });
 
-    const institutionChangeMutation = useMutation({
-        mutationFn: (variables: { userId: string, formData: ChangeInstitutionFormData }) => {
-            const { userId, formData } = variables;
-            const payload = {
-                institutionId: formData.institution!.value,
-            };
-            return changeInstitution(userId, payload);
-        },
-        onSuccess: () => {
-            showToast("Instituição alterada com sucesso!", "success");
-            queryClient.invalidateQueries({ queryKey: ["myData"] });
-            setIsInstitutionDialogOpen(false);
-        },
-        onError: (error) => {
-            if (error instanceof ApiError) {
-                showToast(error.message, "error");
-            } else {
-                showToast("Erro ao alterar a instituição.", "error");
-            }
-        },
-    });
+  const institutionChangeMutation = useMutation({
+    mutationFn: (variables: { userId: string, formData: ChangeInstitutionFormData }) => {
+      const { userId, formData } = variables;
+      const payload = {
+        institutionId: formData.institution!.value,
+      };
+      return changeInstitution(userId, payload);
+    },
+    onSuccess: () => {
+      showToast("Instituição alterada com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey: ["myData"] });
+      setIsInstitutionDialogOpen(false);
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        showToast(error.message, "error");
+      } else {
+        showToast("Erro ao alterar a instituição.", "error");
+      }
+    },
+  });
 
   const onSubmit = (data: ProfileFormData) => {
     if (!isDirty) {
@@ -230,58 +232,63 @@ export const useProfile = () => {
     return data;
   };
 
-    const handleChangePassword = (data: ChangePasswordFormData) => {
-        if (user?.id) {
-            passwordChangeMutation.mutate({ id: user.id, data });
-        } else {
-            showToast("Erro: ID do usuário não encontrado.", "error");
-        }
-    };
+  const handleChangePassword = (data: ChangePasswordFormData) => {
+    if (user?.id) {
+      passwordChangeMutation.mutate({ id: user.id, data });
+    } else {
+      showToast("Erro: ID do usuário não encontrado.", "error");
+    }
+  };
 
   const handleChangeEmail = (data: ChangeEmailFormData) => {
-    emailChangeMutation.mutate(data);
+    if (user?.id) {
+      emailChangeMutation.mutate({ id: user.id, data });
+    } else {
+      showToast("Erro: ID do usuário não encontrado.", "error");
+    }
   };
 
 
-    const handleChangeInstitution = (data: ChangeInstitutionFormData) => {
-        if (user?.id) {
-            institutionChangeMutation.mutate({ userId: user.id, formData: data });
-        } else {
-            showToast("Erro: ID do usuário não encontrado.", "error");
-        }
-    };
 
-    return {
-        user,
-        isLoading: isLoadingUser || profileUpdateMutation.isPending,
-        isSavingPicture: pictureUploadMutation.isPending,
-        isDeletingPicture: pictureDeleteMutation.isPending,
-        register,
-        control,
-        errors,
-        handleProfileSubmit: handleSubmit(onSubmit),
-        handleResetForm,
-        isEditDialogOpen,
-        openPictureEditDialog: () => setIsEditDialogOpen(true),
-        closePictureEditDialog: () => setIsEditDialogOpen(false),
-        handleSavePicture,
-        handleDeletePicture,
-        loadInstitutions,
-        isDirty,
-        isPasswordDialogOpen,
-        openPasswordDialog: () => setIsPasswordDialogOpen(true),
-        closePasswordDialog: () => setIsPasswordDialogOpen(false),
-        handleChangePassword,
-        isChangingPassword: passwordChangeMutation.isPending,
-        isEmailDialogOpen,
-        openEmailDialog: () => setIsEmailDialogOpen(true),
-        closeEmailDialog: () => setIsEmailDialogOpen(false),
-        handleChangeEmail,
-        isChangingEmail: emailChangeMutation.isPending,
-        isInstitutionDialogOpen,
-        openInstitutionDialog: () => setIsInstitutionDialogOpen(true),
-        closeInstitutionDialog: () => setIsInstitutionDialogOpen(false),
-        handleChangeInstitution,
-        isChangingInstitution: institutionChangeMutation.isPending,
-    };
+  const handleChangeInstitution = (data: ChangeInstitutionFormData) => {
+    if (user?.id) {
+      institutionChangeMutation.mutate({ userId: user.id, formData: data });
+    } else {
+      showToast("Erro: ID do usuário não encontrado.", "error");
+    }
+  };
+
+  return {
+    user,
+    isLoading: isLoadingUser || profileUpdateMutation.isPending,
+    isSavingPicture: pictureUploadMutation.isPending,
+    isDeletingPicture: pictureDeleteMutation.isPending,
+    register,
+    control,
+    errors,
+    handleProfileSubmit: handleSubmit(onSubmit),
+    handleResetForm,
+    isEditDialogOpen,
+    openPictureEditDialog: () => setIsEditDialogOpen(true),
+    closePictureEditDialog: () => setIsEditDialogOpen(false),
+    handleSavePicture,
+    handleDeletePicture,
+    loadInstitutions,
+    isDirty,
+    isPasswordDialogOpen,
+    openPasswordDialog: () => setIsPasswordDialogOpen(true),
+    closePasswordDialog: () => setIsPasswordDialogOpen(false),
+    handleChangePassword,
+    isChangingPassword: passwordChangeMutation.isPending,
+    isEmailDialogOpen,
+    openEmailDialog: () => setIsEmailDialogOpen(true),
+    closeEmailDialog: () => setIsEmailDialogOpen(false),
+    handleChangeEmail,
+    isChangingEmail: emailChangeMutation.isPending,
+    isInstitutionDialogOpen,
+    openInstitutionDialog: () => setIsInstitutionDialogOpen(true),
+    closeInstitutionDialog: () => setIsInstitutionDialogOpen(false),
+    handleChangeInstitution,
+    isChangingInstitution: institutionChangeMutation.isPending,
+  };
 };
