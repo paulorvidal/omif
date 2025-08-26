@@ -46,8 +46,7 @@ export const Profile = () => {
     } = useProfile();
 
     return (
-        <div className="flex w-full flex-col gap-4 p-4 md:ms-14 md:gap-8 md:p-8">
-            <H2>Perfil</H2>
+        <>
             <div className="flex w-full h-full flex-col gap-4 md:flex-row md:gap-8">
                 <div className="flex w-full flex-col items-center text-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:w-96 md:flex-shrink-0">
                     <div className="relative w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
@@ -178,6 +177,6 @@ export const Profile = () => {
             />
 
       <ProgressDialog open={isLoading} />
-    </div>
+    </>
   );
 };

@@ -11,11 +11,11 @@ import { Field } from "../ui/Field";
 import { PasswordField } from "../ui/PasswordField";
 
 const changeEmailSchema = z.object({
-  newEmail: z
+  email: z
     .string()
     .min(1, "O novo e-mail é obrigatório.")
     .email("Digite um e-mail válido."),
-  currentPassword: z.string().min(1, "A senha atual é obrigatória."),
+  password: z.string().min(1, "A senha atual é obrigatória."),
 });
 
 export type ChangeEmailFormData = z.infer<typeof changeEmailSchema>;
@@ -85,14 +85,14 @@ export function ChangeEmailDialog(props: ChangeEmailProps) {
               label="Novo E-mail:"
               type="email"
               placeholder="Digite seu novo e-mail"
-              register={register("newEmail")}
-              error={errors.newEmail?.message}
+              register={register("email")}
+              error={errors.email?.message}
             />
             <PasswordField
               label="Senha Atual:"
               placeholder="Digite sua senha para confirmar"
-              register={register("currentPassword")}
-              error={errors.currentPassword?.message}
+              register={register("password")}
+              error={errors.password?.message}
             />
           </div>
 

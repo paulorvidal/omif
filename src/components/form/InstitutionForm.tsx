@@ -1,27 +1,28 @@
+import { useParams } from "react-router-dom";
 import { useInstitutionForm } from "../../hooks/useInstitutionForm";
 import { Field } from "../ui/Field";
 import { AsyncSelectField } from "../ui/AsyncSelectField";
 import { Button } from "../ui/Button";
 
-type Props = {
-  institutionId?: string;
-};
 
-export const InstitutionForm = ({ institutionId }: Props) => {
+export const InstitutionForm = () => {
+
+  const { id } = useParams<{ id?: string }>();
+  const isEditMode = Boolean(id);
+
   const {
     control,
     errors,
-    isEditMode,
     isSubmitting,
     register,
     handleFormSubmit,
     handleReset,
     loadEducatorOptions,
-  } = useInstitutionForm({ institutionId });
+  } = useInstitutionForm({ institutionId: id });
 
   return (
     <form
-      className="flex w-full flex-col justify-center gap-4"
+      className="flex w-full flex-col justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8"
       onSubmit={handleFormSubmit}
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

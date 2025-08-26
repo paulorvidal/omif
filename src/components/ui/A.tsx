@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 type AProps = {
   children: string;

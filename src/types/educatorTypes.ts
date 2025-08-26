@@ -80,3 +80,8 @@ export type ChangePasswordPayload = {
 export type ChangeInstitutionPayload = {
   institutionId: string;
 }
+
+export interface ChangeEmailPayload {
+  email: string;
+  password: string;
+}

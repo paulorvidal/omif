@@ -1,7 +1,7 @@
 import { Controller } from "react-hook-form";
 import AsyncSelect from "react-select/async";
 import { Calendar } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { useNavbar } from "../../hooks/useNavbar";
 import { getInitials } from "../../utils/formatters";
 

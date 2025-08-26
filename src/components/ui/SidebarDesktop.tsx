@@ -5,7 +5,7 @@ import {
   type ForwardRefExoticComponent,
   type RefAttributes,
 } from "react";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 
 type Link = {
   title: string;
@@ -36,7 +36,7 @@ export const SidebarDesktop = ({
     >
       <div className="flex w-full flex-col gap-1">
         <NavLink
-          to="/dashboard"
+          to="/avisos"
           className={({ isActive }) =>
             `flex w-full cursor-pointer items-center rounded-sm duration-300 hover:bg-green-500 active:bg-green-500 ${isActive && isOpen ? "bg-green-500/50" : ""
             }`

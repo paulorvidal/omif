@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import type { PaginationState } from "@tanstack/react-table";
 import {
   findAllNotices,

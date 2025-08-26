@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 
 import { Button } from "../ui/Button";
-
+import { H1 } from "../ui/H1";
 import { Field } from "../ui/Field";
 import { SelectField } from "../ui/SelectField";
 
@@ -182,129 +182,134 @@ export const StudentForm = () => {
   };
 
   return (
-    <form
-      className="flex w-full flex-col justify-center gap-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <Field
-        label="Nome:"
-        type="text"
-        placeholder="Ex: Nome Completo"
-        register={register("name")}
-        error={errors.name?.message}
-      />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Field
-          label="CPF:"
-          type="text"
-          placeholder="Ex: 000.000.000-00"
-          mask="999.999.999-99"
-          register={register("cpf")}
-          error={errors.cpf?.message}
-        />
-        <Field
-          label="Data de Nascimento:"
-          type="date"
-          register={register("birthDate")}
-          error={errors.birthDate?.message}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Field
-          label="E-mail:"
-          type="text"
-          placeholder="Ex: nome@email.com"
-          register={register("email")}
-          error={errors.email?.message}
-        />
-        <Field
-          label="Nome da mãe:"
-          type="text"
-          placeholder="Ex: Nome Completo da Mãe"
-          register={register("motherName")}
-          error={errors.motherName?.message}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Field
-          label="Senha:"
-          type="password"
-          placeholder="Digite sua senha"
-          register={register("password")}
-          error={errors.password?.message}
-        />
-        <Field
-          label="Confirmar Senha:"
-          type="password"
-          placeholder="Digite sua senha novamente"
-          register={register("confirmPassword")}
-          error={errors.confirmPassword?.message}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <SelectField
-          name="grade"
-          label="Série:"
-          control={control}
-          options={gradeOptions}
-          error={errors.grade?.message}
-        />
-        <SelectField
-          name="gender"
-          label="Gênero:"
-          control={control}
-          options={genderOptions}
-          error={errors.gender?.message}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <SelectField
-          name="ethnicity"
-          label="Você se considera:"
-          control={control}
-          options={ethnicityOptions}
-          error={errors.ethnicity?.message}
-        />
-        <SelectField
-          name="auxilioBrasil"
-          label="Sua família é beneficiária do Bolsa Família?"
-          control={control}
-          options={auxilioBrasilOptions}
-          error={errors.auxilioBrasil?.message}
-        />
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <SelectField
-          name="elementarySchoolCompletionPlace"
-          label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
-          control={control}
-          options={elementarySchoolCompletionPlaceOptions}
-          error={errors.elementarySchoolCompletionPlace?.message}
-        />
-        <SelectField
-          name="incomeRange"
-          label="Em qual faixa de renda per capita sua família se encontra?"
-          control={control}
-          options={incomeRangeOptions}
-          error={errors.incomeRange?.message}
-        />
-      </div>
+    <div className="flex w-full flex-col items-center p-4 md:p-8">
+      <div className="flex  w-full flex-col items-center justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8">
+        <H1>Cadastre-se</H1>
+        <form
+          className="flex w-full flex-col justify-center gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Field
+            label="Nome:"
+            type="text"
+            placeholder="Ex: Nome Completo"
+            register={register("name")}
+            error={errors.name?.message}
+          />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Field
+              label="CPF:"
+              type="text"
+              placeholder="Ex: 000.000.000-00"
+              mask="999.999.999-99"
+              register={register("cpf")}
+              error={errors.cpf?.message}
+            />
+            <Field
+              label="Data de Nascimento:"
+              type="date"
+              register={register("birthDate")}
+              error={errors.birthDate?.message}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Field
+              label="E-mail:"
+              type="text"
+              placeholder="Ex: nome@email.com"
+              register={register("email")}
+              error={errors.email?.message}
+            />
+            <Field
+              label="Nome da mãe:"
+              type="text"
+              placeholder="Ex: Nome Completo da Mãe"
+              register={register("motherName")}
+              error={errors.motherName?.message}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Field
+              label="Senha:"
+              type="password"
+              placeholder="Digite sua senha"
+              register={register("password")}
+              error={errors.password?.message}
+            />
+            <Field
+              label="Confirmar Senha:"
+              type="password"
+              placeholder="Digite sua senha novamente"
+              register={register("confirmPassword")}
+              error={errors.confirmPassword?.message}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <SelectField
+              name="grade"
+              label="Série:"
+              control={control}
+              options={gradeOptions}
+              error={errors.grade?.message}
+            />
+            <SelectField
+              name="gender"
+              label="Gênero:"
+              control={control}
+              options={genderOptions}
+              error={errors.gender?.message}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <SelectField
+              name="ethnicity"
+              label="Você se considera:"
+              control={control}
+              options={ethnicityOptions}
+              error={errors.ethnicity?.message}
+            />
+            <SelectField
+              name="auxilioBrasil"
+              label="Sua família é beneficiária do Bolsa Família?"
+              control={control}
+              options={auxilioBrasilOptions}
+              error={errors.auxilioBrasil?.message}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <SelectField
+              name="elementarySchoolCompletionPlace"
+              label="Onde você realizou seus estudos de ensino fundamental ou equivalente?"
+              control={control}
+              options={elementarySchoolCompletionPlaceOptions}
+              error={errors.elementarySchoolCompletionPlace?.message}
+            />
+            <SelectField
+              name="incomeRange"
+              label="Em qual faixa de renda per capita sua família se encontra?"
+              control={control}
+              options={incomeRangeOptions}
+              error={errors.incomeRange?.message}
+            />
+          </div>
 
-      <AsyncSelectField
-        name="institution"
-        label="Instituição:"
-        placeholder="Ex: NOME DA INSTITUIÇÃO"
-        control={control}
-        loadOptions={fetchInstitutions}
-        error={errors.institution?.message}
-      />
+          <AsyncSelectField
+            name="institution"
+            label="Instituição:"
+            placeholder="Ex: NOME DA INSTITUIÇÃO"
+            control={control}
+            loadOptions={fetchInstitutions}
+            error={errors.institution?.message}
+          />
 
-      <div className="flex justify-between">
-        <Button secondary type="button" onClick={onReset}>
-          Limpar
-        </Button>
-        <Button type="submit">Cadastrar</Button>
+          <div className="flex justify-between">
+            <Button secondary type="button" onClick={onReset}>
+              Limpar
+            </Button>
+            <Button type="submit">Cadastrar</Button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 };
