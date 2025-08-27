@@ -23,9 +23,9 @@ export const Notices = () => {
   } = useNoticeTable();
 
   const sortOptions = [
-    { label: "Data de Inclusão (Mais Recente)", value: "timestamp,asc" },
-    { label: "Data de Inclusão (Mais Recente)", value: "timestamp,asc" },
-    { label: "Data de Inclusão (Mais Antiga)", value: "timestamp,desc" },
+    { label: "Data de Inclusão (Mais Recente)", value: "timestamp,desc" },
+    { label: "Data de Inclusão (Mais Recente)", value: "timestamp,desc" },
+    { label: "Data de Inclusão (Mais Antiga)", value: "timestamp,asc" },
     { label: "Título (A-Z)", value: "title,asc" },
     { label: "Título (Z-A)", value: "title,desc" },
   ];

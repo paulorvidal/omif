@@ -27,7 +27,7 @@ export const useNoticeTable = () => {
 
   const pageIndex = parseInt(searchParams.get("page") || "0", 10);
   const pageSize = parseInt(searchParams.get("size") || "10", 10);
-  const sort = searchParams.get("sort") || "timestamp,asc";
+  const sort = searchParams.get("sort") || "timestamp,desc";
   const globalFilter = searchParams.get("q") || "";
   const debouncedFilter = useDebounce(globalFilter, 400);
 
