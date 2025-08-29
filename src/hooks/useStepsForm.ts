@@ -120,7 +120,6 @@ export const useStepsForm = (editionId?: string) => {
   const { mutate: saveMutation, isPending: isSaving } = useMutation({
     mutationFn: (createSteps: CreateStepDTO[]) => saveStepsForEdition(editionId!, createSteps),
     onSuccess: (savedData) => {
-      console.log("Salvo com sucesso!");
       if (savedData?.steps && savedData.steps.length >= 2) {
         const stepsToReset: [Step, Step] = [savedData.steps[0], savedData.steps[1]];
         reset({ steps: stepsToReset });

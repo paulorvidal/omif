@@ -53,3 +53,10 @@ export interface Edition {
   registrationEndDate: string;
   steps: Step[];
 }
+
+export interface CurrentEdition {
+  isActive: boolean;
+  editionName: string;
+  editionYear: number;
+  endEnrollmentDate: string;
+}

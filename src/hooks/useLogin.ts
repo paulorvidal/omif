@@ -135,7 +135,6 @@ export const useLogin = () => {
     mutationFn: (identifier: string) => requestPasswordRecovery(identifier),
     onSuccess: (data) => {
       setMaskedEmailForRecovery(data.email);
-      console.log(data)
     },
     onError: (error) => {
       if (error instanceof ApiError) {

@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { recoverPassword, type PasswordRecoverRequest } from "../services/authService";
-import { useMutation } from "@tanstack/react-query";
+import { recoverPassword, validateRecoveryToken } from "../services/authService";
+import type { PasswordRecoverRequest } from "../types/authTypes"
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 
@@ -18,6 +19,8 @@ const passwordRecoverySchema = z.object({
 type PasswordRecoveryFormData = z.infer<typeof passwordRecoverySchema>;
 
 export const usePasswordRecovery = (token: string) => {
+
+
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -27,9 +30,21 @@ export const usePasswordRecovery = (token: string) => {
     resolver: zodResolver(passwordRecoverySchema),
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data: PasswordRecoverRequest) => recoverPassword(data),
 
+  const {
+    isLoading: isValidationLoading,
+    isError: isValidationError,
+    error: validationError,
+  } = useQuery({
+    queryKey: ["validatePasswordToken", token],
+    queryFn: () => validateRecoveryToken(token),
+    enabled: !!token,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const { mutate, isPending: isSubmitting } = useMutation({
+    mutationFn: (data: PasswordRecoverRequest) => recoverPassword(data),
     onSuccess: () => {
       showToast("Senha alterada com sucesso!", "success");
       reset();
@@ -58,6 +73,11 @@ export const usePasswordRecovery = (token: string) => {
     register,
     handleSubmit,
     errors,
-    isPending,
+    isSubmitting,
+    isValidationLoading,
+    isValidationError,
+    validationErrorMessage: validationError instanceof ApiError
+      ? validationError.message
+      : "Link inválido ou expirado.",
   };
 };

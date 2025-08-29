@@ -5,6 +5,7 @@ import type {
   PasswordRecoverRequest,
   PasswordRecovery
 } from "../types/authTypes"
+import type { AxiosResponse } from "axios"; 
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>("/auth", data);
@@ -32,6 +33,9 @@ export const requestPasswordRecovery = async (
   return response.data;
 };
 
+export const validateRecoveryToken = async (token: string): Promise<AxiosResponse> => {
+  return api.get(`/auth/password-recovery/${token}`);
+};
 
 export const recoverPassword = async (data: PasswordRecoverRequest): Promise<void> => {
   await api.post('/auth/password-recovery', data);

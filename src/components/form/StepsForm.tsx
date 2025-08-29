@@ -7,7 +7,7 @@ import { Button } from "../ui/Button";
 
 export const StepsForm = () => {
   const { id } = useParams<{ id?: string }>();
-  
+
   const {
     editionData,
     isLoading,
@@ -31,24 +31,19 @@ export const StepsForm = () => {
       className="flex w-full flex-col justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8 md:gap-8"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-6">
-        <h2 className="m-0 text-2xl font-semibold text-green-900">
-          {editionData?.name}
-        </h2>
-        {editionData?.year && (
-          <span className="rounded-full bg-green-600 px-4 py-1.5 text-base font-bold text-white">
-            {editionData.year}
-          </span>
-        )}
+      <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+        <div>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Etapas - Edição {editionData?.year}
+          </h2>
+          <p className="text-gray-500">{editionData?.name}</p>
+        </div>
       </div>
-
       <fieldset
         disabled={isLoading || isSaving}
-        className="mt-4 border-none p-0"
+        className="border-none p-0"
       >
-        <h3>Etapas da Edição</h3>
-
-        <div className="mt-4 mb-4 rounded-lg border border-gray-300 p-4">
+        <div className="mb-4 rounded-lg border border-gray-300 p-4">
           <h4>Etapa 1</h4>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

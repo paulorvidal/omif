@@ -7,6 +7,7 @@ import type {
   EditionWithSteps,
   PageResponse,
   Edition,
+  CurrentEdition
 } from "../types/editionTypes";
 import type { Step, CreateStepDTO } from "../types/stepsTypes";
 
@@ -55,7 +56,6 @@ export const getEditionWithSteps = async (
   const response = await api.get<EditionWithSteps>(
     `/editions/${editionId}/steps`,
   );
-  console.log(response.data);
   return response.data;
 };
 
@@ -87,5 +87,10 @@ export const findAllEditions = async (
     params,
   });
 
+  return response.data;
+};
+
+export const getCurrentEdition = async (): Promise<CurrentEdition> => {
+  const response = await api.get<CurrentEdition>("/editions/current");
   return response.data;
 };

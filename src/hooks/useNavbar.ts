@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { fetchEditions } from "../services/editionService";
+import { fetchEditions, getCurrentEdition } from "../services/editionService";
 import { getMyData } from "../services/educatorService";
 import { showToast } from "../utils/events";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -41,6 +41,14 @@ export const useNavbar = () => {
         queryFn: getMyData,
         staleTime: 1000 * 60 * 60,
         refetchOnWindowFocus: false,
+    });
+
+    const { data: currentEditionData, isLoading: isCurrentEditionLoading } = useQuery({
+        queryKey: ["currentEdition"],
+        queryFn: getCurrentEdition,
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
+        retry: false,
     });
 
     const loadOptions = async (inputValue: string) => {
@@ -92,6 +100,8 @@ export const useNavbar = () => {
         placeholder,
         classNames,
         userData,
-        isUserDataLoading
+        isUserDataLoading,
+        currentEditionData,
+        isCurrentEditionLoading,
     };
 };

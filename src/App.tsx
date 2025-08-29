@@ -22,7 +22,7 @@ import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage";
 import { StepsForm } from "./components/form/StepsForm";
 import { Profile } from "./pages/Profile";
-
+import { EnrollmentInstitutionForm } from "./components/form/EnrollmentInstitutionForm";
 
 const router = createBrowserRouter([
   {
@@ -153,6 +153,15 @@ const router = createBrowserRouter([
               </PrivateRoute>
             ),
             handle: { title: "Perfil" },
+          },
+          {
+            path: "/edicoes/:editionYear/inscrever-instituicao",
+            element: (
+              <PrivateRoute>
+                <EnrollmentInstitutionForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Inscrever Instituição" },
           },
         ],
       },
