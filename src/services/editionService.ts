@@ -35,6 +35,7 @@ export const createEdition = async (
   data: CreateEditionRequest,
 ): Promise<CreateEditionResponse> => {
   const response = await api.post("/editions", data);
+  console.log(data)
   return response.data;
 };
 
@@ -90,7 +91,7 @@ export const findAllEditions = async (
   return response.data;
 };
 
-export const getCurrentEdition = async (): Promise<CurrentEdition> => {
-  const response = await api.get<CurrentEdition>("/editions/current");
+export const getCurrentInstitutionEnrollmentEdition = async (): Promise<CurrentEdition> => {
+  const response = await api.get<CurrentEdition>("/editions/institution-enrollment/current");
   return response.data;
 };
