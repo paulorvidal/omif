@@ -24,17 +24,26 @@ export type CreateEditionRequest = {
   name: string;
   year: number;
   minimumWage: string;
-  registrationStartDate: string;
-  registrationEndDate: string;
+  startDate: string;
+  endDate: string;
+  institutionRegistrationStartDate: string;
+  institutionRegistrationEndDate: string;
+  studentRegistrationStartDate: string;
+  studentRegistrationEndDate: string;
 };
+
 
 export type UpdateEditionRequest = {
   editionId: string;
   name: string;
   year: number;
   minimumWage: string;
-  registrationStartDate: string;
-  registrationEndDate: string;
+  startDate: string;
+  endDate: string;
+  institutionRegistrationStartDate: string;
+  institutionRegistrationEndDate: string;
+  studentRegistrationStartDate: string;
+  studentRegistrationEndDate: string;
 };
 
 export interface EditionWithSteps {

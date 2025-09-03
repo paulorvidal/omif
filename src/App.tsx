@@ -127,6 +127,15 @@ const router = createBrowserRouter([
             ),
             handle: { title: "Nova Edição" },
           },
+            {
+            path: "/edicao/:id",
+            element: (
+              <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
+                <EditionForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Nova Edição" },
+          },
           {
             path: "/etapas/:id",
             element: (

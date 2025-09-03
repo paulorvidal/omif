@@ -4,7 +4,6 @@ import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 import { ProgressDialog } from "../dialog/ProgressDialog";
 
-
 export const EditionForm = () => {
   const { id } = useParams<{ id?: string }>();
   const isEditMode = Boolean(id);
@@ -53,21 +52,52 @@ export const EditionForm = () => {
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Field
-          label="Início das Inscrições:"
+          label="Início da Edição:"
           type="datetime-local"
-          register={register("registrationStartDate")}
-          error={errors.registrationStartDate?.message}
-          helpText="A partir de quando os candidatos podem se inscrever."
+          register={register("startDate")}
+          error={errors.startDate?.message}
+          helpText="Data oficial de início da edição."
         />
         <Field
-          label="Fim das Inscrições:"
+          label="Fim da Edição:"
           type="datetime-local"
-          register={register("registrationEndDate")}
-          error={errors.registrationEndDate?.message}
-          helpText="Prazo final para recebimento de novas inscrições."
+          register={register("endDate")}
+          error={errors.endDate?.message}
+          helpText="Data oficial de encerramento da edição."
         />
       </div>
-
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Field
+          label="Início das Inscrições de Instituições:"
+          type="datetime-local"
+          register={register("institutionRegistrationStartDate")}
+          error={errors.institutionRegistrationStartDate?.message}
+          helpText="A partir de quando as instituições podem se inscrever."
+        />
+        <Field
+          label="Fim das Inscrições de Instituições:"
+          type="datetime-local"
+          register={register("institutionRegistrationEndDate")}
+          error={errors.institutionRegistrationEndDate?.message}
+          helpText="Prazo final para inscrições de instituições."
+        />
+      </div>
+       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Field
+          label="Início das Inscrições de Estudantes:"
+          type="datetime-local"
+          register={register("studentRegistrationStartDate")}
+          error={errors.studentRegistrationStartDate?.message}
+          helpText="A partir de quando os estudantes podem se inscrever."
+        />
+        <Field
+          label="Fim das Inscrições de Estudantes:"
+          type="datetime-local"
+          register={register("studentRegistrationEndDate")}
+          error={errors.studentRegistrationEndDate?.message}
+          helpText="Prazo final para inscrições de estudantes."
+        />
+      </div>
       <div className="mt-6 flex justify-between">
         <Button
           secondary

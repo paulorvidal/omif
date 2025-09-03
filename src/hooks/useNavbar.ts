@@ -43,12 +43,19 @@ export const useNavbar = () => {
         refetchOnWindowFocus: false,
     });
 
+    const isAllowedToEnroll = [
+        'COORDENADOR_LOCAL',
+        'ADMINISTRADOR',
+        'COMISSAO_ORGANIZADORA',
+    ].includes(userData?.role ?? '');
+
     const { data: currentEditionData, isLoading: isCurrentEditionLoading } = useQuery({
         queryKey: ["currentEdition"],
         queryFn: getCurrentInstitutionEnrollmentEdition,
         staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
         retry: false,
+        enabled: isAllowedToEnroll,
     });
 
     const loadOptions = async (inputValue: string) => {

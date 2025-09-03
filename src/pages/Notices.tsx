@@ -50,7 +50,7 @@ export const Notices = () => {
                     <SearchInput
                       value={globalFilter}
                       onChange={(e) => handleURLChange({ q: e.target.value })}
-                      placeholder="Buscar instituição..."
+                      placeholder="Buscar aviso..."
                       showClearIcon={true}
                       onClear={() => handleURLChange({ q: "" })}
                     />
