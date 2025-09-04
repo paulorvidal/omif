@@ -40,9 +40,10 @@ export const createEdition = async (
 };
 
 export const updateEdition = async (
-  data: UpdateEditionRequest,
+  data: Partial<UpdateEditionRequest>, 
 ): Promise<CreateEditionResponse> => {
-  const response = await api.post("/editions", data);
+  const { editionId, ...updateData } = data;
+  const response = await api.patch(`/editions/${editionId}`, updateData);
   return response.data;
 };
 
@@ -95,3 +96,4 @@ export const getCurrentInstitutionEnrollmentEdition = async (): Promise<CurrentE
   const response = await api.get<CurrentEdition>("/editions/institution-enrollment/current");
   return response.data;
 };
+

@@ -19,7 +19,9 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 const EditionFormSchema = z.object({
     name: z.string().nonempty("O nome é obrigatório"),
     year: z.coerce.number().min(2000, "O ano deve ser válido"),
-    minimumWage: z.string().nonempty("O salário mínimo é obrigatório"),
+    minimumWage: z.string()
+        .nonempty("O salário mínimo é obrigatório")
+        .regex(/^[0-9.,]+$/, "O valor não pode conter letras."),
     startDate: z.string().nonempty("A data de início da edição é obrigatória"),
     endDate: z.string().nonempty("A data de fim da edição é obrigatória"),
     institutionRegistrationStartDate: z.string().nonempty("A data de início para instituições é obrigatória"),
@@ -72,7 +74,7 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     const {
         register,
         handleSubmit,
-        formState: { errors, isDirty },
+        formState: { errors, isDirty, dirtyFields },
         reset,
     } = useForm<FormData>({
         resolver: zodResolver(EditionFormSchema),
@@ -114,9 +116,9 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     }, [editionData, reset]);
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (requestData: CreateEditionRequest | UpdateEditionRequest) => {
+        mutationFn: (requestData: CreateEditionRequest | Partial<UpdateEditionRequest>) => {
             if (isEditMode) {
-                return updateEdition(requestData as UpdateEditionRequest);
+                return updateEdition(requestData as Partial<UpdateEditionRequest>);
             }
             return createEdition(requestData as CreateEditionRequest);
         },
@@ -129,29 +131,44 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     });
 
     const handleFormSubmit = handleSubmit(async (data: FormData) => {
-        if (isEditMode && !isDirty) return showToast("Nenhuma alteração para salvar", "info");
-        const payload = {
-            ...data,
-            minimumWage: data.minimumWage.replace(',', '.'),
-            startDate: new Date(data.startDate).toISOString(),
-            endDate: new Date(data.endDate).toISOString(),
-            institutionRegistrationStartDate: new Date(data.institutionRegistrationStartDate).toISOString(),
-            institutionRegistrationEndDate: new Date(data.institutionRegistrationEndDate).toISOString(),
-            studentRegistrationStartDate: new Date(data.studentRegistrationStartDate).toISOString(),
-            studentRegistrationEndDate: new Date(data.studentRegistrationEndDate).toISOString(),
-        };
+        if (isEditMode && !isDirty) {
+            return showToast("Nenhuma alteração para salvar", "info");
+        }
 
         if (isEditMode) {
-            const updatePayload: UpdateEditionRequest = {
-                editionId: editionId!,
-                ...payload,
-            };
-            mutate(updatePayload);
+            const updatedData: Partial<UpdateEditionRequest> = { editionId: editionId! };
+
+            for (const key in dirtyFields) {
+                if (Object.prototype.hasOwnProperty.call(data, key)) {
+                    const value = data[key as keyof FormData];
+
+                    if (key.includes('Date')) {
+                        (updatedData as any)[key] = new Date(value as string).toISOString();
+                    } else if (key === 'minimumWage') {
+                        (updatedData as any)[key] = (value as string).replace(/\./g, '').replace(',', '.');
+                    } else {
+                        (updatedData as any)[key] = value;
+                    }
+                }
+            }
+
+            mutate(updatedData as Partial<UpdateEditionRequest>);
+
         } else {
+            const payload = {
+                ...data,
+                minimumWage: data.minimumWage.replace(/\./g, '').replace(',', '.'),
+                startDate: new Date(data.startDate).toISOString(),
+                endDate: new Date(data.endDate).toISOString(),
+                institutionRegistrationStartDate: new Date(data.institutionRegistrationStartDate).toISOString(),
+                institutionRegistrationEndDate: new Date(data.institutionRegistrationEndDate).toISOString(),
+                studentRegistrationStartDate: new Date(data.studentRegistrationStartDate).toISOString(),
+                studentRegistrationEndDate: new Date(data.studentRegistrationEndDate).toISOString(),
+            };
             mutate(payload as CreateEditionRequest);
         }
     });
-    
+
     const handleReset = () => reset();
 
     return {

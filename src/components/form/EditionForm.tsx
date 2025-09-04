@@ -43,7 +43,7 @@ export const EditionForm = () => {
         />
         <Field
           label="Salário Mínimo (R$):"
-          type="text"
+           type="tel"
           placeholder="Ex: 1550,00"
           register={register("minimumWage")}
           error={errors.minimumWage?.message}

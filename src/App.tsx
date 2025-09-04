@@ -134,7 +134,7 @@ const router = createBrowserRouter([
                 <EditionForm />
               </PrivateRoute>
             ),
-            handle: { title: "Nova Edição" },
+            handle: { title: "Editar Edição" },
           },
           {
             path: "/etapas/:id",
