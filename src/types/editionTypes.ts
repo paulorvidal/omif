@@ -12,12 +12,16 @@ export type CreateEditionResponse = {
   id?: string;
 };
 
+type PageInfo = {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+};
+
 export type PageResponse<T> = {
   content: T[];
-  totalPages: number;
-  totalElements?: number;
-  size?: number;
-  number?: number;
+  page: PageInfo;
 };
 
 export type CreateEditionRequest = {
@@ -58,8 +62,13 @@ export interface Edition {
   id: string;
   name: string;
   year: number;
-  registrationStartDate: string;
-  registrationEndDate: string;
+  startDate: string;
+  endDate: string;
+  institutionRegistrationStartDate: string;
+  institutionRegistrationEndDate: string;
+  studentRegistrationStartDate: string;
+  studentRegistrationEndDate: string;
+  minimumWage: number;
   steps: Step[];
 }
 

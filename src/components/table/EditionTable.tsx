@@ -1,21 +1,18 @@
 import React from "react";
 import {
   createColumnHelper,
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
+  type ColumnDef
 } from "@tanstack/react-table";
 import { ListFilterPlus, Pencil, Plus } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEditionsTable } from "../../hooks/useEditionTable";
 import { Button } from "../ui/Button";
-import { Pagination } from "../ui/Pagination";
 import { SearchInput } from "../ui/SearchInput";
 import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../ui/SelectField";
-
 import type { Edition } from "../../types/editionTypes";
 import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
+import { GenericTable } from "../ui/GenericTable";
 
 const formatDate = (dateString?: string): string => {
   if (!dateString) return "N/A";
@@ -45,52 +42,48 @@ export const EditionTable = () => {
         cell: (info) => info.getValue(),
       }),
       columnHelper.display({
-        id: "registrationPeriod",
-        header: "Período de Inscrição",
+        id: "studentRegistrationPeriod",
+        header: "Período de Inscrição do Aluno",
         cell: ({ row }) => (
           <span>
-            {`${formatDate(row.original.registrationStartDate)} - ${formatDate(row.original.registrationEndDate)}`}
+            {`${formatDate(row.original.studentRegistrationStartDate)} - ${formatDate(row.original.studentRegistrationEndDate)}`}
           </span>
+        ),
+      }),
+      columnHelper.display({
+        id: "steps",
+        header: "Etapas",
+        cell: ({ row }) => (
+          <div className="flex flex-col gap-1">
+            {row.original.steps?.map((step, index) => (
+              <span key={step.id}>
+                **Etapa {step.number}**: {formatDate(step.startDate)} - {formatDate(step.endDate)}
+              </span>
+            ))}
+          </div>
         ),
       }),
       columnHelper.display({
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <ActionsPopover>
-            <ActionsPopoverItem
-              icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-              onClick={() => redirectTo(`/edicao/${row.original.id}`)}
-            >
-              Editar
-            </ActionsPopoverItem>
-          </ActionsPopover>
+          <div className="flex justify-end">
+            <ActionsPopover>
+              <ActionsPopoverItem
+                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+                onClick={() => redirectTo(`/edicao/${row.original.id}`)}
+              >
+                Editar
+              </ActionsPopoverItem>
+            </ActionsPopover>
+          </div>
         ),
       }),
-    ];
+    ] as ColumnDef<Edition, unknown>[];
   }, []);
 
-  const table = useReactTable({
-    data,
-    columns,
-    pageCount,
-    state: {
-      pagination,
-    },
-    manualPagination: true,
-    onPaginationChange: (updater) => {
-      const newPagination =
-        typeof updater === "function" ? updater(pagination) : updater;
-      handleURLChange({
-        page: newPagination.pageIndex,
-        size: newPagination.pageSize,
-      });
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => row.id,
-  });
-
   const sortOptions = [
+    { label: "Ano (Mais Recente)", value: "year,desc" },
     { label: "Ano (Mais Recente)", value: "year,desc" },
     { label: "Ano (Mais Antigo)", value: "year,asc" },
     { label: "Nome (A-Z)", value: "name,asc" },
@@ -98,6 +91,7 @@ export const EditionTable = () => {
   ];
 
   const pageSizeOptions = [
+    { label: "5", value: 5 },
     { label: "5", value: 5 },
     { label: "10", value: 10 },
     { label: "20", value: 20 },
@@ -113,7 +107,7 @@ export const EditionTable = () => {
               <SearchInput
                 value={globalFilter}
                 onChange={(e) => handleURLChange({ q: e.target.value })}
-                placeholder="Buscar edição por nome..."
+                placeholder="Buscar edição..."
                 showClearIcon={true}
                 onClear={() => handleURLChange({ q: "" })}
               />
@@ -137,59 +131,20 @@ export const EditionTable = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto rounded-md bg-green-600">
-              <thead className="text-white">
-                {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id}>
-                    {hg.headers.map((header) => (
-                      <th key={header.id} className="p-2 text-left">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="bg-white">
-                {table.getRowModel().rows.map((row) => (
-                  <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="p-2 text-left">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-                {table.getRowModel().rows.length === 0 && !isLoading && (
-                  <tr>
-                    <td colSpan={columns.length} className="p-4 text-center">
-                      Nenhuma edição encontrada.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          <Pagination
-            pageIndex={table.getState().pagination.pageIndex}
-            pageCount={table.getPageCount()}
+          <GenericTable
+            data={data}
+            columns={columns}
+            pageCount={pageCount}
+            pagination={pagination}
             isLoading={isLoading}
-            onPageChange={(newPageIndex) =>
-              handleURLChange({ page: newPageIndex })
-            }
-            className="w-full p-1"
+            onPaginationChange={(updater) => {
+              const newPagination = typeof updater === "function" ? updater(pagination) : updater;
+              handleURLChange({ page: newPagination.pageIndex, size: newPagination.pageSize });
+            }}
+            getRowId={(row) => row.id}
           />
         </div>
       </div>
-
       <DialogForm
         open={filterDialog.open}
         onClose={filterDialog.onClose}
