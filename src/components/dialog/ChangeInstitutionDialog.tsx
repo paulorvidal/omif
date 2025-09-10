@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form"; 
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
-import { AlertTriangle, Building2, Loader2, X } from "lucide-react"; 
+import { AlertTriangle, Building2, Loader2, X } from "lucide-react";
 import { Button } from "../ui/Button";
 import { AsyncSelectField } from "../ui/AsyncSelectField";
 
@@ -47,7 +47,7 @@ export function ChangeInstitutionDialog(props: ChangeInstitutionDialogProps) {
         handleSubmit,
         control,
         reset,
-        watch, 
+        watch,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(changeInstitutionSchema),
@@ -142,12 +142,9 @@ export function ChangeInstitutionDialog(props: ChangeInstitutionDialogProps) {
                             type="submit"
                             className="h-12 w-full text-base"
                             disabled={isSaving}
+                            isLoading={isSaving}
                         >
-                            {isSaving ? (
-                                <Loader2 className="animate-spin" />
-                            ) : (
-                                "Salvar Alteração"
-                            )}
+                            Salvar Alterações
                         </Button>
                     </div>
                 </form>

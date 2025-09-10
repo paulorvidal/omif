@@ -1,7 +1,6 @@
 import { H2 } from "../components/ui/H2";
 import { Badge } from "../components/ui/Badge";
 import { ProfilePictureEditDialog } from "../components/dialog/ProfilePictureEditDialog";
-import { ProgressDialog } from "../components/dialog/ProgressDialog";
 import { Field } from "../components/ui/Field";
 import { Button } from "../components/ui/Button";
 import { useProfile } from "../hooks/useProfile";
@@ -10,7 +9,7 @@ import { InfoItem } from "../components/ui/InfoItem";
 import { AtSign, KeyRound, Building2, Pencil } from "lucide-react";
 import { ChangePasswordDialog } from "../components/dialog/ChangePasswordDialog";
 import { ChangeEmailDialog } from "../components/dialog/ChangeEmailDialog";
-import { ChangeInstitutionDialog } from "../components/dialog/ChangeInstitutionDialog"; 
+import { ChangeInstitutionDialog } from "../components/dialog/ChangeInstitutionDialog";
 
 export const Profile = () => {
     const {
@@ -137,7 +136,7 @@ export const Profile = () => {
                         <div className="grow"></div>
                         <div className="flex justify-between pt-4">
                             <Button secondary type="button" onClick={handleResetForm}>Desfazer  </Button>
-                            <Button type="submit" disabled={isLoading}>
+                            <Button type="submit" disabled={isLoading} isLoading={isLoading}>
                                 Salvar Alterações
                             </Button>
                         </div>
@@ -176,7 +175,6 @@ export const Profile = () => {
                 loadOptions={loadInstitutions}
             />
 
-      <ProgressDialog open={isLoading} />
-    </>
-  );
+        </>
+    );
 };

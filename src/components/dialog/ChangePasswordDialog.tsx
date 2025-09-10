@@ -117,12 +117,9 @@ export function ChangePasswordDialog(props: ChangePasswordDialogProps) {
               type="submit"
               className="h-12 w-full text-base"
               disabled={isSaving}
+              isLoading={isSaving}
             >
-              {isSaving ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                "Salvar Alterações"
-              )}
+              Salvar Alterações
             </Button>
           </div>
         </form>
