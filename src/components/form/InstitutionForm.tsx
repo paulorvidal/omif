@@ -56,11 +56,11 @@ export const InstitutionForm = () => {
         <Field
           label="Telefone:"
           type="text"
-          placeholder="Ex: (00) 00000-0000"
-          mask={["(99) 9999-9999", "(99) 99999-9999"]}
+          placeholder="Ex: (00)00000-0000"
+          mask={["(99)9999-9999", "(99)99999-9999"]}
           register={register("phoneNumber")}
           error={errors.phoneNumber?.message}
-          helpText="Formato (XX) XXXXX-XXXX"
+          helpText="Formato (XX)XXXXX-XXXX"
         />
       </div>
 

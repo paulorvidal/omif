@@ -11,14 +11,14 @@ const currentYear = new Date().getFullYear();
 
 const defaultOption = {
     label: "Todas",
-    value: "todas",
+    value: "all",
 };
 
 const EditionFormSchema = z.object({
     edition: z
         .object({
             label: z.union([z.string(), z.number()]),
-            value: z.string().uuid("ID inválido").or(z.literal("todas")),
+            value: z.string().uuid("ID inválido").or(z.literal("all")),
         })
         .nullable()
         .refine((v) => v !== null, {
@@ -78,7 +78,10 @@ export const useNavbar = () => {
         if (selectedEdition) {
             trigger("edition").then((isValid) => {
                 if (isValid) {
-                    localStorage.setItem("edition", selectedEdition.label.toString());
+                    const valueToStore = selectedEdition.value === 'all'
+                        ? 'all'
+                        : selectedEdition.label.toString();
+                    localStorage.setItem("edition", valueToStore);
                 } else {
                     showToast("Ano inválido.", "error");
                 }
@@ -99,7 +102,8 @@ export const useNavbar = () => {
             ].join(" "),
     };
 
-    const placeholder = localStorage.getItem("edition") ?? currentYear.toString();
+    const storedEdition = localStorage.getItem("edition");
+    const placeholder = storedEdition === "all" ? "Todas" : storedEdition ?? currentYear.toString();
 
     return {
         control,

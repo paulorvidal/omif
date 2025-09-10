@@ -1,9 +1,13 @@
+type PageInfo = {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
+};
+
 export type PageResponse<T> = {
   content: T[];
-  totalPages: number;
-  totalElements?: number;
-  size?: number;
-  number?: number;
+  page: PageInfo;
 };
 
 export type PageParams = {

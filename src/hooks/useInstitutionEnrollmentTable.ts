@@ -5,18 +5,19 @@ import { useDebounce } from "./useDebounce";
 import type { PaginationState } from "@tanstack/react-table";
 import {
   useQuery,
+  keepPreviousData,
   useMutation,
-  useQueryClient,
-  keepPreviousData
+  useQueryClient
 } from "@tanstack/react-query";
 
 import {
-  deleteInstitution,
-  findAllInstitutions,
-} from "../services/institutionService";
+  findAllInstitutionEnrollments,
+  approveEnrollment,
+  refuseEnrollment,
+} from "../services/institutionEnrollmentService";
 import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
-import { type FindAllInstitutionsResponse } from "../types/institutionTypes";
+import type { EnrollmentInstitution } from "../types/institutionEnrollmentTypes";
 import type { PageResponse } from "../types/defaultTypes";
 
 type FilterFormValues = {
@@ -24,70 +25,77 @@ type FilterFormValues = {
   pageSize: number;
 };
 
-export const useInstitutionTable = () => {
+type EnrollmentDecisionPayload = {
+  enrollmentId: string;
+  confirmChange: boolean;
+};
+
+export const useInstitutionEnrollmentTable = (editionYear: string) => {
+
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   const pageIndex = parseInt(searchParams.get("page") || "0", 10);
   const pageSize = parseInt(searchParams.get("size") || "10", 10);
-  const sort = searchParams.get("sort") || "name,asc";
+  const sort = searchParams.get("sort") || "institution.name,asc";
   const globalFilter = searchParams.get("q") || "";
 
   const debouncedFilter = useDebounce(globalFilter, 400);
 
-  const pagination: PaginationState = { pageIndex, pageSize, };
+  const pagination: PaginationState = { pageIndex, pageSize };
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [institutionToDelete, setInstitutionToDelete] = useState<string | null>(null);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-
   const { control, handleSubmit, reset } = useForm<FilterFormValues>();
+
+  const queryKey = ['institutionEnrollments', editionYear, { pageIndex, pageSize, filter: debouncedFilter, sort }];
 
   const {
     data: pageResponse,
     isLoading,
     isError,
     error,
-  } = useQuery<PageResponse<FindAllInstitutionsResponse>, ApiError>({
-    queryKey: ['institutions', { pageIndex, pageSize, filter: debouncedFilter, sort }],
-    queryFn: () => findAllInstitutions(pageIndex, pageSize, debouncedFilter, sort),
+  } = useQuery<PageResponse<EnrollmentInstitution>, ApiError>({
+    queryKey,
+    queryFn: () => findAllInstitutionEnrollments(editionYear!, pageIndex, pageSize, debouncedFilter, sort),
     placeholderData: keepPreviousData,
+    enabled: !!editionYear,
     refetchOnMount: true,
   });
 
+  const { mutate: approveEnrollmentMutate, isPending: isApproving } = useMutation({
+    mutationFn: ({ enrollmentId, confirmChange }: EnrollmentDecisionPayload) =>
+      approveEnrollment(editionYear, enrollmentId, confirmChange),
+    onSuccess: () => {
+      showToast("Inscrição aprovada com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey });
+    },
+    onError: (error: ApiError) => {
+      showToast(error.message || "Erro ao aprovar inscrição", "error");
+    },
+  });
+
+  const { mutate: refuseEnrollmentMutate, isPending: isRefusing } = useMutation({
+    mutationFn: ({ enrollmentId, confirmChange }: EnrollmentDecisionPayload) =>
+      refuseEnrollment(editionYear, enrollmentId, confirmChange),
+    onSuccess: () => {
+      showToast("Inscrição recusada com sucesso.", "success");
+      queryClient.invalidateQueries({ queryKey });
+    },
+    onError: (error: ApiError) => {
+      showToast(error.message || "Erro ao recusar inscrição", "error");
+    },
+  });
+
+
   useEffect(() => {
     if (isError && error) {
-      showToast(error.message || "Erro ao carregar instituições", "error");
+      showToast(error.message || "Erro ao carregar inscrições", "error");
     }
   }, [isError, error]);
 
   const data = pageResponse?.content ?? [];
   const pageCount = pageResponse?.page.totalPages ?? 0;
   const totalElements = pageResponse?.page.totalElements ?? 0;
-
-  const { mutate: performDelete, isPending: isDeleting } = useMutation({
-    mutationFn: (id: string) => deleteInstitution(id),
-    onSuccess: () => {
-      showToast("Instituição deletada com sucesso", "success");
-      queryClient.invalidateQueries({ queryKey: ['institutions'] });
-    },
-    onError: (err) => {
-      showToast(
-        err instanceof Error ? err.message : "Erro ao deletar instituição",
-        "error",
-      );
-    },
-    onSettled: () => {
-      setConfirmOpen(false);
-      setInstitutionToDelete(null);
-    }
-  });
-
-  const handleConfirmDelete = () => {
-    if (institutionToDelete) {
-      performDelete(institutionToDelete);
-    }
-  };
 
   const handleURLChange = useCallback(
     (newParams: Record<string, string | number>) => {
@@ -107,11 +115,6 @@ export const useInstitutionTable = () => {
     [searchParams, setSearchParams],
   );
 
-  const handleDeleteClick = (id: string) => {
-    setInstitutionToDelete(id);
-    setConfirmOpen(true);
-  };
-
   const handleOpenFilterDialog = () => {
     reset({ sort, pageSize });
     setFilterDialogOpen(true);
@@ -127,7 +130,6 @@ export const useInstitutionTable = () => {
     pageCount,
     pagination,
     isLoading,
-    isDeleting,
     globalFilter,
     totalElements,
     handleURLChange,
@@ -140,11 +142,13 @@ export const useInstitutionTable = () => {
         onSubmit: handleSubmit(handleApplyFilters),
       },
     },
-    deleteDialog: {
-      open: confirmOpen,
-      onConfirm: handleConfirmDelete,
-      onCancel: () => setConfirmOpen(false),
+    approveEnrollment: {
+      mutate: approveEnrollmentMutate,
+      isPending: isApproving,
     },
-    handleDeleteClick,
+    refuseEnrollment: {
+      mutate: refuseEnrollmentMutate,
+      isPending: isRefusing,
+    },
   };
 };

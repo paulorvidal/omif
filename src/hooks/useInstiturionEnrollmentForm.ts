@@ -4,9 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AxiosError } from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { enrollInEdition, getEnrollmentStatus, type EnrollmentPayload } from "../services/enrollmentService";
+import { enrollInEdition, getEnrollmentStatus } from "../services/institutionEnrollmentService";
+import { type EnrollmentPayload } from "../types/institutionEnrollmentTypes";
 import { scrollToTop } from "../utils/scrollToTop";
-import { redirectTo, showToast } from "../utils/events";
+import { showToast } from "../utils/events";
 
 const EnrollmentFormSchema = z.object({
     name: z.string().nonempty("O nome é obrigatório"),
@@ -26,13 +27,13 @@ const EnrollmentFormSchema = z.object({
 type FormData = z.infer<typeof EnrollmentFormSchema>;
 
 type UseEnrollmentFormProps = {
-    editionYear: string; 
+    editionYear: string;
 };
 
-export const useEnrollmentInstiturionForm = ({ editionYear }: UseEnrollmentFormProps) => {
+export const useInstiturionEnrollmentForm = ({ editionYear }: UseEnrollmentFormProps) => {
     const queryClient = useQueryClient();
 
-    const { register, handleSubmit, control, formState: { errors }, reset } = useForm<FormData>({
+    const { register, handleSubmit, control, formState: { errors, isDirty }, reset } = useForm<FormData>({
         resolver: zodResolver(EnrollmentFormSchema),
     });
 
@@ -62,7 +63,6 @@ export const useEnrollmentInstiturionForm = ({ editionYear }: UseEnrollmentFormP
         onSuccess: () => {
             showToast("Inscrição realizada com sucesso!", "success");
             queryClient.invalidateQueries({ queryKey: ['enrollmentStatus', editionYear] });
-            redirectTo("/dashboard");
         },
         onError: (err) => {
             const axiosErr = err as AxiosError<{ message: string }>;
@@ -72,14 +72,28 @@ export const useEnrollmentInstiturionForm = ({ editionYear }: UseEnrollmentFormP
     });
 
     const handleFormSubmit = handleSubmit((data: FormData) => {
-        const payload: EnrollmentPayload = {
-            name: data.name,
-            inep: data.inep || undefined,
-            phoneNumber: data.phoneNumber,
-            email1: data.email1,
-            email2: data.email2 || undefined,
-            email3: data.email3 || undefined,
-        };
+        let payload: EnrollmentPayload;
+
+        if (isDirty) {
+            payload = {
+                name: data.name,
+                inep: data.inep || null,
+                phoneNumber: data.phoneNumber,
+                email1: data.email1,
+                email2: data.email2 || null,
+                email3: data.email3 || null,
+            };
+        } else {
+            payload = {
+                name: null,
+                inep: null,
+                phoneNumber: null,
+                email1: null,
+                email2: null,
+                email3: null,
+            };
+        }
+
         submitEnrollment(payload);
     });
 
@@ -101,12 +115,12 @@ export const useEnrollmentInstiturionForm = ({ editionYear }: UseEnrollmentFormP
     return {
         control,
         errors,
-        isSubmitting, 
-        isLoadingStatus, 
+        isSubmitting,
+        isLoadingStatus,
         isError,
         register,
         handleFormSubmit,
         handleReset,
-        enrollmentData: enrollmentStatus, 
+        enrollmentData: enrollmentStatus,
     };
 };

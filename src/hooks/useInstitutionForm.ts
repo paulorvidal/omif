@@ -5,10 +5,12 @@ import { z } from "zod";
 import {
   createInstitution,
   updateInstitution,
-  getInstitutionById,
-  type CreateInstitutionRequest,
-  type UpdateInstitutionRequest,
+  getInstitutionById
 } from "../services/institutionService";
+import type {
+   CreateInstitutionRequest,
+   UpdateInstitutionRequest,
+} from "../types/institutionTypes";
 import { fetchEducators } from "../services/educatorService";
 import { scrollToTop } from "../utils/scrollToTop";
 import { redirectTo, showToast } from "../utils/events";

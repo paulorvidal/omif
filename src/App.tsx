@@ -12,7 +12,6 @@ import { MainLayout } from "./components/layout/MainLayout";
 import { PrivateRoute } from "./utils/PrivateRoute";
 import { Notices } from "./pages/Notices";
 import { NoticeForm } from "./components/form/NoticeForm";
-import { InstitutionTable } from "./components/table/InstitutionTable";
 import { InstitutionForm } from "./components/form/InstitutionForm";
 import { StudentTable } from "./components/table/StudentTable";
 import { EducatorTable } from "./components/table/EducatorTable";
@@ -22,7 +21,9 @@ import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage";
 import { StepsForm } from "./components/form/StepsForm";
 import { Profile } from "./pages/Profile";
-import { EnrollmentInstitutionForm } from "./components/form/EnrollmentInstitutionForm";
+import { InstitutionEnrollmentForm } from "./components/form/InstitutionEnrollmentForm";
+
+import { InstitutionsPage } from "./pages/InstitutionsPage";
 
 const router = createBrowserRouter([
   {
@@ -77,7 +78,7 @@ const router = createBrowserRouter([
             path: "/instituicoes",
             element: (
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
-                <InstitutionTable />
+                <InstitutionsPage />
               </PrivateRoute>
             ),
             handle: { title: "Instituições" },
@@ -167,7 +168,7 @@ const router = createBrowserRouter([
             path: "/edicoes/:editionYear/inscrever-instituicao",
             element: (
               <PrivateRoute>
-                <EnrollmentInstitutionForm />
+                <InstitutionEnrollmentForm />
               </PrivateRoute>
             ),
             handle: { title: "Inscrever Instituição" },

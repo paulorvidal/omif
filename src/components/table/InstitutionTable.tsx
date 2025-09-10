@@ -1,30 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   createColumnHelper,
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
+  type ColumnDef
 } from "@tanstack/react-table";
 import {
   ListFilterPlus,
   Plus,
   Pencil,
   Trash,
-  ExternalLink,
+  
 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
-import { type FindAllInstitutionsResponse } from "../../services/institutionService";
+import { type FindAllInstitutionsResponse } from "../../types/institutionTypes";
 import { useInstitutionTable } from "../../hooks/useInstitutionTable";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { Pagination } from "../ui/Pagination";
+import { GenericTable } from "../ui/GenericTable";
 import { SearchInput } from "../ui/SearchInput";
 import { ConfirmDialog } from "../dialog/ConfirmDialog";
 import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../ui/SelectField";
 import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
-export const InstitutionTable = () => {
+type InstitutionTableProps = {
+  onCountChange: (count: number) => void;
+};
+
+export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
   const {
     data,
     pageCount,
@@ -35,7 +37,14 @@ export const InstitutionTable = () => {
     filterDialog,
     deleteDialog,
     handleDeleteClick,
+    totalElements
   } = useInstitutionTable();
+
+  useEffect(() => {
+    if (typeof totalElements === 'number' && isFinite(totalElements)) {
+      onCountChange(totalElements);
+    }
+  }, [totalElements, onCountChange]);
 
   const columns = React.useMemo(() => {
     const columnHelper = createColumnHelper<FindAllInstitutionsResponse>();
@@ -77,45 +86,33 @@ export const InstitutionTable = () => {
           );
         },
       }),
+
       columnHelper.display({
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <ActionsPopover>
-            <ActionsPopoverItem
-              icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-              onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
-            >
-              Editar
-            </ActionsPopoverItem>
-            <ActionsPopoverItem
-              icon={<Trash className="h-4 w-4 text-zinc-600" />}
-              onClick={() => handleDeleteClick(row.original.id)}
-            >
-              Deletar
-            </ActionsPopoverItem>
-          </ActionsPopover>
+          <div className="flex justify-end">
+
+            <ActionsPopover>
+              <ActionsPopoverItem
+                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+                onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
+              >
+                Editar
+              </ActionsPopoverItem>
+              <ActionsPopoverItem
+                icon={<Trash className="h-4 w-4 text-zinc-600" />}
+                onClick={() => handleDeleteClick(row.original.id)}
+              >
+                Deletar
+              </ActionsPopoverItem>
+            </ActionsPopover>
+          </div>
         ),
       }),
-    ];
+    ] as ColumnDef<FindAllInstitutionsResponse, unknown>[];
   }, [handleDeleteClick]);
 
-  const table = useReactTable({
-    data,
-    columns,
-    pageCount,
-    state: { pagination },
-    manualPagination: true,
-    onPaginationChange: (updater) => {
-      const newPagination =
-        typeof updater === "function" ? updater(pagination) : updater;
-      handleURLChange({
-        page: newPagination.pageIndex,
-        size: newPagination.pageSize,
-      });
-    },
-    getCoreRowModel: getCoreRowModel(),
-  });
 
   const sortOptions = [
     { label: "Nome (A-Z)", value: "name,asc" },
@@ -126,7 +123,7 @@ export const InstitutionTable = () => {
   ];
 
   const pageSizeOptions = [
-    { label: "10", value: 10 },
+    { label: "5", value: 5 },
     { label: "5", value: 5 },
     { label: "10", value: 10 },
     { label: "20", value: 20 },
@@ -166,61 +163,22 @@ export const InstitutionTable = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto rounded-md bg-green-600">
-              <thead className="text-white">
-                {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id}>
-                    {hg.headers.map((header) => (
-                      <th key={header.id} className="p-2 text-left">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="bg-white">
-                {table.getRowModel().rows.map((row) => (
-                  <tr className="odd:bg-white even:bg-zinc-200/50" key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="p-2 text-left">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-                {table.getRowModel().rows.length === 0 && !isLoading && (
-                  <tr>
-                    <td colSpan={columns.length} className="p-4 text-center">
-                      Nenhum registro encontrado.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex flex-col gap-4 md:flex-row">
-            <Pagination
-              pageIndex={table.getState().pagination.pageIndex}
-              pageCount={table.getPageCount()}
-              isLoading={isLoading}
-              onPageChange={(newPageIndex) =>
-                handleURLChange({ page: newPageIndex })
-              }
-              className="flex w-full justify-center p-1 md:justify-start"
-            />
-            <Button icon={<ExternalLink />} outline>
-              Exportar
-            </Button>
-          </div>
+          <GenericTable
+            data={data}
+            columns={columns}
+            pageCount={pageCount}
+            pagination={pagination}
+            isLoading={isLoading}
+            getRowId={(row) => row.id}
+            onPaginationChange={(updater) => {
+              const newPagination =
+                typeof updater === "function" ? updater(pagination) : updater;
+              handleURLChange({
+                page: newPagination.pageIndex,
+                size: newPagination.pageSize,
+              });
+            }}
+          />
         </div>
       </div>
 
