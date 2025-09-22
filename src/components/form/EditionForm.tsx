@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useEditionForm } from "../../hooks/useEditionForm";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 import { ProgressDialog } from "../dialog/ProgressDialog";
+import { maskCurrency } from '../../utils/formatters';
 
 export const EditionForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -15,7 +17,18 @@ export const EditionForm = () => {
     register,
     handleFormSubmit,
     handleReset,
+    watch,
+    setValue,
   } = useEditionForm({ editionId: id });
+  const minimumWageValue = watch('minimumWage');
+  useEffect(() => {
+    const valueAsString = String(minimumWageValue || '');
+    const formattedValue = maskCurrency(valueAsString);
+
+    if (formattedValue !== valueAsString) {
+      setValue('minimumWage', formattedValue, { shouldValidate: true });
+    }
+  }, [minimumWageValue, setValue]);
 
   const isLoading = isPending || (isEditMode && isEditionLoading);
 
@@ -43,11 +56,12 @@ export const EditionForm = () => {
         />
         <Field
           label="Salário Mínimo (R$):"
-           type="tel"
-          placeholder="Ex: 1550,00"
+          type="text" 
+          placeholder="0,00"
           register={register("minimumWage")}
           error={errors.minimumWage?.message}
           helpText="Valor base para o formulário socioeconômico."
+          inputProps={{ inputMode: "decimal" }} 
         />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -82,7 +96,7 @@ export const EditionForm = () => {
           helpText="Prazo final para inscrições de instituições."
         />
       </div>
-       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Field
           label="Início das Inscrições de Estudantes:"
           type="datetime-local"

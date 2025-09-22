@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AxiosError } from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { enrollInEdition, getEnrollmentStatus } from "../services/institutionEnrollmentService";
-import { type EnrollmentPayload } from "../types/institutionEnrollmentTypes";
+import { enrollInEdition, getEnrollmentStatus } from "../services/enrollmentInstitutionService";
+import { type EnrollmentPayload } from "../types/enrollmentInstitutionTypes";
 import { scrollToTop } from "../utils/scrollToTop";
 import { showToast } from "../utils/events";
 
@@ -30,7 +30,7 @@ type UseEnrollmentFormProps = {
     editionYear: string;
 };
 
-export const useInstiturionEnrollmentForm = ({ editionYear }: UseEnrollmentFormProps) => {
+export const useEnrollmentInstiturionForm = ({ editionYear }: UseEnrollmentFormProps) => {
     const queryClient = useQueryClient();
 
     const { register, handleSubmit, control, formState: { errors, isDirty }, reset } = useForm<FormData>({

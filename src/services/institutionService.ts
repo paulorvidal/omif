@@ -9,46 +9,24 @@ import type {
 } from "../types/institutionTypes"
 
 export const findAllInstitutions = async (
-  page: number,
-  size: number = 10,
-  q?: string,
-  sort?: string,
+  params: PageParams,
 ): Promise<PageResponse<FindAllInstitutionsResponse>> => {
-  const params: PageParams = { page, size };
-
-  if (q?.trim()) {
-    params.q = q.trim();
-  }
-
-  if (sort?.trim()) {
-    params.sort = sort.trim();
-  }
-
   const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
     "/institutions",
-    { params },
+    { params }, 
   );
   return response.data;
 };
 
-export async function fetchInstitutions(
-  input: string,
-): Promise<Array<{ label: string; value: string }>> {
-  const response = await api.get<{
-    content: Institution[];
-  }>("/institutions/search", {
-    params: {
-      q: input,
-      page: 0,
-      size: 10,
-    },
-  });
-
-  return response.data.content.map((inst) => ({
-    label: inst.name,
-    value: inst.id,
-  }));
-}
+export const fetchInstitutions = async (
+  params: PageParams,
+): Promise<PageResponse<Institution>> => {
+  const response = await api.get<PageResponse<Institution>>(
+    "/institutions/search",
+    { params },
+  );
+  return response.data;
+};
 
 export const createInstitution = async (
   data: CreateInstitutionRequest,
@@ -61,6 +39,8 @@ export const getInstitutionById = async (id: string) => {
   const resp = await api.get<FindInstitutionsResponse>(`/institutions/${id}`);
   return resp.data;
 };
+
+
 
 export const updateInstitution = async (
   id: string,

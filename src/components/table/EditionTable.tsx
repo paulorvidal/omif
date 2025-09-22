@@ -3,7 +3,7 @@ import {
   createColumnHelper,
   type ColumnDef
 } from "@tanstack/react-table";
-import { ListFilterPlus, Pencil, Plus } from "lucide-react";
+import { ListFilterPlus, Pencil, Plus, Route } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEditionsTable } from "../../hooks/useEditionTable";
 import { Button } from "../ui/Button";
@@ -13,10 +13,18 @@ import { SelectField } from "../ui/SelectField";
 import type { Edition } from "../../types/editionTypes";
 import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 import { GenericTable } from "../ui/GenericTable";
+import { formatInTimeZone } from 'date-fns-tz';
+import { ptBR } from 'date-fns/locale';
+import { StatusButton } from "../ui/StatusButton"
+import { CalendarDays } from 'lucide-react';
 
-const formatDate = (dateString?: string): string => {
+export const formatDateWithTime = (dateString?: string): string => {
   if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  return formatInTimeZone(dateString, 'UTC', "dd/MM/yyyy HH:mm", { locale: ptBR });
+};
+export const formatDate = (dateString?: string): string => {
+  if (!dateString) return "N/A";
+  return formatInTimeZone(dateString, 'UTC', "dd/MM/yyyy", { locale: ptBR });
 };
 
 export const EditionTable = () => {
@@ -43,25 +51,47 @@ export const EditionTable = () => {
       }),
       columnHelper.display({
         id: "studentRegistrationPeriod",
-        header: "Período de Inscrição do Aluno",
+        header: "Período",
         cell: ({ row }) => (
           <span>
-            {`${formatDate(row.original.studentRegistrationStartDate)} - ${formatDate(row.original.studentRegistrationEndDate)}`}
+            {`${formatDateWithTime(row.original.startDate)} - ${formatDateWithTime(row.original.endDate)}`}
           </span>
         ),
       }),
       columnHelper.display({
         id: "steps",
         header: "Etapas",
-        cell: ({ row }) => (
-          <div className="flex flex-col gap-1">
-            {row.original.steps?.map((step, index) => (
-              <span key={step.id}>
-                **Etapa {step.number}**: {formatDate(step.startDate)} - {formatDate(step.endDate)}
-              </span>
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const steps = row.original.steps;
+
+          return (steps && steps.length > 0) ? (
+            <div className="flex flex-wrap gap-2">
+              {steps.map((step) => (
+                <StatusButton
+                  key={step.id}
+                  variant="green"
+                  onClick={() => redirectTo(`/edicoes/${row.original.id}/etapas`)}
+                  className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
+                >
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  <span className="font-semibold">
+                    {step.number}:
+                  </span>
+                  <span>
+                    {formatDate(step.startDate)}
+                  </span>
+                </StatusButton>
+              ))}
+            </div>
+          ) : (
+            <StatusButton
+              variant="red"
+              onClick={() => redirectTo(`/edicoes/${row.original.id}/etapas`)}
+            >
+              Nenhuma etapa
+            </StatusButton>
+          );
+        },
       }),
       columnHelper.display({
         id: "actions",
@@ -74,6 +104,12 @@ export const EditionTable = () => {
                 onClick={() => redirectTo(`/edicao/${row.original.id}`)}
               >
                 Editar
+              </ActionsPopoverItem>
+              <ActionsPopoverItem
+                icon={<Route className="h-4 w-4 text-zinc-600" />}
+                onClick={() => redirectTo(`/edicoes/${row.original.id}/etapas`)}
+              >
+                Etapas
               </ActionsPopoverItem>
             </ActionsPopover>
           </div>

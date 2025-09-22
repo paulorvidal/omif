@@ -14,10 +14,10 @@ import {
   findAllInstitutionEnrollments,
   approveEnrollment,
   refuseEnrollment,
-} from "../services/institutionEnrollmentService";
+} from "../services/enrollmentInstitutionService";
 import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
-import type { EnrollmentInstitution } from "../types/institutionEnrollmentTypes";
+import type { EnrollmentInstitution } from "../types/enrollmentInstitutionTypes";
 import type { PageResponse } from "../types/defaultTypes";
 
 type FilterFormValues = {
@@ -30,7 +30,7 @@ type EnrollmentDecisionPayload = {
   confirmChange: boolean;
 };
 
-export const useInstitutionEnrollmentTable = (editionYear: string) => {
+export const useEnrollmentInstitutionTable = (editionYear: string) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();

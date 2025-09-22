@@ -1,9 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { TabsContainer, Tab } from '../components/ui/Tabs';
-import { InstitutionTable } from '../components/table/InstitutionTable';
-import { EnrollmentInstitutionTable } from '../components/table/EnrollmentInstitutionTable';
-import { InstitutionReportGenerator } from '../components/report/InstitutionReportGenerator';
+import { StudentTable } from '../components/table/StudentTable';
+import { EnrollmentStudentTable } from '../components/table/EnrollmentStudentTable';
 import { List, NotebookPen, FileChartColumn } from 'lucide-react';
 
 type ActiveTab = 'all' | 'enrollments' | 'reports';
@@ -15,24 +15,23 @@ const getValidTab = (tab: string | null): ActiveTab => {
   return 'all';
 };
 
-export const InstitutionsPage = () => {
+export const StudentsPage = () => {
   const [editionYear, setEditionYear] = useState(() => localStorage.getItem("edition"));
   const [isEditionActive, setIsEditionActive] = useState<boolean>(
     () => localStorage.getItem("editionIsActive") === 'true'
   );
 
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const activeTab = getValidTab(searchParams.get('tab'));
 
-  const [institutionsCount, setInstitutionsCount] = useState<number>();
+  const [studentsCount, setStudentsCount] = useState<number>();
   const [enrollmentsCount, setEnrollmentsCount] = useState<number>();
 
   useEffect(() => {
     const handleEditionChange = () => {
       if (activeTab !== 'all') {
-        setInstitutionsCount(undefined);
+        setStudentsCount(undefined);
       }
       if (activeTab !== 'enrollments') {
         setEnrollmentsCount(undefined);
@@ -71,11 +70,11 @@ export const InstitutionsPage = () => {
     <div className="flex flex-col gap-3">
       <TabsContainer>
         <Tab
-          label="Todas"
+          label="Todos"
           isActive={activeTab === 'all'}
           onClick={() => handleTabChange('all')}
           icon={<List size={16} />}
-          count={institutionsCount}
+          count={studentsCount}
         />
         {showEnrollmentsTab && (
           <Tab
@@ -96,17 +95,19 @@ export const InstitutionsPage = () => {
 
       <div>
         {activeTab === 'all' && (
-          <InstitutionTable onCountChange={setInstitutionsCount} />
+          <StudentTable
+            onCountChange={setStudentsCount}
+          />
         )}
         {activeTab === 'enrollments' && showEnrollmentsTab && (
-          <EnrollmentInstitutionTable
+          <EnrollmentStudentTable
             onCountChange={setEnrollmentsCount}
             editionYear={editionYear}
             isEditionActive={isEditionActive}
           />
         )}
         {activeTab === 'reports' && (
-          <InstitutionReportGenerator />
+          <div>nada</div>
         )}
       </div>
     </div>

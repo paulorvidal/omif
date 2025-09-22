@@ -3,8 +3,12 @@ import type { PageParams, PageResponse } from "../types/defaultTypes";
 import type {
     EnrollmentPayload,
     EnrollmentStatusResponse,
-    EnrollmentInstitution
-} from "../types/institutionEnrollmentTypes"
+    EnrollmentInstitution,
+
+} from "../types/enrollmentInstitutionTypes"
+import type {
+  Institution
+} from "../types/institutionTypes"
 
 export const enrollInEdition = async (editionYear: string, payload: EnrollmentPayload) => {
     console.log(payload)
@@ -38,7 +42,7 @@ export const findAllInstitutionEnrollments = async (
         { params },
     );
     return response.data;
-}
+};
 
 export const approveEnrollment = async (editionYear: string, enrollmentId: string, confirmChange?: boolean) => {
     const response = await api.post(
@@ -57,3 +61,25 @@ export const refuseEnrollment = async (editionYear: string, enrollmentId: string
     );
     return response.data;
 };
+
+
+export async function fetchInstitutions(
+  input: string,
+  editionYear: string
+): Promise<Array<{ label: string; value: string }>> {
+  const response = await api.get<{
+    content: Institution[];
+  }>( `/editions/${editionYear}/enrollments/search`, {
+    params: {
+      q: input,
+      page: 0,
+      size: 10,
+    },
+  });
+
+  return response.data.content.map((inst) => ({
+    label: inst.name,
+    value: inst.id,
+  }));
+}
+

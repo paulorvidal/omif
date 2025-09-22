@@ -1,13 +1,13 @@
 
 import { useParams } from "react-router-dom";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
-import { useInstiturionEnrollmentForm } from "../../hooks/useInstiturionEnrollmentForm";
+import { useEnrollmentInstiturionForm } from "../../hooks/useEnrollmentInstiturionForm";
 import { Field } from "../ui/Field";
 import { Button } from "../ui/Button";
 import { redirectTo } from "../../utils/events";
 import type { EnrollmentStatusResponse } from "../../types/institutionEnrollmentTypes";
 
-export const InstitutionEnrollmentForm = () => {
+export const EnrollmentInstitutionForm = () => {
     const { editionYear } = useParams<{ editionYear?: string }>();
 
     if (!editionYear) {
@@ -26,7 +26,7 @@ const EnrollmentView = ({ editionYear }: { editionYear: string }) => {
         handleReset,
         enrollmentData,
         isLoadingStatus
-    } = useInstiturionEnrollmentForm({ editionYear });
+    } = useEnrollmentInstiturionForm({ editionYear });
 
     if (isLoadingStatus) {
         return <div className="p-8 text-center">Verificando status da inscrição...</div>;

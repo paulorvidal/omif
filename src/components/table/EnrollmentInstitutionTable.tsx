@@ -3,8 +3,8 @@ import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { ListFilterPlus, Plus, Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { redirectTo } from "../../utils/events";
-import { useInstitutionEnrollmentTable } from "../../hooks/useInstitutionEnrollmentTable";
-import type { EnrollmentInstitution } from "../../types/institutionEnrollmentTypes";
+import { useEnrollmentInstitutionTable } from "../../hooks/useEnrollmentInstitutionTable";
+import type { EnrollmentInstitution } from "../../types/enrollmentInstitutionTypes";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { GenericTable } from "../ui/GenericTable";
@@ -26,12 +26,13 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-type InstitutionEnrollmentTableProps = {
+type Props = {
   onCountChange: (count: number) => void;
   editionYear: string;
+  isEditionActive: boolean;
 };
 
-export const InstitutionEnrollmentTable = ({ onCountChange, editionYear }: InstitutionEnrollmentTableProps) => {
+export const EnrollmentInstitutionTable = ({ onCountChange, editionYear, isEditionActive }: Props) => {
   const {
     data,
     pageCount,
@@ -43,7 +44,7 @@ export const InstitutionEnrollmentTable = ({ onCountChange, editionYear }: Insti
     totalElements,
     approveEnrollment,
     refuseEnrollment,
-  } = useInstitutionEnrollmentTable(editionYear);
+  } = useEnrollmentInstitutionTable(editionYear);
 
   useEffect(() => {
     if (typeof totalElements === 'number' && isFinite(totalElements)) {
@@ -57,7 +58,7 @@ export const InstitutionEnrollmentTable = ({ onCountChange, editionYear }: Insti
     action: 'approve' | 'refuse' | null;
   }>({ open: false, enrollment: null, action: null });
 
-   const handleActionClick = (enrollment: EnrollmentInstitution, action: 'approve' | 'refuse') => {
+  const handleActionClick = (enrollment: EnrollmentInstitution, action: 'approve' | 'refuse') => {
     if (enrollment.changedInstitutionData) {
       setDialogState({ open: true, enrollment, action });
     } else {
@@ -79,7 +80,7 @@ export const InstitutionEnrollmentTable = ({ onCountChange, editionYear }: Insti
         enrollmentId: enrollment.id,
         confirmChange: confirmChanges,
       });
-    } else { // action === 'refuse'
+    } else {
       refuseEnrollment.mutate({
         enrollmentId: enrollment.id,
         confirmChange: confirmChanges,
@@ -142,23 +143,27 @@ export const InstitutionEnrollmentTable = ({ onCountChange, editionYear }: Insti
 
           return (
             <div className="flex justify-end gap-2">
-              {(() => {
-                switch (status) {
-                  case "PENDING":
-                    return (
-                      <>
-                        {refuseButton}
-                        {approveButton}
-                      </>
-                    );
-                  case "REFUSED":
-                    return approveButton;
-                  case "APPROVED":
-                    return refuseButton;
-                  default:
-                    return null;
-                }
-              })()}
+              {isEditionActive ? (
+                (() => {
+                  switch (status) {
+                    case "PENDING":
+                      return (
+                        <>
+                          {refuseButton}
+                          {approveButton}
+                        </>
+                      );
+                    case "REFUSED":
+                      return approveButton;
+                    case "APPROVED":
+                      return refuseButton;
+                    default:
+                      return null;
+                  }
+                })()
+              ) : (
+                <Badge color="border-zinc-300 text-zinc-600">INDISPONÍVEL</Badge>
+              )}
             </div>
           );
         },

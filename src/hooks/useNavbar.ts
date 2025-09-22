@@ -19,6 +19,7 @@ const EditionFormSchema = z.object({
         .object({
             label: z.union([z.string(), z.number()]),
             value: z.string().uuid("ID inválido").or(z.literal("all")),
+            isActive: z.boolean().optional(),
         })
         .nullable()
         .refine((v) => v !== null, {
@@ -66,7 +67,6 @@ export const useNavbar = () => {
             });
             return [defaultOption, ...(editions || [])];
         } catch (error) {
-            console.error("Failed to fetch editions:", error);
             showToast("Erro ao buscar as edições.", "error");
             return [defaultOption];
         }
@@ -82,6 +82,12 @@ export const useNavbar = () => {
                         ? 'all'
                         : selectedEdition.label.toString();
                     localStorage.setItem("edition", valueToStore);
+                    if (selectedEdition.value === 'all' || typeof selectedEdition.isActive === 'undefined') {
+                        localStorage.removeItem("editionIsActive");
+                    } else {
+                        localStorage.setItem("editionIsActive", String(selectedEdition.isActive));
+                    }
+                    window.dispatchEvent(new Event("editionChange"));
                 } else {
                     showToast("Ano inválido.", "error");
                 }

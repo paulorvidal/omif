@@ -14,14 +14,21 @@ import type {
 } from "../types/editionTypes"
 import { redirectTo, showToast } from "../utils/events";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { maskCurrency } from '../utils/formatters';
 
+const cleanCurrencyString = (value: string) => value.replace(/[R$\s.,]/g, '');
 
 const EditionFormSchema = z.object({
     name: z.string().nonempty("O nome é obrigatório"),
     year: z.coerce.number().min(2000, "O ano deve ser válido"),
-    minimumWage: z.string()
+    minimumWage: z.string({ required_error: "O salário mínimo é obrigatório" })
         .nonempty("O salário mínimo é obrigatório")
-        .regex(/^[0-9.,]+$/, "O valor não pode conter letras."),
+        .transform(cleanCurrencyString)
+        .refine(value => {
+            const num = Number(value) / 100;
+            return !isNaN(num) && num > 0;
+        }, { message: "O salário mínimo deve ser maior que zero" }),
+
     startDate: z.string().nonempty("A data de início da edição é obrigatória"),
     endDate: z.string().nonempty("A data de fim da edição é obrigatória"),
     institutionRegistrationStartDate: z.string().nonempty("A data de início para instituições é obrigatória"),
@@ -63,6 +70,7 @@ const EditionFormSchema = z.object({
     });
 
 type FormData = z.infer<typeof EditionFormSchema>;
+type EditionFormInput = z.input<typeof EditionFormSchema>;
 
 type UseEditionFormProps = {
     editionId?: string;
@@ -76,7 +84,9 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
         handleSubmit,
         formState: { errors, isDirty, dirtyFields },
         reset,
-    } = useForm<FormData>({
+        watch,
+        setValue
+    } = useForm<EditionFormInput>({
         resolver: zodResolver(EditionFormSchema),
         defaultValues: {
             name: "",
@@ -101,10 +111,16 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
         if (editionData) {
             const formatDateForInput = (dateString: string) => dateString ? new Date(dateString).toISOString().slice(0, 16) : "";
 
+            const numericWage = Number(editionData.minimumWage);
+
+            const wageInCentsString = String(numericWage * 100);
+
+            const formattedMinimumWage = maskCurrency(wageInCentsString);
+
             reset({
                 name: editionData.name,
                 year: editionData.year,
-                minimumWage: String(editionData.minimumWage).replace('.', ','),
+                minimumWage: formattedMinimumWage,
                 startDate: formatDateForInput(editionData.startDate),
                 endDate: formatDateForInput(editionData.endDate),
                 institutionRegistrationStartDate: formatDateForInput(editionData.institutionRegistrationStartDate),
@@ -125,16 +141,16 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
         onSuccess: (data) => {
             showToast(isEditMode ? "Edição atualizada com sucesso" : "Edição criada com sucesso", "success");
             const returnedId = data.id;
-            redirectTo(`/etapas/${returnedId}`);
+            redirectTo(`/edicoes/${returnedId}/etapas`);
         },
         onError: (error) => showToast(error instanceof ApiError ? error.message : "Falha na requisição.", "error"),
     });
 
     const handleFormSubmit = handleSubmit(async (data: FormData) => {
+
         if (isEditMode && !isDirty) {
             return showToast("Nenhuma alteração para salvar", "info");
         }
-
         if (isEditMode) {
             const updatedData: Partial<UpdateEditionRequest> = { editionId: editionId! };
 
@@ -142,22 +158,20 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
                 if (Object.prototype.hasOwnProperty.call(data, key)) {
                     const value = data[key as keyof FormData];
 
-                    if (key.includes('Date')) {
+                    if (key === 'minimumWage') {
+                        (updatedData as any)[key] = String(value);
+                    } else if (key.includes('Date')) {
                         (updatedData as any)[key] = new Date(value as string).toISOString();
-                    } else if (key === 'minimumWage') {
-                        (updatedData as any)[key] = (value as string).replace(/\./g, '').replace(',', '.');
                     } else {
                         (updatedData as any)[key] = value;
                     }
                 }
             }
-
             mutate(updatedData as Partial<UpdateEditionRequest>);
-
         } else {
-            const payload = {
+            const payload: CreateEditionRequest = {
                 ...data,
-                minimumWage: data.minimumWage.replace(/\./g, '').replace(',', '.'),
+                minimumWage: String(data.minimumWage),
                 startDate: new Date(data.startDate).toISOString(),
                 endDate: new Date(data.endDate).toISOString(),
                 institutionRegistrationStartDate: new Date(data.institutionRegistrationStartDate).toISOString(),
@@ -165,9 +179,10 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
                 studentRegistrationStartDate: new Date(data.studentRegistrationStartDate).toISOString(),
                 studentRegistrationEndDate: new Date(data.studentRegistrationEndDate).toISOString(),
             };
-            mutate(payload as CreateEditionRequest);
+            mutate(payload);
         }
     });
+
 
     const handleReset = () => reset();
 
@@ -179,5 +194,7 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
         register,
         handleFormSubmit,
         handleReset,
+        watch,
+        setValue,
     };
 };

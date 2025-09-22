@@ -7,13 +7,11 @@ import { Toaster } from "sonner";
 import { RootLayout } from "./components/layout/RootLayout";
 import { Login } from "./pages/Login";
 import { EducatorForm } from "./components/form/EducatorForm";
-import { StudentForm } from "./components/form/StudentForm";
 import { MainLayout } from "./components/layout/MainLayout";
 import { PrivateRoute } from "./utils/PrivateRoute";
 import { Notices } from "./pages/Notices";
 import { NoticeForm } from "./components/form/NoticeForm";
 import { InstitutionForm } from "./components/form/InstitutionForm";
-import { StudentTable } from "./components/table/StudentTable";
 import { EducatorTable } from "./components/table/EducatorTable";
 import { EditionForm } from "./components/form/EditionForm";
 import { EditionTable } from "./components/table/EditionTable";
@@ -21,9 +19,13 @@ import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { PasswordRecoveryPage } from "./pages/PasswordRecoveryPage";
 import { StepsForm } from "./components/form/StepsForm";
 import { Profile } from "./pages/Profile";
-import { InstitutionEnrollmentForm } from "./components/form/InstitutionEnrollmentForm";
+import { EnrollmentInstitutionForm } from "./components/form/EnrollmentInstitutionForm";
 
 import { InstitutionsPage } from "./pages/InstitutionsPage";
+import { StudentsPage } from "./pages/StudentsPage"
+import { EnrollmentStudentPage } from "./pages/EnrollmentStudentPage"
+
+import { StudentEditForm } from "./components/form/StudentEditForm"
 
 const router = createBrowserRouter([
   {
@@ -42,8 +44,8 @@ const router = createBrowserRouter([
         element: <EducatorForm />,
       },
       {
-        path: "/estudante",
-        element: <StudentForm />,
+        path: "/edicoes/:editionYear/estudantes",
+        element: <EnrollmentStudentPage />,
       },
       {
         path: "/verify-email/:token",
@@ -105,10 +107,19 @@ const router = createBrowserRouter([
             path: "/estudantes",
             element: (
               <PrivateRoute>
-                <StudentTable />
+                <StudentsPage />
               </PrivateRoute>
             ),
             handle: { title: "Estudantes" },
+          },
+          {
+            path: "/estudantes/:id",
+            element: (
+              <PrivateRoute>
+                <StudentEditForm />
+              </PrivateRoute>
+            ),
+            handle: { title: "Editar Estudante" },
           },
           {
             path: "/edicoes",
@@ -128,7 +139,7 @@ const router = createBrowserRouter([
             ),
             handle: { title: "Nova Edição" },
           },
-            {
+          {
             path: "/edicao/:id",
             element: (
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
@@ -138,7 +149,7 @@ const router = createBrowserRouter([
             handle: { title: "Editar Edição" },
           },
           {
-            path: "/etapas/:id",
+            path: "/edicoes/:id/etapas",
             element: (
               <PrivateRoute allowedRoles={["ADMINISTRADOR"]}>
                 <StepsForm />
@@ -168,7 +179,7 @@ const router = createBrowserRouter([
             path: "/edicoes/:editionYear/inscrever-instituicao",
             element: (
               <PrivateRoute>
-                <InstitutionEnrollmentForm />
+                <EnrollmentInstitutionForm />
               </PrivateRoute>
             ),
             handle: { title: "Inscrever Instituição" },

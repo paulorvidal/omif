@@ -1,15 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import {
-  createStudent,
-  type CreateStudentRequest,
-} from "../services/studentService";
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 import { scrollToTop } from "../utils/scrollToTop";
+import { fetchInstitutions } from "../services/enrollmentInstitutionService";
+import { useDebounce } from "./useDebounce";
+
+import type {
+  CreateStudentRequest,
+} from "../types/enrollmentStudentTypes";
+import { createStudentAndEnrollmentInEdition } from "../services/enrollmentStudentService";
 
 const StudentFormSchema = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
@@ -51,74 +54,9 @@ const StudentFormSchema = z.object({
 
 export type StudentFormData = z.infer<typeof StudentFormSchema>;
 
-const bolsaFamiliaOptions = [
-  { label: "Selecione uma opção", value: "" },
-  { label: "Sim", value: "Sim" },
-  { label: "Não", value: "Não" },
-  { label: "Prefiro não responder", value: "Prefiro não responder" },
-];
 
-const gradeOptions = [
-  { label: "Selecione a série", value: "" },
-  { label: "1º ano", value: 1 },
-  { label: "2º ano", value: 2 },
-  { label: "3º ano", value: 3 },
-];
 
-const ethnicityOptions = [
-  { label: "Selecione uma opção", value: "" },
-  { label: "Branco", value: "Branco" },
-  { label: "Pardo", value: "Pardo" },
-  { label: "Preto", value: "Preto" },
-  { label: "Amarelo", value: "Amarelo" },
-  { label: "Indígena", value: "Indigena" },
-  { label: "Prefiro não responder", value: "Prefiro não responder" },
-];
-
-const genderOptions = [
-  { label: "Selecione uma opção", value: "" },
-  { label: "Feminino", value: "Feminino" },
-  { label: "Masculino", value: "Masculino" },
-  { label: "Outro", value: "Outro" },
-  { label: "Prefiro não responder", value: "Prefiro não responder" },
-];
-
-const completionElementarySchoolCategoryOptions = [
-  { label: "Selecione uma opção", value: "" },
-  { label: "Escola pública municipal", value: "Escola pública municipal" },
-  { label: "Escola pública estadual", value: "Escola pública estadual" },
-  { label: "Escola particular", value: "Escola particular" },
-  {
-    label: "Parte em escola pública parte em escola particular",
-    value: "Parte em escola pública parte em escola particular",
-  },
-  { label: "Supletivo", value: "Supletivo" },
-  { label: "Prefiro não responder", value: "Prefiro não responder" },
-];
-
-const incomeRangeOptions = [
-  { label: "Selecione uma opção", value: "" },
-  { label: "Até meio salário mínimo", value: "Até meio salário mínimo" },
-  {
-    label: "De meio a um salário mínimo",
-    value: "De meio a um salário mínimo",
-  },
-  {
-    label: "De um a dois salários mínimos",
-    value: "De um a dois salários mínimos",
-  },
-  {
-    label: "De dois a três salários mínimos",
-    value: "De dois a três salários mínimos",
-  },
-  {
-    label: "Acima de três salários mínimos",
-    value: "Acima de três salários mínimos",
-  },
-  { label: "Prefiro não responder", value: "Prefiro não responder" },
-];
-
-export const useStudentForm = () => {
+export const useEnrollmentStudentForm = (editionYear: number) => {
   const {
     register,
     handleSubmit,
@@ -143,6 +81,10 @@ export const useStudentForm = () => {
     },
   });
 
+  const [institutionInput, setInstitutionInput] = useState("");
+  const debouncedInstitutionInput = useDebounce(institutionInput, 500);
+
+
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const [captchaError, setCaptchaError] = useState<string | null>(null);
@@ -159,11 +101,13 @@ export const useStudentForm = () => {
     }
   };
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: createStudent,
-    onSuccess: (response) => {
+   const { mutate, isPending } = useMutation({
+    mutationFn: (studentData: CreateStudentRequest) =>
+      createStudentAndEnrollmentInEdition(studentData, editionYear),
+    onSuccess: () => {
+      reset(); 
       showToast(
-        response.message || "Estudante cadastrado com sucesso!",
+        "Inscrição realizada com sucesso!",
         "success",
       );
     },
@@ -172,13 +116,14 @@ export const useStudentForm = () => {
         showToast(error.message, "error");
       } else {
         console.error("Erro não capturado pela API:", error);
-        showToast("Ocorreu um erro inesperado.", "error");
+        showToast(error.message || "Ocorreu um erro inesperado.", "error");
       }
     },
     onSettled: () => {
       resetCaptcha();
     },
   });
+
 
   const onSubmit = (data: Omit<StudentFormData, "captchaToken">) => {
     if (!captchaToken) {
@@ -202,6 +147,17 @@ export const useStudentForm = () => {
     mutate(payload);
   };
 
+  const {
+    data: institutionOptions,
+    isLoading: isInstitutionsLoading,
+  } = useQuery({
+    queryKey: ["institutions", debouncedInstitutionInput, editionYear],
+    queryFn: () =>
+      fetchInstitutions(debouncedInstitutionInput, String(editionYear)),
+
+    placeholderData: (previousData) => previousData,
+  });
+
   const onReset = () => {
     reset();
     resetCaptcha();
@@ -209,12 +165,6 @@ export const useStudentForm = () => {
   };
 
   return {
-    bolsaFamiliaOptions,
-    gradeOptions,
-    ethnicityOptions,
-    genderOptions,
-    completionElementarySchoolCategoryOptions,
-    incomeRangeOptions,
     register,
     control,
     errors,
@@ -225,5 +175,8 @@ export const useStudentForm = () => {
     captchaToken,
     captchaResetKey,
     captchaError,
+    institutionOptions: institutionOptions || [],
+    isInstitutionsLoading,
+    setInstitutionInput
   };
 };

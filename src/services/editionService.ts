@@ -7,13 +7,14 @@ import type {
   EditionWithSteps,
   PageResponse,
   Edition,
-  CurrentEdition
+  CurrentEdition,
+  EditionStatus
 } from "../types/editionTypes";
 import type { Step, CreateStepDTO } from "../types/stepsTypes";
 
 export async function fetchEditions(
   input: string,
-): Promise<Array<{ label: number; value: string }>> {
+): Promise<Array<{ label: number; value: string; isActive: boolean }>> {
   const response = await api.get<{
     content: FetchEditionsResponse[];
   }>("/editions/search", {
@@ -28,6 +29,7 @@ export async function fetchEditions(
   return response.data.content.map((inst) => ({
     label: inst.year,
     value: inst.id,
+    isActive: inst.isActive,
   }));
 }
 
@@ -49,6 +51,11 @@ export const updateEdition = async (
 
 export const getEditionById = async (id: string) => {
   const resp = await api.get<CreateEditionRequest>(`/editions/${id}`);
+  return resp.data;
+};
+
+export const getEditionStatusByYear = async (editionYear: string) => {
+  const resp = await api.get<EditionStatus>(`/editions/${editionYear}/status`);
   return resp.data;
 };
 

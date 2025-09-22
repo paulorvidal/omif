@@ -22,11 +22,11 @@ import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../ui/SelectField";
 import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
 
-type InstitutionTableProps = {
+type Props = {
   onCountChange: (count: number) => void;
 };
 
-export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
+export const InstitutionTable = ({ onCountChange }: Props) => {
   const {
     data,
     pageCount,
