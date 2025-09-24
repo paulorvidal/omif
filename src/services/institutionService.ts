@@ -1,20 +1,19 @@
 import api from "./api";
 import type { PageParams, PageResponse } from "../types/defaultTypes";
 import type {
-  FindAllInstitutionsResponse,
   Institution,
   CreateInstitutionRequest,
   CreateInstitutionResponse,
-  FindInstitutionsResponse
-} from "../types/institutionTypes"
+  FindInstitutionsResponse,
+  FindAllInstitutionsResponse,
+} from "../types/institutionTypes";
 
 export const findAllInstitutions = async (
   params: PageParams,
 ): Promise<PageResponse<FindAllInstitutionsResponse>> => {
-  const response = await api.get<PageResponse<FindAllInstitutionsResponse>>(
-    "/institutions",
-    { params }, 
-  );
+  const response = await api.get<PageResponse<FindAllInstitutionsResponse>>("/institutions", {
+    params,
+  });
   return response.data;
 };
 
@@ -39,8 +38,6 @@ export const getInstitutionById = async (id: string) => {
   const resp = await api.get<FindInstitutionsResponse>(`/institutions/${id}`);
   return resp.data;
 };
-
-
 
 export const updateInstitution = async (
   id: string,

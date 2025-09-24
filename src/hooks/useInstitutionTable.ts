@@ -7,7 +7,7 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
-  keepPreviousData
+  keepPreviousData,
 } from "@tanstack/react-query";
 
 import {
@@ -16,12 +16,22 @@ import {
 } from "../services/institutionService";
 import { ApiError } from "../services/apiError";
 import { showToast } from "../utils/events";
-import { type FindAllInstitutionsResponse } from "../types/institutionTypes";
+import {
+  type FindAllInstitutionsResponse, 
+} from "../types/institutionTypes";
 import type { PageResponse } from "../types/defaultTypes";
 
 type FilterFormValues = {
   sort: string;
   pageSize: number;
+};
+
+export type InstitutionCollumns = {
+  id: string;
+  name: string;
+  inep: string;
+  email: string;
+  coordinatorName: string;
 };
 
 export const useInstitutionTable = () => {
@@ -35,10 +45,12 @@ export const useInstitutionTable = () => {
 
   const debouncedFilter = useDebounce(globalFilter, 400);
 
-  const pagination: PaginationState = { pageIndex, pageSize, };
+  const pagination: PaginationState = { pageIndex, pageSize };
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [institutionToDelete, setInstitutionToDelete] = useState<string | null>(null);
+  const [institutionToDelete, setInstitutionToDelete] = useState<string | null>(
+    null,
+  );
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
 
   const { control, handleSubmit, reset } = useForm<FilterFormValues>();
@@ -49,15 +61,18 @@ export const useInstitutionTable = () => {
     isError,
     error,
   } = useQuery<PageResponse<FindAllInstitutionsResponse>, ApiError>({
-    queryKey: ['institutions', { pageIndex, pageSize, filter: debouncedFilter, sort }],
-    queryFn: () => findAllInstitutions({
-      page: pageIndex,
-      size: pageSize,
-      q: debouncedFilter,
-      sort: sort,
-    }),
+    queryKey: [
+      'institutions',
+      { pageIndex, pageSize, filter: debouncedFilter, sort },
+    ],
+    queryFn: () =>
+      findAllInstitutions({
+        page: pageIndex,
+        size: pageSize,
+        q: debouncedFilter,
+        sort: sort,
+      }),
     placeholderData: keepPreviousData,
-    refetchOnMount: true,
   });
 
   useEffect(() => {
@@ -66,7 +81,15 @@ export const useInstitutionTable = () => {
     }
   }, [isError, error]);
 
-  const data = pageResponse?.content ?? [];
+  const data: InstitutionCollumns[] =
+    pageResponse?.content.map((institution) => ({
+      id: institution.id,
+      name: institution.name,
+      inep: institution.inep,
+      email: institution.email,
+      coordinatorName: institution.coordinatorName,
+    })) ?? [];
+
   const pageCount = pageResponse?.page.totalPages ?? 0;
   const totalElements = pageResponse?.page.totalElements ?? 0;
 
@@ -74,7 +97,7 @@ export const useInstitutionTable = () => {
     mutationFn: (id: string) => deleteInstitution(id),
     onSuccess: () => {
       showToast("Instituição deletada com sucesso", "success");
-      queryClient.invalidateQueries({ queryKey: ['institutions'] });
+      queryClient.invalidateQueries({ queryKey: ["institutions"] });
     },
     onError: (err) => {
       showToast(
@@ -85,7 +108,7 @@ export const useInstitutionTable = () => {
     onSettled: () => {
       setConfirmOpen(false);
       setInstitutionToDelete(null);
-    }
+    },
   });
 
   const handleConfirmDelete = () => {
@@ -104,12 +127,12 @@ export const useInstitutionTable = () => {
           updatedParams.delete(key);
         }
       });
-      if (newParams.q !== undefined || newParams.sort || (newParams.size && newParams.page === undefined)) {
-        updatedParams.set("page", "0");
+      if (newParams.q !== undefined || newParams.sort || newParams.size) {
+        if (pageIndex !== 0) updatedParams.set("page", "0");
       }
       setSearchParams(updatedParams);
     },
-    [searchParams, setSearchParams],
+    [searchParams, setSearchParams, pageIndex],
   );
 
   const handleDeleteClick = (id: string) => {

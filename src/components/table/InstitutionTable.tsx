@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, Pencil, Trash } from "lucide-react";
+import { ListFilterPlus, Plus, Pencil, Trash, Trash2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../types/institutionTypes";
-import { useInstitutionTable } from "../../hooks/useInstitutionTable";
+import { useInstitutionTable, type InstitutionCollumns } from "../../hooks/useInstitutionTable";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
 import { GenericTable } from "../GenericTable";
@@ -13,21 +13,65 @@ import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../SelectField";
 import { ActionsPopover, ActionsPopoverItem } from "../ActionsPopover";
 
-type Props = {
-  onCountChange: (count: number) => void;
-};
+const getColumns = (
+  handleDeleteClick: (id: string) => void,
+): ColumnDef<InstitutionCollumns, unknown>[] => [
+  {
+    accessorKey: "inep",
+    header: "INEP",
+  },
+  {
+    accessorKey: "name",
+    header: "Nome"
+  },
+  {
+    accessorKey: "email",
+    header: "Email"
+  },
+  {
+    accessorKey: "coordinatorName",
+    header: "Coordenador"
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: ({ row }) => (
+      <div className="flex justify-end">
+        <ActionsPopover>
+          <ActionsPopoverItem
+            icon={<Pencil className="h-4 w-4 text-zinc-600" />}
+            onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
+          >
+            Editar
+          </ActionsPopoverItem>
+          <ActionsPopoverItem
+            icon={<Trash2 className="h-4 w-4 text-zinc-600" />}
+            onClick={() => handleDeleteClick(row.original.id)}
+          >
+            Deletar
+          </ActionsPopoverItem>
+        </ActionsPopover>
+      </div>
+    )
+  }
+]
 
-export const InstitutionTable = ({ onCountChange }: Props) => {
+type InstitutionTableProps = {
+  onCountChange: (count: number) => void
+}
+
+export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
   const {
     data,
     pageCount,
-    pagination,
     isLoading,
+    isDeleting,
+    pagination,
     globalFilter,
     handleURLChange,
-    filterDialog,
-    deleteDialog,
     handleDeleteClick,
+    deleteDialog,
+    filterDialog,
     totalElements,
   } = useInstitutionTable();
 
@@ -37,71 +81,7 @@ export const InstitutionTable = ({ onCountChange }: Props) => {
     }
   }, [totalElements, onCountChange]);
 
-  const columns = React.useMemo(() => {
-    const columnHelper = createColumnHelper<FindAllInstitutionsResponse>();
-    return [
-      columnHelper.accessor("inep", {
-        header: "INEP",
-        cell: (info) => {
-          const inep = info.getValue();
-          return !inep || inep.trim() === "" ? (
-            <Badge color="border-zinc-300 text-zinc-600">N/A</Badge>
-          ) : (
-            inep
-          );
-        },
-      }),
-      columnHelper.accessor("name", {
-        header: "Nome",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("email", {
-        header: "Email",
-        cell: (info) => {
-          const email = info.getValue();
-          return !email || email.trim() === "" ? (
-            <Badge color="border-zinc-300 text-zinc-600">N/A</Badge>
-          ) : (
-            email
-          );
-        },
-      }),
-      columnHelper.accessor("coordinatorName", {
-        header: "Coordenador",
-        cell: (info) => {
-          const name = info.getValue();
-          return !name || name.trim() === "" ? (
-            <Badge color="border-zinc-300 text-zinc-600">N/A</Badge>
-          ) : (
-            name
-          );
-        },
-      }),
-
-      columnHelper.display({
-        id: "actions",
-        header: "",
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <ActionsPopover>
-              <ActionsPopoverItem
-                icon={<Pencil className="h-4 w-4 text-zinc-600" />}
-                onClick={() => redirectTo(`/instituicao/${row.original.id}`)}
-              >
-                Editar
-              </ActionsPopoverItem>
-              <ActionsPopoverItem
-                icon={<Trash className="h-4 w-4 text-zinc-600" />}
-                onClick={() => handleDeleteClick(row.original.id)}
-              >
-                Deletar
-              </ActionsPopoverItem>
-            </ActionsPopover>
-          </div>
-        ),
-      }),
-    ] as ColumnDef<FindAllInstitutionsResponse, unknown>[];
-  }, [handleDeleteClick]);
+  const columns = getColumns(handleDeleteClick)
 
   const sortOptions = [
     { label: "Nome (A-Z)", value: "name,asc" },

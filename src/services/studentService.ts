@@ -10,7 +10,6 @@ export const findAllStudents = async (
     { params },
   );
   return response.data;
-
 };
 
 export const deleteStudent = async (
