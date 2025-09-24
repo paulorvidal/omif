@@ -3,7 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import { ImageUp, X, RotateCw, Check, Trash2 } from "lucide-react";
-import { Button } from "../ui/Button";
+import { Button } from "../Button";
 import ReactCrop, {
   type Crop,
   centerCrop,

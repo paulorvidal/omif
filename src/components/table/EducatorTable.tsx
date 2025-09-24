@@ -11,14 +11,14 @@ import { ListFilterPlus, Pencil, CheckSquare, Undo2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEducatorTable } from "../../hooks/useEducatorTable";
 import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
-import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
-import { Pagination } from "../ui/Pagination";
-import { SearchInput } from "../ui/SearchInput";
-import { DialogForm } from "../dialog/GenericDialog";
-import { SelectField } from "../ui/SelectField";
-import { Checkbox } from "../ui/Checkbox";
-import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
+import { Badge } from "../Badge";
+import { Button } from "../Button"; 
+import { DialogForm } from "../dialog/GenericDialog"; 
+import { Checkbox } from "../Checkbox";
+import { ActionsPopover, ActionsPopoverItem } from "../ActionsPopover";
+import { SearchInput } from "../SearchInput";
+import { Pagination } from "../Pagination";
+import { SelectField } from "../SelectField";
 
 export const EducatorTable = () => {
   const {

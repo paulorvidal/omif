@@ -1,6 +1,6 @@
 import { usePasswordRecovery } from "../../hooks/usePasswordRecovery";
-import { PasswordField } from "../../components/ui/PasswordField";
-import { Button } from "../../components/ui/Button";
+import { PasswordField } from "../../components/PasswordField";
+import { Button } from "../Button";
 import { ProgressDialog } from "../dialog/ProgressDialog";
 import { redirectTo, showToast } from "../../utils/events";
 
@@ -16,8 +16,8 @@ export const PasswordRecoveryForm = ({ token }: { token: string }) => {
   } = usePasswordRecovery(token || "");
 
   if (isValidationError) {
-    showToast(validationErrorMessage, "error")
-    redirectTo('/login');
+    showToast(validationErrorMessage, "error");
+    redirectTo("/login");
   }
   return (
     <form

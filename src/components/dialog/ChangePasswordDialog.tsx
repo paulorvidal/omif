@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
-import { KeyRound, Loader2, X } from "lucide-react";
-import { Button } from "../ui/Button";
-import { PasswordField } from "../ui/PasswordField";
+import { KeyRound, X } from "lucide-react";
+import { Button } from "../Button";
+import { PasswordField } from "../PasswordField";
 
 const changePasswordSchema = z
   .object({

@@ -1,26 +1,17 @@
 import React, { useEffect } from "react";
-import {
-  createColumnHelper,
-  type ColumnDef
-} from "@tanstack/react-table";
-import {
-  ListFilterPlus,
-  Plus,
-  Pencil,
-  Trash,
-  
-} from "lucide-react";
+import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
+import { ListFilterPlus, Plus, Pencil, Trash } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../types/institutionTypes";
 import { useInstitutionTable } from "../../hooks/useInstitutionTable";
-import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
-import { GenericTable } from "../ui/GenericTable";
-import { SearchInput } from "../ui/SearchInput";
+import { Badge } from "../Badge";
+import { Button } from "../Button";
+import { GenericTable } from "../GenericTable";
+import { SearchInput } from "../SearchInput";
 import { ConfirmDialog } from "../dialog/ConfirmDialog";
 import { DialogForm } from "../dialog/GenericDialog";
-import { SelectField } from "../ui/SelectField";
-import { ActionsPopover, ActionsPopoverItem } from "../ui/ActionsPopover";
+import { SelectField } from "../SelectField";
+import { ActionsPopover, ActionsPopoverItem } from "../ActionsPopover";
 
 type Props = {
   onCountChange: (count: number) => void;
@@ -37,11 +28,11 @@ export const InstitutionTable = ({ onCountChange }: Props) => {
     filterDialog,
     deleteDialog,
     handleDeleteClick,
-    totalElements
+    totalElements,
   } = useInstitutionTable();
 
   useEffect(() => {
-    if (typeof totalElements === 'number' && isFinite(totalElements)) {
+    if (typeof totalElements === "number" && isFinite(totalElements)) {
       onCountChange(totalElements);
     }
   }, [totalElements, onCountChange]);
@@ -92,7 +83,6 @@ export const InstitutionTable = ({ onCountChange }: Props) => {
         header: "",
         cell: ({ row }) => (
           <div className="flex justify-end">
-
             <ActionsPopover>
               <ActionsPopoverItem
                 icon={<Pencil className="h-4 w-4 text-zinc-600" />}
@@ -112,7 +102,6 @@ export const InstitutionTable = ({ onCountChange }: Props) => {
       }),
     ] as ColumnDef<FindAllInstitutionsResponse, unknown>[];
   }, [handleDeleteClick]);
-
 
   const sortOptions = [
     { label: "Nome (A-Z)", value: "name,asc" },

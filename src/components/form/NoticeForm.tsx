@@ -3,13 +3,13 @@ import { useNoticeForm } from "../../hooks/useNoticeForm";
 import { ProgressDialog } from "../../components/dialog/ProgressDialog";
 import { ViewDialog } from "../../components/dialog/ViewDialog";
 import { Controller } from "react-hook-form";
-import { TextEditor } from "../../components/ui/TextEditor";
-import { Button } from "../../components/ui/Button";
+import { TextEditor } from "../../components/TextEditor";
+import { Button } from "../Button";
 import { SendHorizonal, Eye } from "lucide-react";
 import DOMPurify from "dompurify";
 import { ConfirmDialog } from "../../components/dialog/ConfirmDialog";
-import { Field } from "../../components/ui/Field";
-import { SelectField } from "../../components/ui/SelectField";
+import { Field } from "../../components/Field";
+import { SelectField } from "../../components/SelectField";
 
 export const NoticeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +57,8 @@ export const NoticeForm = () => {
   const availableRecipientOptions =
     deliveryMethod === "SYSTEM"
       ? allRecipientOptions.filter(
-        (opt) => opt.value === "EDUCATOR" || opt.value === "",
-      )
+          (opt) => opt.value === "EDUCATOR" || opt.value === "",
+        )
       : allRecipientOptions;
 
   const handleOpenConfirmDialog = () => {

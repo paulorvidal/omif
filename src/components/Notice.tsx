@@ -1,9 +1,9 @@
 import { ChevronRight, Info } from "lucide-react";
-import { ViewDialog } from "../dialog/ViewDialog";
+import { ViewDialog } from "./dialog/ViewDialog";
 import { useMemo, useState } from "react";
-import { useNoticeDetails } from "../../hooks/useNoticeDetails";
+import { useNoticeDetails } from "./../hooks/useNoticeDetails";
 import DOMPurify from "dompurify";
-import { ProgressDialog } from "../dialog/ProgressDialog";
+import { ProgressDialog } from "./dialog/ProgressDialog";
 
 type NoticeProps = {
   id: string;

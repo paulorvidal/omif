@@ -8,8 +8,8 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import { KeyRound, MailCheck, X } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Field } from "../ui/Field";
+import { Button } from "../Button";
+import { Field } from "../Field";
 
 const recoverySchema = z.object({
   identifier: z.string().nonempty("O e-mail ou CPF é obrigatório"),
@@ -36,9 +36,9 @@ export function PasswordRecoveryDialog({
     handleSubmit,
     formState: { errors },
     reset,
-    register, 
-    watch,    
-    setValue, 
+    register,
+    watch,
+    setValue,
   } = useForm<RecoveryFormData>({
     resolver: zodResolver(recoverySchema),
     defaultValues: {

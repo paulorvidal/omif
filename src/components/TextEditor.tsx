@@ -12,7 +12,7 @@ import {
   Heading3,
 } from "lucide-react";
 import Placeholder from "@tiptap/extension-placeholder";
-import { Label } from "../ui/Label";
+import { Label } from "./Label";
 
 interface MenuBarProps {
   editor: Editor | null;

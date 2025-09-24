@@ -25,8 +25,11 @@ import { NavLink } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { redirectTo } from "src/utils/events";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "src/hooks/use-mobile";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const isMobile = useIsMobile();
+
   const role = localStorage.getItem("role") as string;
   const queryClient = useQueryClient();
 
@@ -160,7 +163,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarRail />
       </Sidebar>
 
-      <div className="fixed bottom-0 left-0 z-30 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.25)] md:hidden">
+      <div
+        className={`fixed bottom-0 left-0 z-30 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.25)] ${!isMobile ? "hidden" : ""}`}
+      >
         <SidebarTrigger className="m-2" />
         <NavLink to="/avisos" end>
           {({ isActive }) => (

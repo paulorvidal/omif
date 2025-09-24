@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useEditionForm } from "../../hooks/useEditionForm";
-import { Field } from "../ui/Field";
-import { Button } from "../ui/Button";
+import { Field } from "../Field";
+import { Button } from "../Button";
 import { ProgressDialog } from "../dialog/ProgressDialog";
-import { maskCurrency } from '../../utils/formatters';
+import { maskCurrency } from "../../utils/formatters";
 
 export const EditionForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -20,13 +20,13 @@ export const EditionForm = () => {
     watch,
     setValue,
   } = useEditionForm({ editionId: id });
-  const minimumWageValue = watch('minimumWage');
+  const minimumWageValue = watch("minimumWage");
   useEffect(() => {
-    const valueAsString = String(minimumWageValue || '');
+    const valueAsString = String(minimumWageValue || "");
     const formattedValue = maskCurrency(valueAsString);
 
     if (formattedValue !== valueAsString) {
-      setValue('minimumWage', formattedValue, { shouldValidate: true });
+      setValue("minimumWage", formattedValue, { shouldValidate: true });
     }
   }, [minimumWageValue, setValue]);
 
@@ -56,12 +56,12 @@ export const EditionForm = () => {
         />
         <Field
           label="Salário Mínimo (R$):"
-          type="text" 
+          type="text"
           placeholder="0,00"
           register={register("minimumWage")}
           error={errors.minimumWage?.message}
           helpText="Valor base para o formulário socioeconômico."
-          inputProps={{ inputMode: "decimal" }} 
+          inputProps={{ inputMode: "decimal" }}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

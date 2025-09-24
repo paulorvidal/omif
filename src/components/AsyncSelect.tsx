@@ -4,38 +4,43 @@ import {
   type FieldValues,
   type Path,
 } from "react-hook-form";
+import Select, { type ControlProps, type OptionProps } from "react-select";
 import { Label } from "./Label";
-import AsyncSelect from "react-select/async";
-import { type ControlProps, type OptionProps } from "react-select";
 
 type Option = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
-type AsyncSelectFieldProps<TFieldValues extends FieldValues> = {
-  name: Path<TFieldValues>;
+type AsyncSelectProps<T extends FieldValues> = {
+  name: Path<T>;
   label: string;
-  placeholder: string;
-  control: Control<TFieldValues>;
-  loadOptions: (inputValue: string) => Promise<Option[]>;
+  control: Control<T>;
+  options: Option[];
   error?: string;
   helpText?: string;
+  isClearable?: boolean;
+  isLoading?: boolean;
+  onInputChange?: (value: string) => void;
+  placeholder?: string;
 };
 
 const IndicatorSeparator = () => (
   <span className="mx-1 h-5 w-0.5 rounded-md bg-zinc-300" />
 );
 
-export const AsyncSelectField = <TFieldValues extends FieldValues>({
+export const AsyncSelect = <T extends FieldValues>({
   name,
   label,
-  placeholder,
   control,
-  loadOptions,
+  options,
   error,
   helpText,
-}: AsyncSelectFieldProps<TFieldValues>) => {
+  isClearable = false,
+  isLoading,
+  onInputChange,
+  placeholder,
+}: AsyncSelectProps<T>) => {
   const classNames = {
     control: ({ isFocused }: ControlProps<Option, false>) =>
       [
@@ -65,22 +70,22 @@ export const AsyncSelectField = <TFieldValues extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => (
-          <AsyncSelect<Option, false>
+          <Select<Option, false>
             {...field}
             unstyled
             inputId={name}
-            cacheOptions
-            defaultOptions
-            isClearable
-            loadOptions={loadOptions}
+            isClearable={isClearable}
+            options={options}
+            isLoading={isLoading}
+            onInputChange={onInputChange}
             onChange={(opt) => field.onChange(opt)}
             getOptionLabel={(opt) => opt.label}
             getOptionValue={(opt) => String(opt.value)}
-            value={field.value ?? null}
+            value={field.value}
             placeholder={placeholder}
             classNames={classNames}
             components={{ IndicatorSeparator }}
-             menuPosition="fixed"
+            menuPosition="fixed"
           />
         )}
       />

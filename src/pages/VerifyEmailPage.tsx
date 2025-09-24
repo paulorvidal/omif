@@ -1,15 +1,23 @@
-import { useParams, useNavigate } from 'react-router';
-import CircularProgress from '@mui/material/CircularProgress';
-import { CheckCircle, XCircle, LogIn } from 'lucide-react';
-import { Button } from "../components/ui/Button";
-import { useVerifyEmail } from '../hooks/useVerifyEmail';
+import { useParams, useNavigate } from "react-router";
+import CircularProgress from "@mui/material/CircularProgress";
+import { CheckCircle, XCircle, LogIn } from "lucide-react";
+import { Button } from "../components/Button";
+import { useVerifyEmail } from "../hooks/useVerifyEmail";
 
-function StatusDisplay({ icon, title, message }: { icon: React.ReactNode, title: string, message: string }) {
+function StatusDisplay({
+  icon,
+  title,
+  message,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  message: string;
+}) {
   return (
     <div className="flex flex-col items-center gap-4 text-center">
       {icon}
       <h1 className="text-2xl font-bold text-zinc-800">{title}</h1>
-      <p className="text-zinc-600 max-w-sm">{message}</p>
+      <p className="max-w-sm text-zinc-600">{message}</p>
     </div>
   );
 }
@@ -21,7 +29,7 @@ export function VerifyEmailPage() {
   const { status, errorMessage } = useVerifyEmail(token);
 
   const handleNavigateToLogin = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   const statusContent = {
@@ -43,7 +51,10 @@ export function VerifyEmailPage() {
       <StatusDisplay
         icon={<XCircle className="h-16 w-16 text-red-500" />}
         title="Ocorreu um erro na verificação"
-        message={errorMessage || 'Não foi possível validar seu e-mail. Tente novamente ou contate o suporte.'}
+        message={
+          errorMessage ||
+          "Não foi possível validar seu e-mail. Tente novamente ou contate o suporte."
+        }
       />
     ),
   };
@@ -54,12 +65,12 @@ export function VerifyEmailPage() {
         <div className="flex flex-col items-center gap-6">
           {statusContent[status]}
         </div>
-        {(status === 'success' || status === 'error') && (
+        {(status === "success" || status === "error") && (
           <div className="mt-8">
             <div className="my-6 h-px w-full bg-zinc-200" />
             <Button
               onClick={handleNavigateToLogin}
-              className="w-full h-12 text-base font-semibold"
+              className="h-12 w-full text-base font-semibold"
             >
               <LogIn className="mr-2 h-5 w-5" />
               Ir para o Login

@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { Button } from "../ui/Button";
-import { Field } from "../ui/Field";
-import { SelectField } from "../ui/SelectField";
-import { AsyncSelect } from "../ui/AsyncSelect";
+import { Button } from "../Button";
+import { Field } from "../Field";
+import { SelectField } from "../SelectField";
+import { AsyncSelect } from "../AsyncSelect";
 import { useEnrollmentStudentForm } from "../../hooks/useEnrollmentStudentForm";
-import Captcha from "../ui/Captcha";
+import Captcha from "../Captcha";
 
 interface Props {
   editionName: string;
@@ -12,7 +12,11 @@ interface Props {
   editionYear: number;
 }
 
-export const EnrollmentStudentForm = ({ minimumWage, editionName, editionYear }: Props) => {
+export const EnrollmentStudentForm = ({
+  minimumWage,
+  editionName,
+  editionYear,
+}: Props) => {
   const {
     register,
     control,
@@ -113,7 +117,6 @@ export const EnrollmentStudentForm = ({ minimumWage, editionName, editionYear }:
       { label: "Prefiro não responder", value: "Prefiro não responder" },
     ];
   }, [minimumWage]);
-
 
   return (
     <form
@@ -226,7 +229,9 @@ export const EnrollmentStudentForm = ({ minimumWage, editionName, editionYear }:
         <Button secondary type="button" onClick={handleReset}>
           Limpar
         </Button>
-        <Button type="submit" isLoading={isPending}>Inscrever-se</Button>
+        <Button type="submit" isLoading={isPending}>
+          Inscrever-se
+        </Button>
       </div>
     </form>
   );

@@ -3,7 +3,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-import { Button } from "../ui/Button";
+import { Button } from "../Button";
 
 interface ConfirmDialogProps {
   open: boolean;

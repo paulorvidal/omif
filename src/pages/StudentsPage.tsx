@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { TabsContainer, Tab } from '../components/ui/Tabs';
+import { TabsContainer, Tab } from '../components/Tabs';
 import { StudentTable } from '../components/table/StudentTable';
 import { EnrollmentStudentTable } from '../components/table/EnrollmentStudentTable';
 import { List, NotebookPen, FileChartColumn } from 'lucide-react';

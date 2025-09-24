@@ -1,9 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useStepsForm } from "../../hooks/useStepsForm";
 import { ProgressDialog } from "../dialog/ProgressDialog";
-import { Field } from "../ui/Field";
-import { Button } from "../ui/Button";
-
+import { Field } from "../Field";
+import { Button } from "../Button";
 
 export const StepsForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -39,10 +38,7 @@ export const StepsForm = () => {
           <p className="text-gray-500">{editionData?.name}</p>
         </div>
       </div>
-      <fieldset
-        disabled={isLoading || isSaving}
-        className="border-none p-0"
-      >
+      <fieldset disabled={isLoading || isSaving} className="border-none p-0">
         <div className="mb-4 rounded-lg border border-gray-300 p-4">
           <h4>Etapa 1</h4>
 

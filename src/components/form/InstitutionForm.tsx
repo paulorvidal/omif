@@ -1,12 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useInstitutionForm } from "../../hooks/useInstitutionForm";
-import { Field } from "../ui/Field";
-import { AsyncSelectField } from "../ui/AsyncSelectField";
-import { Button } from "../ui/Button";
-
+import { Field } from "../Field";
+import { AsyncSelectField } from "../AsyncSelectField";
+import { Button } from "../Button";
 
 export const InstitutionForm = () => {
-
   const { id } = useParams<{ id?: string }>();
   const isEditMode = Boolean(id);
 

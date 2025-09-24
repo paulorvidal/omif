@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useStudentEditForm } from "../../hooks/useStudentEditForm";
-import { Field } from "../ui/Field";
-import { Button } from "../ui/Button";
-import { AsyncSelect } from "../ui/AsyncSelect";
+import { Field } from "../Field";
+import { Button } from "../Button";
+import { AsyncSelect } from "../AsyncSelect";
 
 export const StudentEditForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -18,7 +18,6 @@ export const StudentEditForm = () => {
     isInstitutionsLoading,
     setInstitutionInput,
   } = useStudentEditForm(id);
-
 
   if (isLoadingStudent) {
     return <p className="text-center">Carregando dados do estudante...</p>;
@@ -89,7 +88,6 @@ export const StudentEditForm = () => {
           type="button"
           onClick={() => reset()}
           disabled={isUpdating}
-
         >
           Desfazer
         </Button>

@@ -2,7 +2,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import { Hourglass, X } from "lucide-react";
-import { Button } from "../ui/Button";
+import { Button } from "../Button";
 
 export interface AccountApprovalDialogProps {
   open: boolean;

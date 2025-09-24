@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { TabsContainer, Tab } from '../components/ui/Tabs';
+import { TabsContainer, Tab } from '../components/Tabs';
 import { InstitutionTable } from '../components/table/InstitutionTable';
 import { EnrollmentInstitutionTable } from '../components/table/EnrollmentInstitutionTable';
 import { InstitutionReportGenerator } from '../components/report/InstitutionReportGenerator';

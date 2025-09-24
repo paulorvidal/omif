@@ -1,11 +1,11 @@
-import { useEducatorForm } from "../../hooks/useEducatorForm";
-import { fetchInstitutions } from "../../services/institutionService";
-import { AsyncSelectField } from "../ui/AsyncSelectField";
-import { Field } from "../ui/Field";
-import { Button } from "../ui/Button";
-import { H1 } from "../ui/H1";
-import Captcha from "../ui/Captcha";
+import { useEducatorForm } from "../../hooks/useEducatorForm"; 
+import { Field } from "../Field";
+import { Button } from "../Button";
+import { H1 } from "../H1";
+import Captcha from "../Captcha";
 import { ProgressDialog } from "../dialog/ProgressDialog";
+import { AsyncSelectField } from "../AsyncSelectField";
+import { fetchInstitutions } from "@/services/institutionService";
 
 export const EducatorForm = () => {
   const {
@@ -22,7 +22,7 @@ export const EducatorForm = () => {
 
   return (
     <div className="flex w-full flex-col items-center p-4 md:p-8">
-      <div className="flex  w-full flex-col items-center justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8">
+      <div className="flex w-full flex-col items-center justify-center gap-4 rounded-md bg-zinc-50 p-4 sm:p-8">
         <H1>Cadastre-se</H1>
         <form
           className="flex w-full flex-col justify-center gap-4"

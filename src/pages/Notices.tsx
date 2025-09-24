@@ -1,13 +1,13 @@
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/Button";
 import { ExternalLink, ListFilterPlus, Plus } from "lucide-react";
 import { redirectTo } from "../utils/events";
-import { Notice } from "../components/ui/Notice";
+import { Notice } from "../components/Notice";
 import { useNoticeTable } from "../hooks/useNoticeTable";
 import { ProgressDialog } from "../components/dialog/ProgressDialog";
 import { DialogForm } from "../components/dialog/GenericDialog";
-import { SelectField } from "../components/ui/SelectField";
-import { SearchInput } from "../components/ui/SearchInput";
-import { Pagination } from "../components/ui/Pagination";
+import { SelectField } from "../components/SelectField";
+import { SearchInput } from "../components/SearchInput";
+import { Pagination } from "../components/Pagination";
 
 export const Notices = () => {
   const isAdmin = localStorage.getItem("role") === "ADMINISTRADOR";

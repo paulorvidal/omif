@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
-import { AtSign, Loader2, X } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Field } from "../ui/Field";
-import { PasswordField } from "../ui/PasswordField";
+import { AtSign, X } from "lucide-react";
+import { Button } from "../Button";
+import { Field } from "../Field";
+import { PasswordField } from "../PasswordField";
 
 const changeEmailSchema = z.object({
   email: z

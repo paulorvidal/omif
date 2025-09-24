@@ -3,45 +3,39 @@ import {
   type Control,
   type FieldValues,
   type Path,
-} from "react-hook-form";
+} from "react-hook-form"; 
+import AsyncSelect from "react-select/async";
+import { type ControlProps, type OptionProps } from "react-select";
 import { Label } from "./Label";
-import Select, { type ControlProps, type OptionProps } from "react-select";
 
 type Option = {
   label: string;
-  value: string | number;
+  value: string;
 };
 
-type AsyncSelectProps<T extends FieldValues> = {
-  name: Path<T>;
+type AsyncSelectFieldProps<TFieldValues extends FieldValues> = {
+  name: Path<TFieldValues>;
   label: string;
-  control: Control<T>;
-  options: Option[];
+  placeholder: string;
+  control: Control<TFieldValues>;
+  loadOptions: (inputValue: string) => Promise<Option[]>;
   error?: string;
   helpText?: string;
-  isClearable?: boolean;
-  isLoading?: boolean;
-  onInputChange?: (value: string) => void;
-  placeholder?: string;
 };
 
 const IndicatorSeparator = () => (
   <span className="mx-1 h-5 w-0.5 rounded-md bg-zinc-300" />
 );
 
-export const AsyncSelect = <T extends FieldValues>({
+export const AsyncSelectField = <TFieldValues extends FieldValues>({
   name,
   label,
+  placeholder,
   control,
-  options,
+  loadOptions,
   error,
   helpText,
-  isClearable = false,
-  isLoading,
-  onInputChange,
-  placeholder,
-}: AsyncSelectProps<T>) => {
-
+}: AsyncSelectFieldProps<TFieldValues>) => {
   const classNames = {
     control: ({ isFocused }: ControlProps<Option, false>) =>
       [
@@ -71,18 +65,18 @@ export const AsyncSelect = <T extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => (
-          <Select<Option, false>
+          <AsyncSelect<Option, false>
             {...field}
             unstyled
             inputId={name}
-            isClearable={isClearable}
-            options={options} 
-            isLoading={isLoading}
-            onInputChange={onInputChange}
+            cacheOptions
+            defaultOptions
+            isClearable
+            loadOptions={loadOptions}
             onChange={(opt) => field.onChange(opt)}
             getOptionLabel={(opt) => opt.label}
             getOptionValue={(opt) => String(opt.value)}
-            value={field.value}
+            value={field.value ?? null}
             placeholder={placeholder}
             classNames={classNames}
             components={{ IndicatorSeparator }}
