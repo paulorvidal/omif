@@ -12,7 +12,7 @@ import type { PageResponse } from "../types/defaultTypes";
 
 const StudentFormSchema = z.object({
     name: z.string().nonempty("O nome é obrigatório"),
-    socialName: z.string().optional(),
+    socialName: z.string().nullable().optional(),
     email: z.string().email("Email inválido"),
     cpf: z
         .string()

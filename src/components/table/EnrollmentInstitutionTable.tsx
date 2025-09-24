@@ -134,7 +134,7 @@ export const EnrollmentInstitutionTable = ({
       }),
       columnHelper.accessor("enrollmentDate", {
         header: "Data da Inscrição",
-        cell: (info) => format(new Date(info.getValue()), "dd/MM/yyyy : hh:mm"),
+        cell: (info) => format(new Date(info.getValue()), "dd/MM/yyyy hh:mm"),
       }),
       columnHelper.display({
         id: "actions",

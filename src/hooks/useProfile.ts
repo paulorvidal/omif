@@ -226,10 +226,13 @@ export const useProfile = () => {
   const loadInstitutions = async (inputValue: string) => {
     const data = await queryClient.fetchQuery({
       queryKey: ["institutions", inputValue],
-      queryFn: () => fetchInstitutions(inputValue),
-      staleTime: 1000 * 60 * 5,
+      queryFn: () => fetchInstitutions({ page: 0, size: 20, q: inputValue }),
+      staleTime: 1000 * 60 * 5, 
     });
-    return data;
+    return data.content.map((institution) => ({
+      value: institution.id,
+      label: institution.name,
+    }));
   };
 
   const handleChangePassword = (data: ChangePasswordFormData) => {

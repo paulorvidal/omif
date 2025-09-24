@@ -92,7 +92,7 @@ export const StudentEditForm = () => {
           Desfazer
         </Button>
         <Button type="submit" isLoading={isUpdating}>
-          Salvar
+          Salvar Alterações
         </Button>
       </div>
     </form>
