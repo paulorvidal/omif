@@ -64,7 +64,6 @@ export function EmailVerificationDialog(props: EmailVerificationDialogProps) {
               <Button
                 onClick={handleResendClick}
                 disabled={isSending}
-                className="h-12 w-full text-base"
               >
                 {isSending ? (
                   <CircularProgress size={24} color="inherit" />

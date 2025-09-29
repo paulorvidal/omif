@@ -3,12 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createEducator } from "../services/educatorService";
-import { type CreateEducatorRequest } from "../types/educatorTypes";
 import { scrollToTop } from "../utils/scrollToTop";
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreateEducatorRequest } from "../types/educatorTypes";
+import { fetchInstitutions } from "../services/institutionService";
+import { useDebounce } from "./useDebounce";
+import type { Institution } from "../types/institutionTypes";
+import type { PageResponse } from "../types/defaultTypes";
 
 const EducatorFormSchema = z
   .object({
@@ -81,6 +84,10 @@ const EducatorFormSchema = z
 export type EducatorFormData = z.infer<typeof EducatorFormSchema>;
 
 export const useEducatorForm = () => {
+  const queryClient = useQueryClient();
+  const [institutionInput, setInstitutionInput] = useState("");
+  const debouncedInstitutionInput = useDebounce(institutionInput, 500);
+
   const {
     register,
     handleSubmit,
@@ -142,6 +149,23 @@ export const useEducatorForm = () => {
     },
   });
 
+  const { data: institutionOptions, isLoading: isInstitutionsLoading } = useQuery({
+    queryKey: ["institutions", debouncedInstitutionInput],
+
+    queryFn: () =>
+      fetchInstitutions({
+        q: debouncedInstitutionInput,
+        page: 0,
+        size: 10
+      }),
+
+    select: (data: PageResponse<Institution>) =>
+      data.content.map((institution) => ({
+        label: institution.name,
+        value: institution.id,
+      })),
+  });
+
   const onSubmit = (data: Omit<EducatorFormData, "captchaToken">) => {
     if (!captchaToken) {
       setCaptchaError("Por favor, complete a verificação.");
@@ -181,5 +205,8 @@ export const useEducatorForm = () => {
     captchaToken,
     captchaResetKey,
     captchaError,
+    institutionOptions: institutionOptions ?? [],
+    isInstitutionsLoading,
+    setInstitutionInput,
   };
 };

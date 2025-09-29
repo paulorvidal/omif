@@ -26,10 +26,12 @@ export interface ChangeEmailProps {
   onSave: (data: ChangeEmailFormData) => void;
   isSaving: boolean;
   currentEmail?: string;
+  initialValues?: Partial<ChangeEmailFormData>;
 }
 
 export function ChangeEmailDialog(props: ChangeEmailProps) {
-  const { open, onClose, onSave, isSaving, currentEmail } = props;
+  const { open, onClose, onSave, isSaving, currentEmail, initialValues } =
+    props;
 
   const {
     register,
@@ -38,13 +40,20 @@ export function ChangeEmailDialog(props: ChangeEmailProps) {
     formState: { errors },
   } = useForm<ChangeEmailFormData>({
     resolver: zodResolver(changeEmailSchema),
+    defaultValues: {
+      email: initialValues?.email || "",
+      password: "",
+    },
   });
 
   useEffect(() => {
-    if (!open) {
-      reset();
+    if (open) {
+      reset({
+        email: initialValues?.email || "",
+        password: "",
+      });
     }
-  }, [open, reset]);
+  }, [open, reset, initialValues]);
 
   const handleFormSubmit = (data: ChangeEmailFormData) => {
     onSave(data);
@@ -101,17 +110,11 @@ export function ChangeEmailDialog(props: ChangeEmailProps) {
               secondary
               type="button"
               onClick={onClose}
-              className="h-12 w-full text-base"
               disabled={isSaving}
             >
               Cancelar
             </Button>
-            <Button
-              type="submit"
-              className="h-12 w-full text-base"
-              disabled={isSaving}
-              isLoading={isSaving}
-            >
+            <Button type="submit" disabled={isSaving} isLoading={isSaving}>
               Salvar Alterações
             </Button>
           </div>

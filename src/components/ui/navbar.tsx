@@ -32,6 +32,8 @@ function Navbar() {
     }
   }, [shouldShowEnrollmentAlert]);
 
+  const displayName = userData?.socialName || userData?.name;
+
   return (
     <header className="bg-background sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b px-4">
       <div className="flex flex-1 items-center">
@@ -92,11 +94,11 @@ function Navbar() {
       >
         <p
           className="hidden max-w-[200px] truncate sm:block"
-          title={userData?.socialName || "Meu Perfil"}
+          title={displayName || "Meu Perfil"}
         >
           {isUserDataLoading
             ? "Carregando..."
-            : userData?.socialName || "Meu Perfil"}
+            : displayName || "Meu Perfil"}
         </p>
         <div className="h-10 w-10 shrink-0 p-1">
           {userData && userData.profilePictureUrl ? (
@@ -108,7 +110,7 @@ function Navbar() {
           ) : (
             <div className="flex h-full w-full items-center justify-center rounded-full bg-green-500">
               <span className="font-bold text-white">
-                {getInitials(userData?.socialName)}
+                {getInitials(displayName)}
               </span>
             </div>
           )}

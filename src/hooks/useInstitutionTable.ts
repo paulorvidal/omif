@@ -50,7 +50,12 @@ export const useInstitutionTable = () => {
     error,
   } = useQuery<PageResponse<FindAllInstitutionsResponse>, ApiError>({
     queryKey: ['institutions', { pageIndex, pageSize, filter: debouncedFilter, sort }],
-    queryFn: () => findAllInstitutions(pageIndex, pageSize, debouncedFilter, sort),
+    queryFn: () => findAllInstitutions({
+      page: pageIndex,
+      size: pageSize,
+      q: debouncedFilter,
+      sort: sort,
+    }),
     placeholderData: keepPreviousData,
     refetchOnMount: true,
   });

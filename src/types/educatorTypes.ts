@@ -1,5 +1,5 @@
 import type {
-    Institution
+  Institution
 } from "../types/institutionTypes"
 
 export type CreateEducatorRequest = {
@@ -60,12 +60,13 @@ export type GetMyDataEducatorResponse = {
   role: string;
   email: string;
   institution: Institution;
+  pendingEmail?: string;
 };
 
 
 export type ProfileData = {
   name?: string;
-  socialName?: string; 
+  socialName?: string;
   cpf?: string;
   dateOfBirth?: string;
   siape?: string;
@@ -73,8 +74,8 @@ export type ProfileData = {
 };
 
 export type ChangePasswordPayload = {
-  password: string;      
-  newPassword: string; 
+  password: string;
+  newPassword: string;
 }
 
 export type ChangeInstitutionPayload = {

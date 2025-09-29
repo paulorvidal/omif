@@ -73,7 +73,7 @@ export const StudentEditForm = () => {
         <AsyncSelect
           name="institution"
           label="Instituição:"
-          placeholder="Digite para buscar a instituição..."
+          placeholder="Digite para buscar..."
           control={control}
           options={institutionOptions}
           onInputChange={setInstitutionInput}

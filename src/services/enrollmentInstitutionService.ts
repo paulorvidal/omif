@@ -11,7 +11,6 @@ import type {
 } from "../types/institutionTypes"
 
 export const enrollInEdition = async (editionYear: string, payload: EnrollmentPayload) => {
-    console.log(payload)
     const response = await api.post(`/editions/${editionYear}/enrollments`, payload);
     return response.data;
 };

@@ -87,7 +87,6 @@ export const getMyData = async (): Promise<GetMyDataEducatorResponse> => {
   if (localImageUrl) {
     userData.profilePictureUrl = localImageUrl;
   }
-
   return userData;
 };
 
@@ -142,7 +141,7 @@ export const changePassword = async (
   id: string,
   data: ChangePasswordPayload,
 ): Promise<GetMyDataEducatorResponse> => {
-  const response = await api.put(`/educators/${id}/change-password`, data);
+  const response = await api.patch(`/educators/${id}/change-password`, data);
   return response.data;
 };
 
@@ -150,7 +149,7 @@ export const changeInstitution = async (
   id: string,
   data: ChangeInstitutionPayload
 ): Promise<GetMyDataEducatorResponse> => {
-  const response = await api.put(`/educators/${id}/change-institution`, data);
+  const response = await api.patch(`/educators/${id}/change-institution`, data);
   return response.data;
 };
 
@@ -158,6 +157,6 @@ export const changeEmail = async (
   id: string,
   data: ChangeEmailPayload
 ): Promise<GetMyDataEducatorResponse> => {
-  const response = await api.put(`/educators/${id}/change-email`, data);
+  const response = await api.post(`/educators/${id}/email-change-request`, data);
   return response.data;
 };

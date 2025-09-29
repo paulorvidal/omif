@@ -1,6 +1,7 @@
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import { X, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "../Button";
@@ -84,26 +85,31 @@ export function EnrollmentActionDialog({
     key: keyof CreateInstitutionRequest;
     label: string;
   }[] = [
-    { key: "name", label: "Nome da Instituição" },
-    { key: "inep", label: "Código INEP" },
-    { key: "phoneNumber", label: "Telefone" },
-    { key: "email1", label: "E-mail Principal" },
-    { key: "email2", label: "E-mail Secundário" },
-    { key: "email3", label: "E-mail Adicional" },
-  ];
+      { key: "name", label: "Nome da Instituição" },
+      { key: "inep", label: "Código INEP" },
+      { key: "phoneNumber", label: "Telefone" },
+      { key: "email1", label: "E-mail Principal" },
+      { key: "email2", label: "E-mail Secundário" },
+      { key: "email3", label: "E-mail Adicional" },
+    ];
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogContent className="p-4 sm:p-6">
-        <div className="flex w-full justify-end">
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            className="text-zinc-400 transition-colors hover:text-zinc-600"
-          >
-            <X size={24} />
-          </IconButton>
-        </div>
+      <DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <X size={24} />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent className="p-4 sm:p-6 pt-0">
         <div className="flex flex-col items-center px-4 pb-2 text-center">
           <div
             className={`mb-5 flex h-16 w-16 items-center justify-center rounded-full ${iconColor}`}
@@ -125,51 +131,45 @@ export function EnrollmentActionDialog({
         </div>
       </DialogContent>
 
-      <DialogActions className="flex-wrap justify-center p-4 sm:justify-between">
-        <div className="w-full sm:w-auto">
-          <Button onClick={onClose} outline disabled={isPending}>
-            Cancelar
-          </Button>
-        </div>
-        <div className="flex w-full flex-col-reverse gap-3 sm:w-auto sm:flex-row">
-          {isApproving ? (
-            <>
-              <Button
-                onClick={onConfirmWithoutChanges}
-                outline
-                isLoading={isPending}
-              >
-                Aprovar sem Alterações
-              </Button>
-              <Button
-                onClick={onConfirm}
-                className="w-full bg-green-600 hover:bg-green-700 sm:w-auto"
-                isLoading={isPending}
-              >
-                Aprovar com Alterações
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={onConfirmWithoutChanges}
-                destructive
-                outline
-                isLoading={isPending}
-              >
-                Recusar sem Alterações
-              </Button>
-              <Button
-                onClick={onConfirm}
-                destructive
-                isLoading={isPending}
-                className="w-full sm:w-auto"
-              >
-                Recusar com Alterações
-              </Button>
-            </>
-          )}
-        </div>
+      <DialogActions className="flex-wrap justify-center p-4 sm:justify-end">
+        {isApproving ? (
+          <>
+            <Button
+              onClick={onConfirmWithoutChanges}
+              outline
+              disabled={isPending}
+              className="w-full sm:w-auto"
+            >
+              Aprovar sem Alterações
+            </Button>
+            <Button
+              onClick={onConfirm}
+              isLoading={isPending}
+              className="w-full bg-green-600 hover:bg-green-700 sm:w-auto"
+            >
+              Aprovar com Alterações
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              onClick={onConfirmWithoutChanges}
+              outline
+              disabled={isPending}
+              className="w-full sm:w-auto"
+            >
+              Recusar sem Alterações
+            </Button>
+            <Button
+              onClick={onConfirm}
+              destructive
+              isLoading={isPending}
+              className="w-full sm:w-auto"
+            >
+              Recusar com Inscrição
+            </Button>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   );

@@ -13,7 +13,7 @@ import type {
 import type { Step, CreateStepDTO } from "../types/stepsTypes";
 
 export async function fetchEditions(
-  input: string,
+  input?: string,
 ): Promise<Array<{ label: number; value: string; isActive: boolean }>> {
   const response = await api.get<{
     content: FetchEditionsResponse[];

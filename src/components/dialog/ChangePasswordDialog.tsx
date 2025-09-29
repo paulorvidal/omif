@@ -108,14 +108,12 @@ export function ChangePasswordDialog(props: ChangePasswordDialogProps) {
               secondary
               type="button"
               onClick={onClose}
-              className="h-12 w-full text-base"
               disabled={isSaving}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="h-12 w-full text-base"
               disabled={isSaving}
               isLoading={isSaving}
             >

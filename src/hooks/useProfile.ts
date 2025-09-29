@@ -10,24 +10,18 @@ import {
   deleteMyProfilePicture,
   changeEmail,
   changePassword,
-  changeInstitution
+  changeInstitution,
 } from "../services/educatorService";
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/apiError";
 import { fetchInstitutions } from "../services/institutionService";
-import {
-  type ChangePasswordFormData,
-} from "../components/dialog/ChangePasswordDialog";
-import {
-  type ChangeEmailFormData,
-} from "../components/dialog/ChangeEmailDialog";
-import {
-  type ChangeInstitutionFormData,
-} from "../components/dialog/ChangeInstitutionDialog";
+import { type ChangePasswordFormData } from "../components/dialog/ChangePasswordDialog";
+import { type ChangeEmailFormData } from "../components/dialog/ChangeEmailDialog";
+import { type ChangeInstitutionFormData } from "../components/dialog/ChangeInstitutionDialog";
 
-const profileSchema = z.object({
+const profileValidationSchema = z.object({
   name: z.string().min(3, "O nome completo é obrigatório"),
-  socialName: z.string().optional(),
+  socialName: z.string().nullable().optional(),
   cpf: z.string().length(14, "CPF inválido. Ex: 999.999.999-99"),
   dateOfBirth: z.string().min(1, "Data de nascimento é obrigatória"),
   siape: z.string().min(1, "SIAPE é obrigatório"),
@@ -40,6 +34,10 @@ const profileSchema = z.object({
     ),
 });
 
+export type ProfileFormInput = z.infer<typeof profileValidationSchema>;
+const profileSchema = profileValidationSchema.extend({
+  socialName: z.string().transform((val) => val ?? ""),
+});
 export type ProfileFormData = z.infer<typeof profileSchema>;
 
 export const useProfile = () => {
@@ -144,7 +142,10 @@ export const useProfile = () => {
     mutationFn: (variables: { id: string; data: ChangeEmailFormData }) =>
       changeEmail(variables.id, variables.data),
     onSuccess: () => {
-      showToast("E-mail alterado com sucesso!", "success");
+      showToast(
+        "Link de confirmação enviado! Verifique sua caixa de entrada.",
+        "success",
+      );
       queryClient.invalidateQueries({ queryKey: ["myData"] });
       setIsEmailDialogOpen(false);
     },
@@ -152,13 +153,16 @@ export const useProfile = () => {
       if (error instanceof ApiError) {
         showToast(error.message, "error");
       } else {
-        showToast("Erro ao alterar o e-mail.", "error");
+        showToast("Erro ao solicitar a alteração de e-mail.", "error");
       }
     },
   });
 
   const institutionChangeMutation = useMutation({
-    mutationFn: (variables: { userId: string, formData: ChangeInstitutionFormData }) => {
+    mutationFn: (variables: {
+      userId: string;
+      formData: ChangeInstitutionFormData;
+    }) => {
       const { userId, formData } = variables;
       const payload = {
         institutionId: formData.institution!.value,
@@ -227,7 +231,7 @@ export const useProfile = () => {
     const data = await queryClient.fetchQuery({
       queryKey: ["institutions", inputValue],
       queryFn: () => fetchInstitutions({ page: 0, size: 20, q: inputValue }),
-      staleTime: 1000 * 60 * 5, 
+      staleTime: 1000 * 60 * 5,
     });
     return data.content.map((institution) => ({
       value: institution.id,
@@ -251,7 +255,9 @@ export const useProfile = () => {
     }
   };
 
-
+  const handleEmailEditClick = () => {
+    setIsEmailDialogOpen(true);
+  };
 
   const handleChangeInstitution = (data: ChangeInstitutionFormData) => {
     if (user?.id) {
@@ -293,5 +299,6 @@ export const useProfile = () => {
     closeInstitutionDialog: () => setIsInstitutionDialogOpen(false),
     handleChangeInstitution,
     isChangingInstitution: institutionChangeMutation.isPending,
+    handleEmailEditClick,
   };
 };

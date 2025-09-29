@@ -6,7 +6,12 @@ import { Button } from "../components/Button";
 import { useProfile } from "../hooks/useProfile";
 import { getInitials } from "../utils/formatters";
 import { InfoItem } from "../components/InfoItem";
-import { AtSign, KeyRound, Building2, Pencil } from "lucide-react";
+import {
+  AtSign,
+  KeyRound,
+  Building2,
+  Pencil,
+} from "lucide-react";
 import { ChangePasswordDialog } from "../components/dialog/ChangePasswordDialog";
 import { ChangeEmailDialog } from "../components/dialog/ChangeEmailDialog";
 import { ChangeInstitutionDialog } from "../components/dialog/ChangeInstitutionDialog";
@@ -32,7 +37,6 @@ export const Profile = () => {
     handleChangePassword,
     isChangingPassword,
     isEmailDialogOpen,
-    openEmailDialog,
     closeEmailDialog,
     handleChangeEmail,
     isChangingEmail,
@@ -42,7 +46,16 @@ export const Profile = () => {
     handleChangeInstitution,
     isChangingInstitution,
     loadInstitutions,
+    handleEmailEditClick,
   } = useProfile();
+  
+  const pendingEmailTooltip = user?.pendingEmail ? (
+    <div className="text-center">
+      <p>Aguardando confirmação para:</p>
+      <p className="font-semibold">{user.pendingEmail}</p>
+    </div>
+  ) : undefined;
+  const displayName = user?.socialName || user?.name;
 
   return (
     <>
@@ -58,7 +71,7 @@ export const Profile = () => {
             ) : (
               <div className="flex h-full w-full items-center justify-center rounded-full bg-green-500">
                 <span className="text-4xl font-bold text-white md:text-5xl">
-                  {getInitials(user?.socialName)}
+                  {getInitials(displayName)}
                 </span>
               </div>
             )}
@@ -70,15 +83,17 @@ export const Profile = () => {
               <Pencil className="h-5 w-5 text-gray-700" />
             </button>
           </div>
-          <p className="font-semibold">{user?.socialName}</p>
+          <p className="font-semibold">{displayName}</p>
           <Badge>{user?.role}</Badge>
-          <div className="mt-4 flex w-full flex-col gap-2 pt-4 text-left">
+          <div className="mt-4 flex w-full flex-col gap-4 pt-4 text-left">
             <InfoItem
               label="E-mail"
               value={user?.email}
               icon={<AtSign size={20} />}
-              onEdit={openEmailDialog}
+              onEdit={handleEmailEditClick}
+              alertTooltip={pendingEmailTooltip}
             />
+
             <InfoItem
               label="Senha"
               value="********"
@@ -180,6 +195,7 @@ export const Profile = () => {
         onSave={handleChangeEmail}
         isSaving={isChangingEmail}
         currentEmail={user?.email}
+        initialValues={{ email: user?.pendingEmail || "" }}
       />
       <ChangeInstitutionDialog
         open={isInstitutionDialogOpen}

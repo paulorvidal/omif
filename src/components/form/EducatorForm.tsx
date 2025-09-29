@@ -1,11 +1,11 @@
-import { useEducatorForm } from "../../hooks/useEducatorForm"; 
+import { useEducatorForm } from "../../hooks/useEducatorForm";
 import { Field } from "../Field";
 import { Button } from "../Button";
 import { H1 } from "../H1";
 import Captcha from "../Captcha";
 import { ProgressDialog } from "../dialog/ProgressDialog";
-import { AsyncSelectField } from "../AsyncSelectField";
-import { fetchInstitutions } from "@/services/institutionService";
+import { AsyncSelect } from "../AsyncSelect";
+
 
 export const EducatorForm = () => {
   const {
@@ -18,6 +18,9 @@ export const EducatorForm = () => {
     captchaResetKey,
     captchaError,
     isPending,
+    institutionOptions,
+    isInstitutionsLoading,
+    setInstitutionInput,
   } = useEducatorForm();
 
   return (
@@ -114,12 +117,14 @@ export const EducatorForm = () => {
             />
           </div>
 
-          <AsyncSelectField
+          <AsyncSelect
             name="institution"
             label="Instituição:"
-            placeholder="Ex: NOME DA INSTITUIÇÃO"
+            placeholder="Digite para buscar..."
             control={control}
-            loadOptions={fetchInstitutions}
+            options={institutionOptions}
+            onInputChange={setInstitutionInput}
+            isLoading={isInstitutionsLoading}
             error={errors.institution?.message}
           />
 

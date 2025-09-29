@@ -83,7 +83,7 @@ export const InstitutionForm = () => {
         <AsyncSelectField
           name="coordinator"
           label="Coordenador:"
-          placeholder="Ex: Nome do Coordenador"
+          placeholder="Digite para buscar..."
           control={control}
           loadOptions={loadEducatorOptions}
           error={errors.coordinator?.message}

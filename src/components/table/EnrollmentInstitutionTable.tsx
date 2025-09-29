@@ -1,7 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { ListFilterPlus, Plus, Check, X } from "lucide-react";
-import { format } from "date-fns";
 import { redirectTo } from "../../utils/events";
 import { useEnrollmentInstitutionTable } from "../../hooks/useEnrollmentInstitutionTable";
 import type { EnrollmentInstitution } from "../../types/enrollmentInstitutionTypes";
@@ -12,6 +11,15 @@ import { SearchInput } from "../SearchInput";
 import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../SelectField";
 import { EnrollmentActionDialog } from "../dialog/EnrollmentActionDialog";
+import { formatInTimeZone } from "date-fns-tz";
+import { ptBR } from "date-fns/locale";
+
+export const formatDateWithTime = (dateString?: string): string => {
+  if (!dateString) return "N/A";
+  return formatInTimeZone(dateString, "UTC", "dd/MM/yyyy HH:mm", {
+    locale: ptBR,
+  });
+};
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -134,7 +142,7 @@ export const EnrollmentInstitutionTable = ({
       }),
       columnHelper.accessor("enrollmentDate", {
         header: "Data da Inscrição",
-        cell: (info) => format(new Date(info.getValue()), "dd/MM/yyyy hh:mm"),
+        cell: (info) => formatDateWithTime(info.getValue()),
       }),
       columnHelper.display({
         id: "actions",

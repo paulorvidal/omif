@@ -28,12 +28,39 @@ const EditionFormSchema = z.object({
 });
 
 export const useNavbar = () => {
-    const { control, watch, trigger } = useForm({
+    const storedEditionValue = localStorage.getItem("edition");
+
+
+     const getInitialEdition = async () => {
+        if (!storedEditionValue || storedEditionValue === "all") {
+            return defaultOption;
+        }
+
+        try {
+            const editions = await fetchEditions(); 
+            const foundEdition = editions.find(e => e.label.toString() === storedEditionValue);
+            return foundEdition ? { ...foundEdition, label: foundEdition.label } : defaultOption;
+        } catch (error) {
+            console.error("Failed to fetch editions:", error);
+            return defaultOption;
+        }
+    };
+
+
+     const { control, watch, trigger, setValue } = useForm({
         resolver: zodResolver(EditionFormSchema),
         defaultValues: {
             edition: null,
         },
     });
+
+     useEffect(() => {
+        const setInitialEdition = async () => {
+            const initialEdition = await getInitialEdition();
+            setValue("edition", initialEdition);
+        };
+        setInitialEdition();
+    }, []);
 
     const queryClient = useQueryClient();
 
