@@ -8,7 +8,7 @@ type ButtonProps = {
   outline?: boolean;
   neutral?: boolean;
   destructive?: boolean;
-  size?: 'sm' | 'default';
+  size?: "sm" | "default";
   isLoading?: boolean;
 } & ComponentProps<"button">;
 
@@ -27,28 +27,32 @@ export const Button = ({
   const baseClasses =
     "relative flex cursor-pointer items-center justify-center rounded-md gap-2 duration-500 font-semibold disabled:opacity-70 disabled:cursor-not-allowed";
 
-
   let variantClasses = "";
   if (outline) {
-    variantClasses = "border-2 border-zinc-300 text-zinc-500 hover:border-zinc-400 active:border-zinc-600";
+    variantClasses =
+      "border-2 border-zinc-300 text-zinc-500 hover:border-zinc-400 active:border-zinc-600";
   } else if (secondary) {
-    variantClasses = "border-2 border-green-600 text-green-600 hover:border-green-500 hover:text-green-500";
+    variantClasses =
+      "border-2 border-green-600 text-green-600 hover:border-green-500 hover:text-green-500";
   } else if (neutral) {
-    variantClasses = "bg-zinc-300 text-zinc-700 hover:bg-zinc-400 active:bg-zinc-500";
+    variantClasses =
+      "bg-zinc-300 text-zinc-700 hover:bg-zinc-400 active:bg-zinc-500";
   } else if (destructive) {
-    variantClasses = "border-2 border-red-600 text-red-600 hover:border-red-500 hover:text-red-500";
+    variantClasses =
+      "border-2 border-red-600 text-red-600 hover:border-red-500 hover:text-red-500";
   } else {
-    variantClasses = "bg-green-600 text-white hover:bg-green-500 active:bg-green-500";
+    variantClasses =
+      "bg-green-600 text-white hover:bg-green-500 active:bg-green-500";
   }
 
   let sizeClasses = "";
   let effectiveSize = size;
   if (!effectiveSize) {
-    effectiveSize = neutral ? 'sm' : 'default';
+    effectiveSize = neutral ? "sm" : "default";
   }
 
   switch (effectiveSize) {
-    case 'sm':
+    case "sm":
       sizeClasses = "h-9 px-3 text-sm";
       break;
     default:
@@ -58,7 +62,7 @@ export const Button = ({
 
   return (
     <button
-      className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className || ''}`}
+      className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className || ""}`}
       disabled={isLoading}
       {...props}
     >
@@ -68,8 +72,10 @@ export const Button = ({
         </div>
       )}
 
-      <span className={`flex items-center justify-center gap-2 ${isLoading ? 'invisible' : 'visible'}`}>
-        {icon && <span className="flex items-center w-5">{icon}</span>}
+      <span
+        className={`flex items-center justify-center gap-2 ${isLoading ? "invisible" : "visible"}`}
+      >
+        {icon && <span className="flex w-5 items-center">{icon}</span>}
         {children}
       </span>
     </button>
@@ -78,7 +84,7 @@ export const Button = ({
 
 const Spinner = () => (
   <svg
-    className="animate-spin h-5 w-5 text-current"
+    className="h-5 w-5 animate-spin text-current"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"

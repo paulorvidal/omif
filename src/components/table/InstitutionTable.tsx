@@ -3,7 +3,10 @@ import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
 import { ListFilterPlus, Plus, Pencil, Trash, Trash2 } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { type FindAllInstitutionsResponse } from "../../types/institutionTypes";
-import { useInstitutionTable, type InstitutionCollumns } from "../../hooks/useInstitutionTable";
+import {
+  useInstitutionTable,
+  type InstitutionCollumns,
+} from "../../hooks/useInstitutionTable";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
 import { GenericTable } from "../GenericTable";
@@ -22,15 +25,15 @@ const getColumns = (
   },
   {
     accessorKey: "name",
-    header: "Nome"
+    header: "Nome",
   },
   {
     accessorKey: "email",
-    header: "Email"
+    header: "Email",
   },
   {
     accessorKey: "coordinatorName",
-    header: "Coordenador"
+    header: "Coordenador",
   },
   {
     id: "actions",
@@ -52,13 +55,13 @@ const getColumns = (
           </ActionsPopoverItem>
         </ActionsPopover>
       </div>
-    )
-  }
-]
+    ),
+  },
+];
 
 type InstitutionTableProps = {
-  onCountChange: (count: number) => void
-}
+  onCountChange: (count: number) => void;
+};
 
 export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
   const {
@@ -81,7 +84,7 @@ export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
     }
   }, [totalElements, onCountChange]);
 
-  const columns = getColumns(handleDeleteClick)
+  const columns = getColumns(handleDeleteClick);
 
   const sortOptions = [
     { label: "Nome (A-Z)", value: "name,asc" },
@@ -101,7 +104,7 @@ export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
 
   return (
     <div className="flex flex-col gap-4 md:gap-8">
-      <div className="rounded-md bg-slate-50">
+      <div className="rounded-md bg-zinc-50">
         <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex w-full flex-col items-center gap-4 md:flex-row">
             <div className="w-full flex-1">

@@ -21,7 +21,7 @@ export const PasswordRecoveryForm = ({ token }: { token: string }) => {
   }
   return (
     <form
-      className="flex w-full flex-col justify-center gap-4 rounded-md bg-white p-10 md:max-w-1/2 lg:max-w-1/3"
+      className="flex w-full flex-col justify-center gap-4 rounded-md bg-zinc-50 p-10 md:max-w-1/2 lg:max-w-1/3"
       onSubmit={handleSubmit}
     >
       <h2 className="text-center text-xl font-semibold text-zinc-800">

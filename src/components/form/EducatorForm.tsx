@@ -1,11 +1,10 @@
 import { useEducatorForm } from "../../hooks/useEducatorForm";
 import { Field } from "../Field";
-import { Button } from "../Button";
 import { H1 } from "../H1";
 import Captcha from "../Captcha";
 import { ProgressDialog } from "../dialog/ProgressDialog";
 import { AsyncSelect } from "../AsyncSelect";
-
+import { Button } from "../ui/button";
 
 export const EducatorForm = () => {
   const {
@@ -136,7 +135,7 @@ export const EducatorForm = () => {
           />
 
           <div className="flex justify-between">
-            <Button secondary type="button" onClick={handleReset}>
+            <Button variant="secondary" type="button" onClick={handleReset}>
               Limpar
             </Button>
             <Button type="submit">Cadastrar</Button>

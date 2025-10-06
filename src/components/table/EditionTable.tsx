@@ -133,7 +133,7 @@ export const EditionTable = () => {
 
   return (
     <div className="flex flex-col gap-4 md:gap-8">
-      <div className="rounded-md bg-slate-50">
+      <div className="rounded-md bg-zinc-50">
         <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex w-full flex-col items-center gap-4 md:flex-row">
             <div className="w-full flex-1">

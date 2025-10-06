@@ -1,6 +1,4 @@
 import { useLogin } from "../hooks/useLogin";
-import { A } from "../components/A";
-import { Button } from "../components/Button";
 import { H1 } from "../components/H1";
 import { Field } from "../components/Field";
 import { ProgressDialog } from "../components/dialog/ProgressDialog";
@@ -8,6 +6,9 @@ import { EmailVerificationDialog } from "../components/dialog/EmailVerificationD
 import { AccountApprovalDialog } from "../components/dialog/AccountApprovalDialog";
 import Captcha from "../components/Captcha";
 import { PasswordRecoveryDialog } from "../components/dialog/PasswordRecoveryDialog";
+import { Button } from "@/components/ui/button";
+import { AppButton } from "@/components/app-button";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const {
@@ -33,6 +34,8 @@ export const Login = () => {
     isSendingPasswordRecovery,
     maskedEmailForRecovery,
   } = useLogin();
+
+  const navigate = useNavigate();
 
   return (
     <div className="flex h-screen w-screen flex-col items-center bg-zinc-200 p-4 text-zinc-700 sm:p-16">
@@ -67,27 +70,29 @@ export const Login = () => {
             error={captchaError}
           />
 
-          <Button type="submit">Entrar</Button>
-
-          <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
-            <A
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                openPasswordRecoveryDialog();
-              }}
-              className="text-center"
-            >
-              Esqueci minha senha
-            </A>
-            <A to="/educador" className="text-center">
-              Criar cadastro
-            </A>
+          <div className="flex flex-col gap-2">
+            <Button type="submit">Entrar</Button>
+            <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
+              <AppButton
+                variant="link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openPasswordRecoveryDialog();
+                }}
+              >
+                Esqueci minha senha
+              </AppButton>
+              <AppButton variant="link" onClick={() => navigate("/educador")}>
+                Criar cadastro
+              </AppButton>
+            </div>
+            <p className="text-center text-sm">
+              Problemas com o login:{" "}
+              <AppButton variant="link" href="mailto:suporte@omif.com.br">
+                suporte@omif.com.br
+              </AppButton>
+            </p>
           </div>
-          <p className="text-center">
-            Problemas com o login:{" "}
-            <A href="mailto:suporte@omif.com.br">suporte@omif.com.br</A>
-          </p>
         </form>
       </div>
 

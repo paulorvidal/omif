@@ -45,7 +45,7 @@ export const Notices = () => {
           <div className="flex flex-col gap-4 md:gap-8">
             <div className="rounded-md">
               <div className="flex flex-col gap-4">
-                <div className="flex w-full flex-col items-center gap-4 rounded-md bg-slate-50 p-4 md:flex-row md:p-8">
+                <div className="flex w-full flex-col items-center gap-4 rounded-md bg-zinc-50 p-4 md:flex-row md:p-8">
                   <div className="w-full flex-1">
                     <SearchInput
                       value={globalFilter}
@@ -87,7 +87,7 @@ export const Notices = () => {
                   ))}
                 </div>
 
-                <div className="flex items-center rounded-md bg-slate-50 p-4 md:p-8">
+                <div className="flex items-center rounded-md bg-zinc-50 p-4 md:p-8">
                   <Pagination
                     pageIndex={pagination.pageIndex}
                     pageCount={pageCount}
