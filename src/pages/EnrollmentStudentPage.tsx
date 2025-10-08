@@ -38,7 +38,7 @@ export const EnrollmentStudentPage = () => {
   }
 
   if (isSuccess) {
-    return !editionStatus.isStudentEnrollmentOpen ? (
+    return editionStatus.isStudentEnrollmentOpen ? (
       <EnrollmentStudentForm
         minimumWage={editionStatus.minimumWage}
         editionName={editionStatus.name}
