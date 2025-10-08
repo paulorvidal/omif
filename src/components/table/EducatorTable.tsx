@@ -7,18 +7,19 @@ import {
   getFilteredRowModel,
   getFacetedRowModel,
 } from "@tanstack/react-table";
-import { ListFilterPlus, Pencil, CheckSquare, Undo2 } from "lucide-react";
+import { ListFilterPlus, Pencil, CheckSquare, Undo2, Funnel } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEducatorTable } from "../../hooks/useEducatorTable";
 import { type FindAllEducatorsResponse as Educator } from "../../services/educatorService";
 import { Badge } from "../Badge";
-import { Button } from "../Button"; 
-import { DialogForm } from "../dialog/GenericDialog"; 
+import { Button } from "../Button";
+import { DialogForm } from "../dialog/GenericDialog";
 import { Checkbox } from "../Checkbox";
 import { ActionsPopover, ActionsPopoverItem } from "../ActionsPopover";
 import { SearchInput } from "../SearchInput";
 import { Pagination } from "../Pagination";
 import { SelectField } from "../SelectField";
+import { AppButton } from "../app-button";
 
 export const EducatorTable = () => {
   const {
@@ -277,14 +278,14 @@ export const EducatorTable = () => {
                   )}
                 </>
               )}
-              <Button
-                icon={<ListFilterPlus />}
+              <AppButton
+                variant="secondary"
                 type="button"
                 onClick={filterDialog.onOpen}
-                outline
               >
+                <Funnel />
                 Filtros
-              </Button>
+              </AppButton>
             </div>
           </div>
 

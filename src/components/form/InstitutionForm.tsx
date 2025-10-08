@@ -3,6 +3,8 @@ import { useInstitutionForm } from "../../hooks/useInstitutionForm";
 import { Field } from "../Field";
 import { AsyncSelectField } from "../AsyncSelectField";
 import { Button } from "../Button";
+import { AppButton } from "../app-button";
+import { Spinner } from "../ui/spinner";
 
 export const InstitutionForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -92,17 +94,26 @@ export const InstitutionForm = () => {
       )}
 
       <div className="flex justify-between">
-        <Button
-          secondary
+        <AppButton
+          variant="secondary"
           type="button"
           onClick={handleReset}
           disabled={isSubmitting}
         >
           Limpar
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isEditMode ? "Salvar" : "Cadastrar"}
-        </Button>
+        </AppButton>
+        <AppButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Spinner />
+              {isEditMode ? "Salvando..." : "Cadastrando..."}
+            </>
+          ) : isEditMode ? (
+            "Salvar"
+          ) : (
+            "Cadastrar"
+          )}
+        </AppButton>
       </div>
     </form>
   );

@@ -5,6 +5,8 @@ import { Field } from "../Field";
 import { Button } from "../Button";
 import { ProgressDialog } from "../dialog/ProgressDialog";
 import { maskCurrency } from "../../utils/formatters";
+import { AppButton } from "../app-button";
+import { Spinner } from "../ui/spinner";
 
 export const EditionForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -113,20 +115,27 @@ export const EditionForm = () => {
         />
       </div>
       <div className="mt-6 flex justify-between">
-        <Button
-          secondary
+        <AppButton
+          variant="secondary"
           type="button"
           onClick={handleReset}
           disabled={isLoading}
         >
           Limpar
-        </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isEditMode ? "Salvar" : "Cadastrar"}
-        </Button>
+        </AppButton>
+        <AppButton type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Spinner />
+              {isEditMode ? "Salvando..." : "Cadastrando..."}
+            </>
+          ) : isEditMode ? (
+            "Salvar"
+          ) : (
+            "Cadastrar"
+          )}
+        </AppButton>
       </div>
-
-      <ProgressDialog open={isLoading} />
     </form>
   );
 };

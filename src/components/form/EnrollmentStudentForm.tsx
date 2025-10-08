@@ -5,6 +5,8 @@ import { SelectField } from "../SelectField";
 import { AsyncSelect } from "../AsyncSelect";
 import { useEnrollmentStudentForm } from "../../hooks/useEnrollmentStudentForm";
 import Captcha from "../Captcha";
+import { AppButton } from "../app-button";
+import { Spinner } from "../ui/spinner";
 
 interface Props {
   editionName: string;
@@ -226,12 +228,18 @@ export const EnrollmentStudentForm = ({
       />
 
       <div className="flex justify-between">
-        <Button secondary type="button" onClick={handleReset}>
+        <AppButton
+          variant="secondary"
+          type="button"
+          onClick={handleReset}
+          disabled={isPending}
+        >
           Limpar
-        </Button>
-        <Button type="submit" isLoading={isPending}>
-          Inscrever-se
-        </Button>
+        </AppButton>
+        <AppButton type="submit" disabled={isPending}>
+          {isPending && <Spinner />}
+          {isPending ? "Inscrevendo-se..." : "Inscrever-se"}
+        </AppButton>
       </div>
     </form>
   );

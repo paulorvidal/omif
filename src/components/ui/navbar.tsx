@@ -96,9 +96,7 @@ function Navbar() {
           className="hidden max-w-[200px] truncate sm:block"
           title={displayName || "Meu Perfil"}
         >
-          {isUserDataLoading
-            ? "Carregando..."
-            : displayName || "Meu Perfil"}
+          {isUserDataLoading ? "Carregando..." : displayName || "Meu Perfil"}
         </p>
         <div className="h-10 w-10 shrink-0 p-1">
           {userData && userData.profilePictureUrl ? (

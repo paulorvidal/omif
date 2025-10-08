@@ -6,9 +6,9 @@ import { EmailVerificationDialog } from "../components/dialog/EmailVerificationD
 import { AccountApprovalDialog } from "../components/dialog/AccountApprovalDialog";
 import Captcha from "../components/Captcha";
 import { PasswordRecoveryDialog } from "../components/dialog/PasswordRecoveryDialog";
-import { Button } from "@/components/ui/button";
 import { AppButton } from "@/components/app-button";
 import { useNavigate } from "react-router-dom";
+import { Spinner } from "@/components/ui/spinner";
 
 export const Login = () => {
   const {
@@ -71,7 +71,10 @@ export const Login = () => {
           />
 
           <div className="flex flex-col gap-2">
-            <Button type="submit">Entrar</Button>
+            <AppButton type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Spinner />}
+              {isSubmitting ? "Entrando..." : "Entrar"}
+            </AppButton>
             <div className="flex flex-col justify-center sm:flex-row sm:justify-between">
               <AppButton
                 variant="link"
@@ -95,8 +98,6 @@ export const Login = () => {
           </div>
         </form>
       </div>
-
-      <ProgressDialog open={isSubmitting} />
 
       <EmailVerificationDialog
         open={isVerificationDialogOpen}

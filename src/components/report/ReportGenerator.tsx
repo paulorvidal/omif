@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Button } from "../Button";
 import { Download, Check } from "lucide-react";
+import { AppButton } from "../app-button";
 
 type ReportField = {
   id: string;
@@ -163,14 +164,10 @@ const ReportGeneratorFooter = ({
       <span className="font-semibold text-green-700">{selectedCount}</span> de{" "}
       {totalCount} campos selecionados.
     </div>
-    <Button
-      onClick={onGenerate}
-      disabled={selectedCount === 0}
-      icon={<Download size={18} />}
-      className="bg-green-600 font-semibold text-white hover:bg-green-700"
-    >
+    <AppButton onClick={onGenerate} disabled={selectedCount === 0}>
+      <Download />
       Exportar CSV
-    </Button>
+    </AppButton>
   </footer>
 );
 

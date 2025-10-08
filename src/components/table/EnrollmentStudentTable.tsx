@@ -1,6 +1,6 @@
 import { useMemo, useEffect } from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { ListFilterPlus, Check, X } from "lucide-react";
+import { ListFilterPlus, Check, X, Funnel } from "lucide-react";
 import { format } from "date-fns";
 import { useEnrollmentStudentTable } from "../../hooks/useEnrollmentStudentTable";
 import type { EnrollmentStudent } from "../../types/enrollmentStudentTypes";
@@ -10,6 +10,7 @@ import { GenericTable } from "../GenericTable";
 import { SearchInput } from "../SearchInput";
 import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../SelectField";
+import { AppButton } from "../app-button";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -188,14 +189,14 @@ export const EnrollmentStudentTable = ({
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-              <Button
-                icon={<ListFilterPlus />}
+              <AppButton
+                variant="secondary"
                 type="button"
                 onClick={filterDialog.onOpen}
-                outline
               >
+                <Funnel />
                 Filtros
-              </Button>
+              </AppButton>
             </div>
           </div>
           <GenericTable

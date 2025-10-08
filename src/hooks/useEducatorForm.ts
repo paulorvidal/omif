@@ -149,22 +149,23 @@ export const useEducatorForm = () => {
     },
   });
 
-  const { data: institutionOptions, isLoading: isInstitutionsLoading } = useQuery({
-    queryKey: ["institutions", debouncedInstitutionInput],
+  const { data: institutionOptions, isLoading: isInstitutionsLoading } =
+    useQuery({
+      queryKey: ["institutions", debouncedInstitutionInput],
 
-    queryFn: () =>
-      fetchInstitutions({
-        q: debouncedInstitutionInput,
-        page: 0,
-        size: 10
-      }),
+      queryFn: () =>
+        fetchInstitutions({
+          q: debouncedInstitutionInput,
+          page: 0,
+          size: 10,
+        }),
 
-    select: (data: PageResponse<Institution>) =>
-      data.content.map((institution) => ({
-        label: institution.name,
-        value: institution.id,
-      })),
-  });
+      select: (data: PageResponse<Institution>) =>
+        data.content.map((institution) => ({
+          label: institution.name,
+          value: institution.id,
+        })),
+    });
 
   const onSubmit = (data: Omit<EducatorFormData, "captchaToken">) => {
     if (!captchaToken) {

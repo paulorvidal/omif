@@ -7,6 +7,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import { Button } from "../Button";
 import type { Path, RegisterOptions } from "react-hook-form";
+import { AppButton } from "../app-button";
 
 export interface FieldConfig<T extends object> {
   name: Path<T>;
@@ -68,10 +69,10 @@ export function DialogForm(props: DialogFormProps) {
         >
           {children}
           <DialogActions>
-            <Button onClick={onClose} secondary type="button">
+            <AppButton variant="secondary" type="button" onClick={onClose}>
               {cancelText}
-            </Button>
-            <Button type="submit">{submitText}</Button>
+            </AppButton>
+            <AppButton type="submit">{submitText}</AppButton>
           </DialogActions>
         </Box>
       </DialogContent>

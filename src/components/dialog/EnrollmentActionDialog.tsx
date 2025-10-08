@@ -6,6 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import { X, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "../Button";
 import type { CreateInstitutionRequest } from "../../types/institutionTypes";
+import { AppButton } from "../app-button";
+import { Spinner } from "../ui/spinner";
 
 const ComparisonRow = ({
   label,
@@ -85,13 +87,13 @@ export function EnrollmentActionDialog({
     key: keyof CreateInstitutionRequest;
     label: string;
   }[] = [
-      { key: "name", label: "Nome da Instituição" },
-      { key: "inep", label: "Código INEP" },
-      { key: "phoneNumber", label: "Telefone" },
-      { key: "email1", label: "E-mail Principal" },
-      { key: "email2", label: "E-mail Secundário" },
-      { key: "email3", label: "E-mail Adicional" },
-    ];
+    { key: "name", label: "Nome da Instituição" },
+    { key: "inep", label: "Código INEP" },
+    { key: "phoneNumber", label: "Telefone" },
+    { key: "email1", label: "E-mail Principal" },
+    { key: "email2", label: "E-mail Secundário" },
+    { key: "email3", label: "E-mail Adicional" },
+  ];
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -100,7 +102,7 @@ export function EnrollmentActionDialog({
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: 'absolute',
+            position: "absolute",
             right: 8,
             top: 8,
             color: (theme) => theme.palette.grey[500],
@@ -109,7 +111,7 @@ export function EnrollmentActionDialog({
           <X size={24} />
         </IconButton>
       </DialogTitle>
-      <DialogContent className="p-4 sm:p-6 pt-0">
+      <DialogContent className="p-4 pt-0 sm:p-6">
         <div className="flex flex-col items-center px-4 pb-2 text-center">
           <div
             className={`mb-5 flex h-16 w-16 items-center justify-center rounded-full ${iconColor}`}
@@ -134,40 +136,38 @@ export function EnrollmentActionDialog({
       <DialogActions className="flex-wrap justify-center p-4 sm:justify-end">
         {isApproving ? (
           <>
-            <Button
+            <AppButton
+              variant="outline"
               onClick={onConfirmWithoutChanges}
-              outline
               disabled={isPending}
-              className="w-full sm:w-auto"
             >
-              Aprovar sem Alterações
-            </Button>
-            <Button
-              onClick={onConfirm}
-              isLoading={isPending}
-              className="w-full bg-green-600 hover:bg-green-700 sm:w-auto"
-            >
-              Aprovar com Alterações
-            </Button>
+              {isPending && <Spinner />}
+              {isPending ? "Aprovando..." : "Aprovar sem alterações"}
+            </AppButton>
+
+            <AppButton onClick={onConfirm} disabled={isPending}>
+              {isPending && <Spinner />}
+              {isPending ? "Aprovando..." : "Aprovar com alterações"}
+            </AppButton>
           </>
         ) : (
           <>
-            <Button
+            <AppButton
+              variant="outline"
               onClick={onConfirmWithoutChanges}
-              outline
               disabled={isPending}
-              className="w-full sm:w-auto"
             >
-              Recusar sem Alterações
-            </Button>
-            <Button
+              {isPending && <Spinner />}
+              {isPending ? "Recusando..." : "Recusar sem alterações"}
+            </AppButton>
+            <AppButton
+              variant="destructive"
               onClick={onConfirm}
-              destructive
-              isLoading={isPending}
-              className="w-full sm:w-auto"
+              disabled={isPending}
             >
-              Recusar com Inscrição
-            </Button>
+              {isPending && <Spinner />}
+              {isPending ? "Recusando..." : "Recusar com alterações"}
+            </AppButton>
           </>
         )}
       </DialogActions>

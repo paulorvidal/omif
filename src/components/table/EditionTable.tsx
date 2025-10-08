@@ -1,6 +1,6 @@
 import React from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { ListFilterPlus, Pencil, Plus, Route } from "lucide-react";
+import { Funnel, ListFilterPlus, Pencil, Plus, Route } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEditionsTable } from "../../hooks/useEditionTable";
 import { Button } from "../Button";
@@ -14,6 +14,7 @@ import { formatInTimeZone } from "date-fns-tz";
 import { ptBR } from "date-fns/locale";
 import { StatusButton } from "../StatusButton";
 import { CalendarDays } from "lucide-react";
+import { AppButton } from "../app-button";
 
 export const formatDateWithTime = (dateString?: string): string => {
   if (!dateString) return "N/A";
@@ -146,21 +147,18 @@ export const EditionTable = () => {
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-              <Button
-                icon={<ListFilterPlus />}
+              <AppButton
+                variant="secondary"
                 type="button"
                 onClick={filterDialog.onOpen}
-                outline
               >
+                <Funnel />
                 Filtros
-              </Button>
-              <Button
-                icon={<Plus />}
-                type="button"
-                onClick={() => redirectTo("/edicao")}
-              >
+              </AppButton>
+              <AppButton type="button" onClick={() => redirectTo("/edicao")}>
+                <Plus />
                 Cadastrar
-              </Button>
+              </AppButton>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, Check, X } from "lucide-react";
+import { ListFilterPlus, Plus, Check, X, Funnel } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import { useEnrollmentInstitutionTable } from "../../hooks/useEnrollmentInstitutionTable";
 import type { EnrollmentInstitution } from "../../types/enrollmentInstitutionTypes";
@@ -13,6 +13,7 @@ import { SelectField } from "../SelectField";
 import { EnrollmentActionDialog } from "../dialog/EnrollmentActionDialog";
 import { formatInTimeZone } from "date-fns-tz";
 import { ptBR } from "date-fns/locale";
+import { AppButton } from "../app-button";
 
 export const formatDateWithTime = (dateString?: string): string => {
   if (!dateString) return "N/A";
@@ -237,21 +238,21 @@ export const EnrollmentInstitutionTable = ({
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-              <Button
-                icon={<ListFilterPlus />}
+              <AppButton
+                variant="secondary"
                 type="button"
                 onClick={filterDialog.onOpen}
-                outline
               >
+                <Funnel />
                 Filtros
-              </Button>
-              <Button
-                icon={<Plus />}
+              </AppButton>
+              <AppButton
                 type="button"
                 onClick={() => redirectTo("/instituicao")}
               >
+                <Plus />
                 Cadastrar
-              </Button>
+              </AppButton>
             </div>
           </div>
 

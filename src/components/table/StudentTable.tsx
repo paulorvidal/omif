@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Pencil, Trash2, ListFilterPlus } from "lucide-react";
+import { Pencil, Trash2, ListFilterPlus, Funnel } from "lucide-react";
 import { redirectTo } from "../../utils/events";
 import {
   useStudentTable,
@@ -13,6 +13,7 @@ import { ConfirmDialog } from "../dialog/ConfirmDialog";
 import { DialogForm } from "../dialog/GenericDialog";
 import { Button } from "../Button";
 import { SelectField } from "../SelectField";
+import { AppButton } from "../app-button";
 
 const getColumns = (
   handleDeleteClick: (id: string) => void,
@@ -112,14 +113,14 @@ export const StudentTable = ({ onCountChange }: StudentTableProps) => {
                 />
               </div>
               <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-                <Button
-                  icon={<ListFilterPlus />}
+                <AppButton
+                  variant="secondary"
                   type="button"
                   onClick={filterDialog.onOpen}
-                  outline
                 >
+                  <Funnel />
                   Filtros
-                </Button>
+                </AppButton>
               </div>
             </div>
 

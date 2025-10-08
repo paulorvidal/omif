@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
-import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { ListFilterPlus, Plus, Pencil, Trash, Trash2 } from "lucide-react";
+import { useEffect } from "react";
+import { type ColumnDef } from "@tanstack/react-table";
+import { ListFilterPlus, Plus, Pencil, Trash2, Funnel } from "lucide-react";
 import { redirectTo } from "../../utils/events";
-import { type FindAllInstitutionsResponse } from "../../types/institutionTypes";
 import {
   useInstitutionTable,
   type InstitutionCollumns,
 } from "../../hooks/useInstitutionTable";
-import { Badge } from "../Badge";
 import { Button } from "../Button";
 import { GenericTable } from "../GenericTable";
 import { SearchInput } from "../SearchInput";
@@ -15,6 +13,7 @@ import { ConfirmDialog } from "../dialog/ConfirmDialog";
 import { DialogForm } from "../dialog/GenericDialog";
 import { SelectField } from "../SelectField";
 import { ActionsPopover, ActionsPopoverItem } from "../ActionsPopover";
+import { AppButton } from "../app-button";
 
 const getColumns = (
   handleDeleteClick: (id: string) => void,
@@ -117,21 +116,21 @@ export const InstitutionTable = ({ onCountChange }: InstitutionTableProps) => {
               />
             </div>
             <div className="grid w-full grid-cols-1 gap-4 md:flex md:w-auto">
-              <Button
-                icon={<ListFilterPlus />}
+              <AppButton
+                variant="secondary"
                 type="button"
                 onClick={filterDialog.onOpen}
-                outline
               >
+                <Funnel />
                 Filtros
-              </Button>
-              <Button
-                icon={<Plus />}
+              </AppButton>
+              <AppButton
                 type="button"
                 onClick={() => redirectTo("/instituicao")}
               >
+                <Plus />
                 Cadastrar
-              </Button>
+              </AppButton>
             </div>
           </div>
 
