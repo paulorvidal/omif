@@ -15,7 +15,7 @@ type AppCardProps = {
   type: "info" | "warning" | "error" | "success";
 } & React.ComponentProps<typeof Card>;
 
-export function AppCard({ title, description, type, ...props }: AppCardProps) {
+function AppCard({ title, description, type, ...props }: AppCardProps) {
   const navigate = useNavigate();
 
   return (
@@ -42,3 +42,5 @@ export function AppCard({ title, description, type, ...props }: AppCardProps) {
     </Card>
   );
 }
+
+export { AppCard };

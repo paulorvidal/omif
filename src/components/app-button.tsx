@@ -1,16 +1,35 @@
+import type React from "react";
 import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
 
-type AppCardProps = {
+type AppButtonProps = {
   children: React.ReactNode;
+  icon?: React.ReactElement;
   href?: string;
+  isLoading?: boolean;
 } & React.ComponentProps<typeof Button>;
 
-export function AppButton({ children, href, ...props }: AppCardProps) {
-  return href ? (
-    <Button asChild {...props}>
-      <a href={href}>{children}</a>
-    </Button>
-  ) : (
-    <Button {...props}>{children}</Button>
+function AppButton({
+  children,
+  icon,
+  href,
+  isLoading,
+  ...props
+}: AppButtonProps) {
+  return (
+    <>
+      {href ? (
+        <Button asChild {...props}>
+          <a href={href}>{children}</a>
+        </Button>
+      ) : (
+        <Button disabled={isLoading} {...props}>
+          {isLoading ? <Spinner /> : icon}
+          {children}
+        </Button>
+      )}
+    </>
   );
 }
+
+export { AppButton };
