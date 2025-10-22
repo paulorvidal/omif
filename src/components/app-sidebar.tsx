@@ -26,6 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { redirectTo } from "src/utils/events";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "src/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isMobile = useIsMobile();
@@ -166,25 +167,44 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <div
         className={`fixed bottom-0 left-0 z-30 flex h-14 w-full items-center justify-around bg-green-600 text-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.25)] ${!isMobile ? "hidden" : ""}`}
       >
-        <SidebarTrigger className="hover:text-sidebar-accent-foreground active:text-sidebar-accent-foreground m-2" />
+        <SidebarTrigger
+          className={cn(
+            "m-2",
+            "hover:text-sidebar-accent-foreground",
+            "active:text-sidebar-accent-foreground",
+            "hover:bg-sidebar-accent",
+            "active:bg-sidebar-accent",
+          )}
+        />
+
         <NavLink to="/avisos" end>
           {({ isActive }) => (
             <Button
               variant="ghost"
               size="icon"
-              className={`m-2 size-7 ${isActive ? "bg-accent" : ""}`}
+              className={cn(
+                "m-2 size-7",
+                "hover:bg-sidebar-accent",
+                "active:bg-sidebar-accent",
+                isActive && "bg-sidebar-active",
+              )}
             >
               <img src={OmifIcon} alt="Omif logo" className="size-4" />
             </Button>
           )}
         </NavLink>
+
         <Button
           onClick={handleLogout}
           variant="ghost"
           size="icon"
-          className={
-            "hover:text-sidebar-accent-foreground active:text-sidebar-accent-foreground m-2 size-7"
-          }
+          className={cn(
+            "m-2 size-7",
+            "hover:text-sidebar-accent-foreground",
+            "active:text-sidebar-accent-foreground",
+            "hover:bg-sidebar-accent",
+            "active:bg-sidebar-accent",
+          )}
         >
           <LogOut />
         </Button>

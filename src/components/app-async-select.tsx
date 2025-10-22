@@ -75,6 +75,7 @@ export function AsyncAppSelect<T extends FieldValues>({
                 variant="secondary"
                 size="icon"
                 className="bg-background h-6 w-6 rounded-full"
+                {...props}
               >
                 <Info />
               </Button>
