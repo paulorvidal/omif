@@ -1,6 +1,6 @@
 import axios, { type AxiosError } from "axios";
 import { redirectTo } from "../utils/events";
-import { ApiError } from "./apiError";
+import { ApiError } from "./api-error";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
