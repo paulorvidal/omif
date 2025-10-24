@@ -22,7 +22,7 @@ function AppCheckbox({
     <Checkbox
       checked={checked}
       onCheckedChange={onCheckedChange}
-      className="border-ring data-[state=unchecked]:bg-input/50"
+      className="border-ring data-[state=unchecked]:bg-muted/50"
       aria-label="Selecionar linha"
     />
   );

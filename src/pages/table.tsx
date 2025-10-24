@@ -26,7 +26,7 @@ type Institution = {
 
 const statusOptions: Status[] = ["active", "inactive", "pending"];
 
-const mockData: Institution[] = Array.from({ length: 50 }, (_, i) => ({
+const mockData: Institution[] = Array.from({ length: 500 }, (_, i) => ({
   id: (i + 1).toString(),
   name: `Instituição ${i + 1}`,
   coordinator: `Coordenador ${i + 1}`,
