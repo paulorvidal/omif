@@ -11,7 +11,7 @@ import { Delete, Plus } from "lucide-react";
 import { AppSelect } from "@/components/app-select";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { AsyncAppSelect } from "@/components/app-async-select";
+import { AppAsyncSelect } from "@/components/app-async-select";
 
 const allOptions = [
   { label: "1", value: 1 },
@@ -77,16 +77,6 @@ function Form() {
                         helpText="Texto de Ajuda"
                       />
                     </Field>
-                    {/* <Field>
-                      <AppDatePicker label={"Data"} helpText="Texto de Ajuda" />
-                    </Field>
-                    <Field>
-                      <AppDatePicker
-                        label={"Data com Erro"}
-                        helpText="Texto de Ajuda"
-                        error="Erro: Algo inesperado aconteceu."
-                      />
-                    </Field> */}
                     <Field>
                       <AppInput
                         type="datetime-local"
@@ -122,7 +112,7 @@ function Form() {
                       />
                     </Field>
                     <Field>
-                      <AsyncAppSelect
+                      <AppAsyncSelect
                         name="asyncSelect"
                         label="Select Assíncrono"
                         control={control}
@@ -133,7 +123,7 @@ function Form() {
                       />
                     </Field>
                     <Field>
-                      <AsyncAppSelect
+                      <AppAsyncSelect
                         name="asyncSelectError"
                         label="Select Assíncrono com Erro"
                         control={control}

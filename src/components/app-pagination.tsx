@@ -1,13 +1,10 @@
-import { useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "./ui/pagination";
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 type AppPaginationProps = {
   pageCount: number;
@@ -15,100 +12,66 @@ type AppPaginationProps = {
   onPageChange: (page: number) => void;
   maxVisible?: number;
   disabled?: boolean;
-} & React.ComponentProps<typeof Pagination>;
+};
 
 function AppPagination({
   pageCount,
   currentPage,
   onPageChange,
-  maxVisible = 5,
   disabled = false,
 }: AppPaginationProps) {
   const canPrevious = currentPage > 1;
   const canNext = currentPage < pageCount;
 
-  const getPages = useCallback(() => {
-    if (pageCount <= 1) return [1];
-
-    const pages: (number | string)[] = [];
-    const totalVisible = Math.min(maxVisible, pageCount);
-    const half = Math.floor(totalVisible / 2);
-
-    let start = currentPage - half;
-    let end = currentPage + half;
-
-    if (start < 1) {
-      start = 1;
-      end = totalVisible;
-    } else if (end > pageCount) {
-      end = pageCount;
-      start = pageCount - totalVisible + 1;
-    }
-
-    if (start > 1) {
-      pages.push(1);
-      if (start > 2) pages.push("...");
-    }
-
-    for (let i = start; i <= end; i++) pages.push(i);
-
-    if (end < pageCount) {
-      if (end < pageCount - 1) pages.push("...");
-      pages.push(pageCount);
-    }
-
-    return pages;
-  }, [currentPage, pageCount, maxVisible]);
-
   return (
-    <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (canPrevious && !disabled) onPageChange(currentPage - 1);
-            }}
-            className={
-              !canPrevious || disabled ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
-
-        {getPages().map((page, i) => (
-          <PaginationItem key={i}>
-            {page === "..." ? (
-              <PaginationEllipsis />
-            ) : (
-              <PaginationLink
-                href="#"
-                isActive={page === currentPage}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (!disabled) onPageChange(Number(page));
-                }}
-              >
-                {page}
-              </PaginationLink>
-            )}
-          </PaginationItem>
-        ))}
-
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (canNext && !disabled) onPageChange(currentPage + 1);
-            }}
-            className={
-              !canNext || disabled ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+    <div className="flex items-center justify-end">
+      <div className="flex w-full items-center gap-8 lg:w-fit">
+        <div className="flex w-fit items-center justify-center text-sm font-medium">
+          Página {currentPage} de {pageCount}
+        </div>
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <Button
+            variant="secondary"
+            className="hidden h-8 w-8 p-0 lg:flex"
+            onClick={() => onPageChange(1)}
+            disabled={!canPrevious || disabled}
+          >
+            <span className="sr-only">Ir para a primeira página</span>
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="secondary"
+            className="size-8"
+            size="icon"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={!canPrevious || disabled}
+          >
+            <span className="sr-only">Página anterior</span>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="secondary"
+            className="size-8"
+            size="icon"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={!canNext || disabled}
+          >
+            <span className="sr-only">Próxima página</span>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="secondary"
+            className="hidden size-8 lg:flex"
+            size="icon"
+            onClick={() => onPageChange(pageCount)}
+            disabled={!canNext || disabled}
+          >
+            <span className="sr-only">Ir para a última página</span>
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 

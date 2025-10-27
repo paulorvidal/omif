@@ -15,8 +15,9 @@ import {
   TableRow,
 } from "./ui/table";
 import { AppPagination } from "./app-pagination";
+import { Spinner } from "./ui/spinner";
 
-type GenericTableProps<TData, TValue> = {
+type AppGenericTableProps<TData, TValue> = {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
   pageCount: number;
@@ -26,7 +27,7 @@ type GenericTableProps<TData, TValue> = {
   getRowId: (row: TData) => string;
 } & React.ComponentProps<typeof Table>;
 
-function GenericTable<TData, TValue>({
+function AppGenericTable<TData, TValue>({
   data,
   columns,
   pageCount,
@@ -34,7 +35,7 @@ function GenericTable<TData, TValue>({
   isLoading,
   onPaginationChange,
   getRowId,
-}: GenericTableProps<TData, TValue>) {
+}: AppGenericTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -47,11 +48,6 @@ function GenericTable<TData, TValue>({
   });
 
   const currentPage = pagination.pageIndex + 1;
-  const totalPages = pageCount;
-
-  const goToPage = (page: number) => {
-    table.setPageIndex(page - 1);
-  };
 
   return (
     <div className="space-y-4">
@@ -79,7 +75,15 @@ function GenericTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-16">
+                  <div className="flex h-full items-center justify-center">
+                    <Spinner />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   className="odd:bg-muted/50"
@@ -120,4 +124,4 @@ function GenericTable<TData, TValue>({
   );
 }
 
-export { GenericTable };
+export { AppGenericTable };

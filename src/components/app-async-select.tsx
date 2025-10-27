@@ -24,7 +24,7 @@ type Option = {
   value: string | number;
 };
 
-type AsyncAppSelectProps<T extends FieldValues> = {
+type AppAsyncSelectProps<T extends FieldValues> = {
   name: Path<T>;
   label: string;
   control: Control<T>;
@@ -39,7 +39,7 @@ type AsyncAppSelectProps<T extends FieldValues> = {
   className?: string;
 } & React.ComponentProps<typeof Button>;
 
-export function AsyncAppSelect<T extends FieldValues>({
+function AppAsyncSelect<T extends FieldValues>({
   name,
   label,
   control,
@@ -53,7 +53,7 @@ export function AsyncAppSelect<T extends FieldValues>({
   onInputChange,
   className,
   ...props
-}: AsyncAppSelectProps<T>) {
+}: AppAsyncSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
@@ -174,3 +174,5 @@ export function AsyncAppSelect<T extends FieldValues>({
     </>
   );
 }
+
+export { AppAsyncSelect };

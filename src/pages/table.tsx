@@ -1,7 +1,16 @@
+import { AppBadge } from "@/components/app-badge";
+import { AppButton } from "@/components/app-button";
 import { AppCheckbox } from "@/components/app-checkbox";
-import { GenericTable } from "@/components/app-generic-table";
+import { AppGenericTable } from "@/components/app-generic-table";
+import { AppSearchInput } from "@/components/app-search-input";
+import {
+  AppTabs,
+  AppTabsContent,
+  AppTabsList,
+  AppTabsTrigger,
+} from "@/components/app-tabs";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,10 +19,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Field,
+  FieldContent,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+  FieldTitle,
+} from "@/components/ui/field";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
 import { redirectTo } from "@/utils/events";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import {
+  ChevronLeft,
+  Funnel,
+  MoreVertical,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 type Status = "active" | "inactive" | "pending";
 
@@ -26,7 +53,7 @@ type Institution = {
 
 const statusOptions: Status[] = ["active", "inactive", "pending"];
 
-const mockData: Institution[] = Array.from({ length: 500 }, (_, i) => ({
+const mockDatabase: Institution[] = Array.from({ length: 500 }, (_, i) => ({
   id: (i + 1).toString(),
   name: `Instituição ${i + 1}`,
   coordinator: `Coordenador ${i + 1}`,
@@ -70,13 +97,11 @@ const getColumns = (
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as Status;
-      const color =
-        status === "active"
-          ? "text-green-600"
-          : status === "inactive"
-            ? "text-red-600"
-            : "text-yellow-600";
-      return <span className={color}>{status}</span>;
+      if (status === "active") return <AppBadge type="success">Ativo</AppBadge>;
+      if (status === "inactive")
+        return <AppBadge type="error">Desativado</AppBadge>;
+      if (status === "pending")
+        return <AppBadge type="warning">Pendente</AppBadge>;
     },
   },
   {
@@ -118,7 +143,29 @@ const getColumns = (
   },
 ];
 
+type ActiveTab = "all" | "enrollments" | "reports";
+
+const getValidTab = (tab: string | null): ActiveTab => {
+  if (tab === "enrollments" || tab === "reports") {
+    return tab;
+  }
+  return "all";
+};
+
 function Table() {
+  const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = getValidTab(searchParams.get("tab"));
+
+  const handleTabChange = (tab: ActiveTab) => {
+    if (tab === "all") {
+      setSearchParams({});
+    } else {
+      setSearchParams({ tab: tab });
+    }
+  };
+
   const columns = getColumns(() => {});
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -126,16 +173,126 @@ function Table() {
     pageSize: 10,
   });
 
+  const [data, setData] = useState<Institution[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pageCount, setPageCount] = useState(
+    Math.ceil(mockDatabase.length / pagination.pageSize),
+  );
+
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  const handleURLChange = ({ q }: { q: string }) => {
+    setGlobalFilter(q);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const timer = setTimeout(() => {
+      const start = pagination.pageIndex * pagination.pageSize;
+      const end = start + pagination.pageSize;
+
+      const paginatedData = mockDatabase.slice(start, end);
+
+      setData(paginatedData);
+      setPageCount(Math.ceil(mockDatabase.length / pagination.pageSize));
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [pagination]);
+
   return (
-    <GenericTable<Institution, unknown>
-      data={mockData}
-      columns={columns}
-      pageCount={Math.ceil(mockData.length / pagination.pageSize)}
-      pagination={pagination}
-      isLoading={false}
-      onPaginationChange={setPagination}
-      getRowId={(row) => row.id}
-    />
+    <>
+      <div className="flex items-center gap-4">
+        <Button
+          variant="secondary"
+          className="size-8"
+          size="icon"
+          onClick={() => navigate(-1)}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-3xl font-semibold">Tabela</h1>
+      </div>
+
+      <AppTabs
+        defaultValue="all"
+        value={activeTab}
+        onValueChange={(value) => handleTabChange(value as ActiveTab)}
+      >
+        <AppTabsList>
+          <AppTabsTrigger value="all">Todas</AppTabsTrigger>
+          <AppTabsTrigger value="enrollments" count={1000}>
+            Inscrições
+          </AppTabsTrigger>
+          <AppTabsTrigger value="reports">Relatórios</AppTabsTrigger>
+        </AppTabsList>
+
+        <AppTabsContent value="all">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <AppSearchInput
+              value={globalFilter}
+              onChange={(e) => handleURLChange({ q: e.target.value })}
+              placeholder="Pesquisar instituição..."
+              showClearIcon={true}
+              onClear={() => handleURLChange({ q: "" })}
+            />
+            <AppButton variant="secondary" type="button">
+              <Funnel />
+              Filtros
+            </AppButton>
+            <AppButton type="button" onClick={() => redirectTo("/form")}>
+              <Plus />
+              Cadastrar
+            </AppButton>
+          </div>
+
+          <AppGenericTable<Institution, unknown>
+            data={data}
+            columns={columns}
+            pageCount={pageCount}
+            pagination={pagination}
+            isLoading={isLoading}
+            onPaginationChange={setPagination}
+            getRowId={(row) => row.id}
+          />
+        </AppTabsContent>
+
+        <AppTabsContent value="enrollments">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <AppSearchInput
+              value={globalFilter}
+              onChange={(e) => handleURLChange({ q: e.target.value })}
+              placeholder="Pesquisar instituição..."
+              showClearIcon={true}
+              onClear={() => handleURLChange({ q: "" })}
+            />
+            <AppButton variant="secondary" type="button">
+              <Funnel />
+              Filtros
+            </AppButton>
+            <AppButton type="button" onClick={() => redirectTo("/form")}>
+              <Plus />
+              Cadastrar
+            </AppButton>
+          </div>
+
+          <AppGenericTable<Institution, unknown>
+            data={data}
+            columns={columns}
+            pageCount={pageCount}
+            pagination={pagination}
+            isLoading={isLoading}
+            onPaginationChange={setPagination}
+            getRowId={(row) => row.id}
+          />
+        </AppTabsContent>
+
+        <AppTabsContent value="reports"></AppTabsContent>
+      </AppTabs>
+    </>
   );
 }
 
