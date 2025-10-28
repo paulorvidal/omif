@@ -1,7 +1,16 @@
+import { AppActionsDropdownMenu } from "@/components/app-actions-dropdown-menu";
 import { AppBadge } from "@/components/app-badge";
 import { AppButton } from "@/components/app-button";
 import { AppCheckbox } from "@/components/app-checkbox";
+import {
+  AppDialog,
+  AppDialogContent,
+  AppDialogFooter,
+  AppDialogTitle,
+} from "@/components/app-dialog";
+import { AppGenericDialog } from "@/components/app-generic-dialog";
 import { AppGenericTable } from "@/components/app-generic-table";
+import { AppInput } from "@/components/app-input";
 import { AppSearchInput } from "@/components/app-search-input";
 import {
   AppTabs,
@@ -9,36 +18,9 @@ import {
   AppTabsList,
   AppTabsTrigger,
 } from "@/components/app-tabs";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Field,
-  FieldContent,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-  FieldTitle,
-} from "@/components/ui/field";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cn } from "@/lib/utils";
 import { redirectTo } from "@/utils/events";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
-import {
-  ChevronLeft,
-  Funnel,
-  MoreVertical,
-  Pencil,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ChevronLeft, Funnel, Plus, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -109,35 +91,10 @@ const getColumns = (
     enableHiding: false,
     cell: ({ row }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="secondary"
-              size="icon-sm"
-              className="bg-transparent"
-            >
-              <span className="sr-only">Abrir menu</span>
-              <MoreVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => redirectTo(`/table/${row.original.id}`)}
-            >
-              <Pencil />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => handleDeleteClick(row.original.id)}
-            >
-              <Trash2 />
-              Deletar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <AppActionsDropdownMenu
+          onEditClick={() => redirectTo(`/table/${row.original.id}`)}
+          onDeleteClick={() => handleDeleteClick(row.original.id)}
+        />
       );
     },
   },
@@ -154,6 +111,7 @@ const getValidTab = (tab: string | null): ActiveTab => {
 
 function Table() {
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState<string | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = getValidTab(searchParams.get("tab"));
@@ -206,14 +164,14 @@ function Table() {
   return (
     <>
       <div className="flex items-center gap-4">
-        <Button
+        <AppButton
           variant="secondary"
           className="size-8"
           size="icon"
           onClick={() => navigate(-1)}
         >
           <ChevronLeft className="h-4 w-4" />
-        </Button>
+        </AppButton>
         <h1 className="text-3xl font-semibold">Tabela</h1>
       </div>
 
@@ -239,13 +197,20 @@ function Table() {
               showClearIcon={true}
               onClear={() => handleURLChange({ q: "" })}
             />
-            <AppButton variant="secondary" type="button">
+            <AppButton
+              variant="secondary"
+              type="button"
+              onClick={() => setOpenDialog("genericDialog")}
+            >
               <Funnel />
-              Filtros
+              Exemplo Generic Dialog
             </AppButton>
-            <AppButton type="button" onClick={() => redirectTo("/form")}>
+            <AppButton
+              type="button"
+              onClick={() => setOpenDialog("dialogoPersonalizado")}
+            >
               <Plus />
-              Cadastrar
+              Exemplo Diálogo Personalizado
             </AppButton>
           </div>
 
@@ -273,6 +238,7 @@ function Table() {
               <Funnel />
               Filtros
             </AppButton>
+
             <AppButton type="button" onClick={() => redirectTo("/form")}>
               <Plus />
               Cadastrar
@@ -292,6 +258,48 @@ function Table() {
 
         <AppTabsContent value="reports"></AppTabsContent>
       </AppTabs>
+
+      <AppDialog
+        open={openDialog === "dialogoPersonalizado"}
+        onOpenChange={(open) => open || setOpenDialog(null)}
+        onSubmit={() => {}}
+      >
+        <AppDialogTitle description="Descrição">Título</AppDialogTitle>
+        <AppDialogContent>
+          <AppInput label={"Input"}></AppInput>
+          <AppInput label={"Input"}></AppInput>
+          <AppInput label={"Input"}></AppInput>
+          <AppInput label={"Input"}></AppInput>
+          <AppInput label={"Input"}></AppInput>
+        </AppDialogContent>
+        <AppDialogFooter>
+          <AppButton variant="secondary" onClick={() => setOpenDialog(null)}>
+            <X />
+            Cancelar
+          </AppButton>
+          <AppButton type="submit">
+            <Save />
+            Salvar
+          </AppButton>
+        </AppDialogFooter>
+      </AppDialog>
+
+      <AppGenericDialog
+        open={openDialog === "genericDialog"}
+        onOpenChange={(open) => open || setOpenDialog(null)}
+        title="Título"
+        description="Descrição"
+        onClose={() => setOpenDialog(null)}
+        onSubmit={() => {}}
+        submitText="Salvar"
+        cancelText="Cancelar"
+      >
+        <AppInput label={"Input"}></AppInput>
+        <AppInput label={"Input"}></AppInput>
+        <AppInput label={"Input"}></AppInput>
+        <AppInput label={"Input"}></AppInput>
+        <AppInput label={"Input"}></AppInput>
+      </AppGenericDialog>
     </>
   );
 }
