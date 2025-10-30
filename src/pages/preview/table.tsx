@@ -164,13 +164,13 @@ function Table() {
   return (
     <>
       <div className="flex items-center gap-4">
-        <AppButton
+        <AppButton 
           variant="secondary"
           className="size-8"
           size="icon"
           onClick={() => navigate(-1)}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft />
         </AppButton>
         <h1 className="text-3xl font-semibold">Tabela</h1>
       </div>
@@ -198,18 +198,18 @@ function Table() {
               onClear={() => handleURLChange({ q: "" })}
             />
             <AppButton
+              icon={<Funnel />}
               variant="secondary"
               type="button"
               onClick={() => setOpenDialog("genericDialog")}
             >
-              <Funnel />
               Exemplo Generic Dialog
             </AppButton>
             <AppButton
+              icon={<Plus />}
               type="button"
               onClick={() => setOpenDialog("dialogoPersonalizado")}
             >
-              <Plus />
               Exemplo Diálogo Personalizado
             </AppButton>
           </div>
@@ -234,13 +234,15 @@ function Table() {
               showClearIcon={true}
               onClear={() => handleURLChange({ q: "" })}
             />
-            <AppButton variant="secondary" type="button">
-              <Funnel />
+            <AppButton icon={<Funnel />} variant="secondary" type="button">
               Filtros
             </AppButton>
 
-            <AppButton type="button" onClick={() => redirectTo("/form")}>
-              <Plus />
+            <AppButton
+              icon={<Plus />}
+              type="button"
+              onClick={() => redirectTo("/form")}
+            >
               Cadastrar
             </AppButton>
           </div>
@@ -273,12 +275,14 @@ function Table() {
           <AppInput label={"Input"}></AppInput>
         </AppDialogContent>
         <AppDialogFooter>
-          <AppButton variant="secondary" onClick={() => setOpenDialog(null)}>
-            <X />
+          <AppButton
+            icon={<X />}
+            variant="secondary"
+            onClick={() => setOpenDialog(null)}
+          >
             Cancelar
           </AppButton>
-          <AppButton type="submit">
-            <Save />
+          <AppButton icon={<Save />} type="submit">
             Salvar
           </AppButton>
         </AppDialogFooter>
