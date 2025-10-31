@@ -35,7 +35,7 @@ function AppGenericDialog({
       </AppDialogTitle>
       <AppDialogContent>{children}</AppDialogContent>
       <AppDialogFooter>
-        <AppButton variant="secondary" onClick={onClose}>
+        <AppButton variant="secondary" type="button" onClick={onClose}>
           <X />
           {cancelText}
         </AppButton>

@@ -135,7 +135,7 @@ function Login() {
         </div>
       </div>
 
-      <AppDialog
+      {/* <AppDialog
         open={isPasswordRecoveryDialogOpen == true && openDialog === "dialogoPersonalizado"}
         onOpenChange={(open) => open || setOpenDialog(null)}
         onSubmit={() => {}}
@@ -160,7 +160,7 @@ function Login() {
             Salvar
           </AppButton>
         </AppDialogFooter>
-      </AppDialog>
+      </AppDialog> */}
     </>
   );
 }
