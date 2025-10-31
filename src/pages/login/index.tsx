@@ -1,14 +1,16 @@
 import { cn } from "@/lib/utils";
-import OmifBackground from "../assets/omif-background.png";
-import OmifLogo from "../assets/omif-logo.svg";
+import OmifBackground from "@/assets/omif-background.png";
+import OmifLogo from "@/assets/omif-logo.svg";
 import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
 import { LogIn } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useLogin } from "@/hooks/use-login";
 import { AppCaptcha } from "@/components/app-captcha";
-import { AppDialog } from "@/components/app-dialog";
+import { redirectTo } from "@/utils/events";
+import { PasswordRecoveryDialog } from "./password-recovery-dialog";
+import { EmailVerificationDialog } from "./email-verification-dialog";
+import { AccountApprovalDialog } from "./account-approval-dialog";
 
 function Login() {
   const {
@@ -34,8 +36,6 @@ function Login() {
     isSendingPasswordRecovery,
     maskedEmailForRecovery,
   } = useLogin();
-
-  const navigate = useNavigate();
 
   return (
     <>
@@ -108,7 +108,7 @@ function Login() {
                         Esqueci minha senha
                       </a>
                       <a
-                        onClick={() => navigate("/educador")}
+                        onClick={() => redirectTo("/educador")}
                         className="cursor-pointer underline underline-offset-4"
                       >
                         Criar cadastro
@@ -135,32 +135,27 @@ function Login() {
         </div>
       </div>
 
-      {/* <AppDialog
-        open={isPasswordRecoveryDialogOpen == true && openDialog === "dialogoPersonalizado"}
-        onOpenChange={(open) => open || setOpenDialog(null)}
-        onSubmit={() => {}}
-      >
-        <AppDialogTitle description="Descrição">Título</AppDialogTitle>
-        <AppDialogContent>
-          <AppInput label={"Input"}></AppInput>
-          <AppInput label={"Input"}></AppInput>
-          <AppInput label={"Input"}></AppInput>
-          <AppInput label={"Input"}></AppInput>
-          <AppInput label={"Input"}></AppInput>
-        </AppDialogContent>
-        <AppDialogFooter>
-          <AppButton
-            icon={<X />}
-            variant="secondary"
-            onClick={() => setOpenDialog(null)}
-          >
-            Cancelar
-          </AppButton>
-          <AppButton icon={<Save />} type="submit">
-            Salvar
-          </AppButton>
-        </AppDialogFooter>
-      </AppDialog> */}
+      <EmailVerificationDialog
+        open={isVerificationDialogOpen}
+        email={emailForVerification}
+        isSending={isResending}
+        onClose={closeVerificationDialog}
+        onResend={handleResendVerificationLink}
+        countdown={countdown}
+      />
+
+      <AccountApprovalDialog
+        open={isApprovalDialogOpen}
+        onClose={closeApprovalDialog}
+      />
+
+      <PasswordRecoveryDialog
+        open={isPasswordRecoveryDialogOpen}
+        onClose={closePasswordRecoveryDialog}
+        onSubmit={handlePasswordRecoverySubmit}
+        isSending={isSendingPasswordRecovery}
+        maskedEmail={maskedEmailForRecovery}
+      />
     </>
   );
 }

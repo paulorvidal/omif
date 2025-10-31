@@ -4,8 +4,7 @@ import {
   AppDialogContent,
   AppDialogFooter,
   AppDialogTitle,
-} from "./app-dialog";
-import { Dialog } from "./ui/dialog";
+} from "./app-dialog"; 
 import { AppButton } from "./app-button";
 import { Save, X } from "lucide-react";
 
