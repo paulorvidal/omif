@@ -111,7 +111,6 @@ const getValidTab = (tab: string | null): ActiveTab => {
 
 function Table() {
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = useState<string | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = getValidTab(searchParams.get("tab"));
@@ -161,10 +160,27 @@ function Table() {
     return () => clearTimeout(timer);
   }, [pagination]);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const openDialog = () => setIsDialogOpen(true);
+  const closeDialog = () => setIsDialogOpen(false);
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    alert("Formulário Personalizado Enviado!");
+    closeDialog();
+  };
+
+  const [isGenericDialogOpen, setIsGenericDialogOpen] = useState(false);
+  const openGenericDialog = () => setIsGenericDialogOpen(true);
+  const closeGenericDialog = () => setIsGenericDialogOpen(false);
+  const handleGenericSubmit = () => {
+    alert("Formulário Genérico Enviado!");
+    closeGenericDialog();
+  };
+
   return (
     <>
       <div className="flex items-center gap-4">
-        <AppButton 
+        <AppButton
           variant="secondary"
           className="size-8"
           size="icon"
@@ -201,14 +217,14 @@ function Table() {
               icon={<Funnel />}
               variant="secondary"
               type="button"
-              onClick={() => setOpenDialog("genericDialog")}
+              onClick={() => openGenericDialog()}
             >
               Exemplo Generic Dialog
             </AppButton>
             <AppButton
               icon={<Plus />}
               type="button"
-              onClick={() => setOpenDialog("dialogoPersonalizado")}
+              onClick={() => openDialog()}
             >
               Exemplo Diálogo Personalizado
             </AppButton>
@@ -262,9 +278,9 @@ function Table() {
       </AppTabs>
 
       <AppDialog
-        open={openDialog === "dialogoPersonalizado"}
-        onOpenChange={(open) => open || setOpenDialog(null)}
-        onSubmit={() => {}}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSubmit={handleSubmit}
       >
         <AppDialogTitle description="Descrição">Título</AppDialogTitle>
         <AppDialogContent>
@@ -275,11 +291,7 @@ function Table() {
           <AppInput label={"Input"}></AppInput>
         </AppDialogContent>
         <AppDialogFooter>
-          <AppButton
-            icon={<X />}
-            variant="secondary"
-            onClick={() => setOpenDialog(null)}
-          >
+          <AppButton icon={<X />} variant="secondary" type="button" onClick={closeDialog}>
             Cancelar
           </AppButton>
           <AppButton icon={<Save />} type="submit">
@@ -289,12 +301,12 @@ function Table() {
       </AppDialog>
 
       <AppGenericDialog
-        open={openDialog === "genericDialog"}
-        onOpenChange={(open) => open || setOpenDialog(null)}
+        open={isGenericDialogOpen}
+        onOpenChange={setIsGenericDialogOpen}
         title="Título"
         description="Descrição"
-        onClose={() => setOpenDialog(null)}
-        onSubmit={() => {}}
+        onClose={closeGenericDialog}
+        onSubmit={handleGenericSubmit}
         submitText="Salvar"
         cancelText="Cancelar"
       >
