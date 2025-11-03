@@ -1,42 +1,28 @@
-import type React from "react";
-import { Input } from "./ui/input";
+import * as React from "react";
+import { Textarea } from "./ui/textarea";
 import { cn } from "@/lib/utils";
 import { FieldDescription, FieldLabel } from "./ui/field";
 import type { UseFormRegisterReturn } from "react-hook-form";
-import { mask as remask } from "remask";
 import { Info } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 
-type AppInputProps = {
+type AppTextareaProps = {
   label: string;
-  type?: string;
-  mask?: string | string[];
   error?: string;
   helpText?: string;
   register: UseFormRegisterReturn;
-} & React.ComponentProps<typeof Input>;
+} & React.ComponentProps<typeof Textarea>;
 
-function AppInput({
+function AppTextarea({
   label,
-  type = "text",
-  mask,
   error,
   helpText,
   register,
   className,
   ...props
-}: AppInputProps) {
+}: AppTextareaProps) {
   const { onChange, onBlur, name, ref } = register;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (mask) {
-      const raw = e.target.value.replace(/\D/g, "");
-      const maskPatternArray = Array.isArray(mask) ? mask : [mask];
-      e.target.value = remask(raw, maskPatternArray);
-    }
-    onChange(e);
-  };
 
   return (
     <>
@@ -54,23 +40,19 @@ function AppInput({
                 <Info />
               </Button>
             </PopoverTrigger>
-
             <PopoverContent className="w-56 text-sm">{helpText}</PopoverContent>
           </Popover>
         )}
       </div>
 
-      <Input
-        type={type}
+      <Textarea
         id={name}
-        onChange={handleChange}
-        onBlur={onBlur}
         name={name}
         ref={ref}
-        value={props.value}
+        onChange={onChange}
+        onBlur={onBlur}
         className={cn(
           className,
-          "inline-block",
           error &&
             "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
         )}
@@ -86,4 +68,4 @@ function AppInput({
   );
 }
 
-export { AppInput };
+export { AppTextarea };
