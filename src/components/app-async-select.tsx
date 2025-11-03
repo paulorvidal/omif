@@ -56,6 +56,7 @@ function AppAsyncSelect<T extends FieldValues>({
 }: AppAsyncSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [buttonWidth, setButtonWidth] = useState(0);
 
   useEffect(() => {
     if (onInputChange) {
@@ -64,8 +65,8 @@ function AppAsyncSelect<T extends FieldValues>({
   }, [inputValue, onInputChange]);
 
   return (
-    <>
-      <div className="flex h-6 justify-start gap-1">
+    <div className="flex w-full flex-col gap-3">
+      <div className="flex h-6 justify-start">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -93,11 +94,15 @@ function AppAsyncSelect<T extends FieldValues>({
           const selectedOption = options.find(
             (opt) => opt.value === field.value,
           );
+          const buttonRef = (el: HTMLButtonElement | null) => {
+            if (el) setButtonWidth(el.offsetWidth);
+          };
 
           return (
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
+                  ref={buttonRef}
                   type="button"
                   variant="outline"
                   role="combobox"
@@ -111,13 +116,14 @@ function AppAsyncSelect<T extends FieldValues>({
                       "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
+                  {...props}
                 >
                   {field.value ? selectedOption?.label : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="w-full p-0">
+              <PopoverContent style={{ width: buttonWidth }} className="p-0">
                 <Command>
                   <CommandInput
                     placeholder="Pesquisar..."
@@ -167,11 +173,11 @@ function AppAsyncSelect<T extends FieldValues>({
       />
 
       {error && (
-        <FieldDescription className="text-destructive">
+        <FieldDescription className="text-destructive mt-1">
           {error}
         </FieldDescription>
       )}
-    </>
+    </div>
   );
 }
 

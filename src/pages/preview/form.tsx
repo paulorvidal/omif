@@ -12,6 +12,7 @@ import { AppSelect } from "@/components/app-select";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { AppAsyncSelect } from "@/components/app-async-select";
+import { AppTextarea } from "@/components/app-textarea";
 
 const allOptions = [
   { label: "1", value: 1 },
@@ -22,7 +23,7 @@ const allOptions = [
 ];
 
 function Form() {
-  const { control, handleSubmit } = useForm();
+  const { control, register, handleSubmit } = useForm();
   const [options, setOptions] = useState(allOptions);
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +53,7 @@ function Form() {
                         placeholder="Ex: Input"
                         label="Input"
                         helpText="Texto de Ajuda"
+                        register={register("input")}
                       />
                     </Field>
                     <Field>
@@ -60,6 +62,7 @@ function Form() {
                         label="Input com Erro"
                         error="Erro: Algo inesperado aconteceu."
                         helpText="Texto de Ajuda"
+                        register={register("inputComErro")}
                       />
                     </Field>
                     <Field>
@@ -67,6 +70,7 @@ function Form() {
                         type="date"
                         label="Data"
                         helpText="Texto de Ajuda"
+                        register={register("data")}
                       />
                     </Field>
                     <Field>
@@ -75,6 +79,7 @@ function Form() {
                         label="Data com Erro"
                         error="Erro: Algo inesperado aconteceu."
                         helpText="Texto de Ajuda"
+                        register={register("dataComErro")}
                       />
                     </Field>
                     <Field>
@@ -82,6 +87,7 @@ function Form() {
                         type="datetime-local"
                         label="Data e Hora"
                         helpText="Texto de Ajuda"
+                        register={register("dataEHora")}
                       />
                     </Field>
                     <Field>
@@ -90,6 +96,7 @@ function Form() {
                         label="Data e Hora com Erro"
                         error="Erro: Algo inesperado aconteceu."
                         helpText="Texto de Ajuda"
+                        register={register("dataEHoraComErro")}
                       />
                     </Field>
                     <Field>
@@ -131,7 +138,21 @@ function Form() {
                         isLoading={loading}
                         onInputChange={handleSearch}
                         error="Erro: Algo inesperado aconteceu."
-                        //helpText="Texto de Ajuda"
+                      />
+                    </Field>
+                    <Field>
+                      <AppTextarea
+                        label="Textarea"
+                        helpText="Texto de Ajuda"
+                        register={register("textarea")}
+                      />
+                    </Field>
+                    <Field>
+                      <AppTextarea
+                        label="Textarea com Erro"
+                        helpText="Texto de Ajuda"
+                        register={register("textareaComErro")}
+                        error="Erro: Algo inesperado aconteceu."
                       />
                     </Field>
                   </FieldGroup>

@@ -51,10 +51,11 @@ function AppSelect<T extends FieldValues>({
   ...props
 }: AppSelectProps<T>) {
   const [open, setOpen] = useState(false);
+  const [buttonWidth, setButtonWidth] = useState(0);
 
   return (
-    <>
-      <div className="flex h-6 justify-start gap-1">
+    <div className="flex w-full flex-col gap-3">
+      <div className="flex h-6 justify-start">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -81,11 +82,15 @@ function AppSelect<T extends FieldValues>({
           const selectedOption = options.find(
             (option) => option.value === field.value,
           );
+          const buttonRef = (el: HTMLButtonElement | null) => {
+            if (el) setButtonWidth(el.offsetWidth);
+          };
 
           return (
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
+                  ref={buttonRef}
                   type="button"
                   variant="outline"
                   role="combobox"
@@ -106,7 +111,7 @@ function AppSelect<T extends FieldValues>({
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="w-full p-0">
+              <PopoverContent style={{ width: buttonWidth }} className="p-0">
                 <Command>
                   <CommandInput placeholder="Pesquisar..." className="h-9" />
                   <CommandList>
@@ -148,11 +153,11 @@ function AppSelect<T extends FieldValues>({
       />
 
       {error && (
-        <FieldDescription className="text-destructive">
+        <FieldDescription className="text-destructive mt-1">
           {error}
         </FieldDescription>
       )}
-    </>
+    </div>
   );
 }
 
