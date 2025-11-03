@@ -131,7 +131,7 @@ function Form() {
                         isLoading={loading}
                         onInputChange={handleSearch}
                         error="Erro: Algo inesperado aconteceu."
-                        helpText="Texto de Ajuda"
+                        //helpText="Texto de Ajuda"
                       />
                     </Field>
                   </FieldGroup>

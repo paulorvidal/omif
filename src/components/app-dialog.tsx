@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ type AppDialogProps = {
   onSubmit?: React.FormEventHandler<HTMLFormElement>;
 } & ComponentProps<typeof Dialog>;
 
-type AppDialogTitleProps = { description?: string } & ComponentProps<
+type AppDialogTitleProps = { description?: ReactNode } & ComponentProps<
   typeof DialogTitle
 >;
 
@@ -49,8 +49,14 @@ function AppDialogTitle({
 }: AppDialogTitleProps) {
   return (
     <DialogHeader>
-      <DialogTitle {...props}>{children}</DialogTitle>
-      {description && <DialogDescription>{description}</DialogDescription>}
+      <DialogTitle className="text-center" {...props}>
+        {children}
+      </DialogTitle>
+      {description && (
+        <DialogDescription className="text-center">
+          {description}
+        </DialogDescription>
+      )}
     </DialogHeader>
   );
 }

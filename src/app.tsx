@@ -11,6 +11,8 @@ import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { Login } from "./pages/login";
 
+import { EnrollmentStudentForm } from "./pages/enrrolmentstudent/enrollment-student-form";
+
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -39,6 +41,10 @@ const router = createBrowserRouter([
             element: <Table />,
           },
         ],
+      },
+      {
+        path: "/edicoes/:editionYear/estudantes-inscricao",
+        element: <EnrollmentStudentForm />,
       },
     ],
   },

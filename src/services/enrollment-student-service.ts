@@ -1,18 +1,18 @@
 import api from "./api";
 import type {
-  CreateStudentRequest,
   CreateStudentResponse,
   EnrollmentStudent,
 } from "../types/enrollment-student-types";
 import type { PageParams, PageResponse } from "../types/default-types";
 
 export const createStudentAndEnrollmentInEdition = async (
-  data: CreateStudentRequest,
-  editionYear: number,
+  data: FormData, 
+  editionYear: number
 ): Promise<CreateStudentResponse> => {
+  console.log(data)
   const response = await api.post<CreateStudentResponse>(
     `/editions/${editionYear}/student-enrollments`,
-    data,
+    data
   );
   return response.data;
 };

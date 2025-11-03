@@ -54,7 +54,7 @@ function AppSelect<T extends FieldValues>({
 
   return (
     <>
-      <div className="flex justify-start gap-1">
+      <div className="flex h-6 justify-start gap-1">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
