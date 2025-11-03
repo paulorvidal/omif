@@ -51,12 +51,10 @@ function AppSelect<T extends FieldValues>({
   ...props
 }: AppSelectProps<T>) {
   const [open, setOpen] = useState(false);
-  const [previewValue, setPreviewValue] = useState<string | number>("");
-  const displayValue = control ? undefined : previewValue;
 
   return (
     <>
-      <div className="flex justify-start gap-1">
+      <div className="flex h-6 justify-start gap-1">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -80,7 +78,6 @@ function AppSelect<T extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => {
-          const { ref, onChange, value, ...rest } = field;
           const selectedOption = options.find(
             (option) => option.value === field.value,
           );
@@ -102,10 +99,9 @@ function AppSelect<T extends FieldValues>({
                       "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
-                  {...rest}
                   {...props}
                 >
-                  {value ? selectedOption?.label : placeholder}
+                  {field.value ? selectedOption?.label : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
               </PopoverTrigger>
