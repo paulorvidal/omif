@@ -12,7 +12,7 @@ import { PasswordRecoveryDialog } from "./password-recovery-dialog";
 import { EmailVerificationDialog } from "./email-verification-dialog";
 import { AccountApprovalDialog } from "./account-approval-dialog";
 
-function Login() {
+function LoginForm() {
   const {
     register,
     handleLoginSubmit,
@@ -160,4 +160,4 @@ function Login() {
   );
 }
 
-export { Login };
+export { LoginForm };

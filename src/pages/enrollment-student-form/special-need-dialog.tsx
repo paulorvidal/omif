@@ -14,10 +14,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import {
-  Field,
-  FieldGroup,
-} from "@/components/ui/field"; 
+import { Field, FieldGroup } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppSelect } from "@/components/app-select";
 import { AppButton } from "@/components/app-button";
@@ -31,7 +28,7 @@ const specialNeedTypeOptions = [
   { label: "Outra", value: "outra" },
 ];
 
-type Props = {
+type SpecialNeedDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: SpecialNeedFormData) => void;
@@ -42,15 +39,15 @@ const emptyValues: SpecialNeedFormData = {
   description: "",
   type: "",
   observation: "",
-  medicalReportFile: new DataTransfer().files, 
+  medicalReportFile: new DataTransfer().files,
 };
 
-export function SpecialNeedFormModal({
+function SpecialNeedDialog({
   isOpen,
   onClose,
   onSubmit,
   defaultValues,
-}: Props) {
+}: SpecialNeedDialogProps) {
   const {
     register,
     handleSubmit,
@@ -87,7 +84,7 @@ export function SpecialNeedFormModal({
               <AppInput
                 label="Descrição da Necessidade"
                 placeholder="Ex: Dislexia, Baixa Visão"
-                {...register("description")}
+                register={register("description")}
                 error={errors.description?.message}
               />
             </Field>
@@ -104,7 +101,7 @@ export function SpecialNeedFormModal({
               <AppInput
                 label="Observação (Opcional)"
                 placeholder="Ex: Necessita de prova ampliada, ledor, etc."
-                {...register("observation")}
+                register={register("observation")}
                 error={errors.observation?.message}
               />
             </Field>
@@ -113,7 +110,7 @@ export function SpecialNeedFormModal({
                 label="Laudo Médico"
                 type="file"
                 accept="application/pdf,image/*"
-                {...register("medicalReportFile")}
+                register={register("medicalReportFile")}
                 error={errors.medicalReportFile?.message}
                 helpText="Arquivo (PDF, PNG, JPG) de até 5MB. Obrigatório."
               />
@@ -135,3 +132,5 @@ export function SpecialNeedFormModal({
     </Dialog>
   );
 }
+
+export { SpecialNeedDialog };

@@ -22,14 +22,15 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { AppSelect } from "@/components/app-select";
-import { AsyncAppSelect } from "@/components/app-async-select";
+import { AppAsyncSelect } from "@/components/app-async-select";
 import { Delete, Plus, Edit, FileText, Loader2 } from "lucide-react";
 import { AppCaptcha } from "@/components/app-captcha";
 
-import { SpecialNeedFormModal } from "./special-need-form-dialog";
 import { AppCard } from "@/components/app-card";
 import { getEditionStatusByYear } from "../../services/edition-service";
 import { ApiError } from "../../services/api-error";
+import { SpecialNeedDialog } from "./special-need-dialog";
+import { Separator } from "@/components/ui/separator";
 
 const bolsaFamiliaOptions = [
   { label: "Sim", value: "sim" },
@@ -83,7 +84,6 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-
 const generateIncomeRangeOptions = (minimumWageInput: string | number) => {
   let wageString: string;
 
@@ -117,13 +117,13 @@ const generateIncomeRangeOptions = (minimumWageInput: string | number) => {
     },
     {
       label: `De 1 a 2 salários mínimos (${formatCurrency(
-        wage1x + 0.01
+        wage1x + 0.01,
       )} - ${formatCurrency(wage2x)})`,
       value: "1_a_2_sm",
     },
     {
       label: `De 2 a 3 salários mínimos (${formatCurrency(
-        wage2x + 0.01
+        wage2x + 0.01,
       )} - ${formatCurrency(wage3x)})`,
       value: "2_a_3_sm",
     },
@@ -183,10 +183,9 @@ function EnrollmentStudentForm() {
     return generateIncomeRangeOptions(editionStatus.minimumWage);
   }, [editionStatus?.minimumWage]);
 
-
   if (isNaN(numericEditionYear)) {
     return (
-      <div className="flex min-h-svh w-full justify-center items-center p-6 md:p-10">
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
         <AppCard
           title="Edição Inválida"
           description="O ano da edição fornecido na URL não é válido. Por favor, verifique o link."
@@ -198,8 +197,8 @@ function EnrollmentStudentForm() {
 
   if (isStatusLoading) {
     return (
-      <div className="flex min-h-svh w-full justify-center items-center p-6 md:p-10">
-        <Loader2 className="size-10 animate-spin text-primary" />
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+        <Loader2 className="text-primary size-10 animate-spin" />
         <span className="sr-only">Carregando dados da edição...</span>
       </div>
     );
@@ -211,7 +210,7 @@ function EnrollmentStudentForm() {
         ? statusError.message
         : "Não foi possível carregar os dados da edição. Tente novamente.";
     return (
-      <div className="flex min-h-svh w-full justify-center items-center p-6 md:p-10">
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
         <AppCard
           title="Erro ao carregar"
           description={errorMessage}
@@ -223,7 +222,7 @@ function EnrollmentStudentForm() {
 
   if (!editionStatus?.isStudentEnrollmentOpen) {
     return (
-      <div className="flex min-h-svh w-full justify-center items-center p-6 md:p-10">
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
         <AppCard
           title="Inscrições Encerradas"
           description={`As inscrições para a edição de ${editionStatus?.year} não estão abertas no momento.`}
@@ -252,7 +251,7 @@ function EnrollmentStudentForm() {
 
   const getLabelForValue = (
     options: { label: string; value: string | number }[],
-    value: string
+    value: string,
   ) => {
     return options.find((opt) => opt.value === value)?.label || value;
   };
@@ -267,8 +266,9 @@ function EnrollmentStudentForm() {
                 <FieldGroup>
                   <FieldSet>
                     <FieldLegend>Formulário de Inscrição</FieldLegend>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Inscrição para: {editionStatus.name} ({editionStatus.year})
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      Inscrição para: {editionStatus.name} ({editionStatus.year}
+                      )
                     </p>
                     <FieldGroup>
                       <Field>
@@ -276,7 +276,7 @@ function EnrollmentStudentForm() {
                           label="Nome Completo"
                           placeholder="Ex: Nome Completo"
                           error={errors.name?.message}
-                          {...register("name")}
+                          register={register("name")}
                         />
                       </Field>
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -286,7 +286,7 @@ function EnrollmentStudentForm() {
                             type="email"
                             placeholder="Ex: exemplo@email.com"
                             error={errors.email?.message}
-                            {...register("email")}
+                            register={register("email")}
                           />
                         </Field>
                         <Field>
@@ -294,7 +294,7 @@ function EnrollmentStudentForm() {
                             label="Nome Social (Opcional)"
                             placeholder="Como prefere ser chamado(a)"
                             error={errors.socialName?.message}
-                            {...register("socialName")}
+                            register={register("socialName")}
                           />
                         </Field>
                       </div>
@@ -303,9 +303,10 @@ function EnrollmentStudentForm() {
                           <AppInput
                             label="CPF"
                             placeholder="000.000.000-00"
+                            mask="999.999.999-99"
                             helpText="Use o formato com pontos e traço."
                             error={errors.cpf?.message}
-                            {...register("cpf")}
+                            register={register("cpf")}
                           />
                         </Field>
                         <Field>
@@ -313,12 +314,12 @@ function EnrollmentStudentForm() {
                             label="Data de Nascimento"
                             type="date"
                             error={errors.birthDate?.message}
-                            {...register("birthDate")}
+                            register={register("birthDate")}
                           />
                         </Field>
                       </div>
                       <Field>
-                        <AsyncAppSelect
+                        <AppAsyncSelect
                           name="institution"
                           label="Instituição de Ensino"
                           control={control as any}
@@ -384,8 +385,7 @@ function EnrollmentStudentForm() {
                             control={control as any}
                             options={completionSchoolOptions}
                             error={
-                              errors.completionElementarySchoolCategory
-                                ?.message
+                              errors.completionElementarySchoolCategory?.message
                             }
                           />
                         </Field>
@@ -409,7 +409,7 @@ function EnrollmentStudentForm() {
                       <div className="space-y-4">
                         {fields.map((field, index) => (
                           <Card key={field.id} className="overflow-hidden">
-                            <CardHeader className="flex flex-row items-start justify-between space-y-0 p-4">
+                            <CardHeader className="flex flex-row items-start justify-between space-y-0">
                               <div>
                                 <CardTitle className="text-lg">
                                   {field.description}
@@ -418,7 +418,7 @@ function EnrollmentStudentForm() {
                                   Tipo:{" "}
                                   {getLabelForValue(
                                     specialNeedTypeOptions,
-                                    field.type
+                                    field.type,
                                   )}
                                 </CardDescription>
                               </div>
@@ -429,7 +429,7 @@ function EnrollmentStudentForm() {
                                   size="icon"
                                   onClick={() => handleEditClick(index)}
                                 >
-                                  <Edit className="h-4 w-4" />
+                                  <Edit />
                                 </AppButton>
                                 <AppButton
                                   type="button"
@@ -437,12 +437,13 @@ function EnrollmentStudentForm() {
                                   size="icon"
                                   onClick={() => remove(index)}
                                 >
-                                  <Delete className="h-4 w-4" />
+                                  <Delete />
                                 </AppButton>
                               </div>
                             </CardHeader>
-                            <CardContent className="border-t p-4 pt-3">
-                              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                            <Separator />
+                            <CardContent>
+                              <div className="text-muted-foreground flex items-center space-x-2 text-sm">
                                 <FileText className="h-4 w-4 shrink-0" />
                                 <span>
                                   {field.medicalReportFile?.[0]?.name ||
@@ -459,23 +460,26 @@ function EnrollmentStudentForm() {
                         variant="outline"
                         onClick={handleAddClick}
                         icon={<Plus />}
-                        className=" w-full"
+                        className="w-full"
                       >
                         Adicionar Necessidade
                       </AppButton>
 
                       {errors.specialNeeds?.root && (
-                        <p className="text-sm font-medium text-destructive mt-2">
+                        <p className="text-destructive mt-2 text-sm font-medium">
                           {errors.specialNeeds.root.message}
                         </p>
                       )}
                     </FieldGroup>
                   </FieldSet>
 
-                  <Field orientation="horizontal" className="flex flex-col md:flex-row md:justify-end gap-4">
+                  <Field
+                    orientation="horizontal"
+                    className="flex flex-col gap-4 md:flex-row md:justify-end"
+                  >
                     <Field
                       orientation="horizontal"
-                      className="flex justify-start w-full md:w-auto"
+                      className="flex w-full justify-start md:w-auto"
                     >
                       <Controller
                         name="captchaToken"
@@ -490,7 +494,7 @@ function EnrollmentStudentForm() {
                         )}
                       />
                     </Field>
-                    <div className="flex gap-4 justify-end w-full ">
+                    <div className="flex w-full justify-end gap-4">
                       <AppButton
                         type="button"
                         icon={<Delete />}
@@ -516,7 +520,7 @@ function EnrollmentStudentForm() {
         </div>
       </div>
 
-      <SpecialNeedFormModal
+      <SpecialNeedDialog
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ isOpen: false, editingIndex: null })}
         onSubmit={handleSaveSpecialNeed}
@@ -531,4 +535,3 @@ function EnrollmentStudentForm() {
 }
 
 export { EnrollmentStudentForm };
-
