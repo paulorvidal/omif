@@ -14,7 +14,7 @@ type AppInputProps = {
   mask?: string | string[];
   error?: string;
   helpText?: string;
-  register?: UseFormRegisterReturn;
+  register: UseFormRegisterReturn;
 } & React.ComponentProps<typeof Input>;
 
 function AppInput({
@@ -27,24 +27,16 @@ function AppInput({
   className,
   ...props
 }: AppInputProps) {
-  let onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
-  let onBlur: React.FocusEventHandler<HTMLInputElement> | undefined;
-  let name: string | undefined;
-  let ref: React.Ref<any> | undefined;
+  const { onChange, onBlur, name, ref } = register;
 
-  if (register) {
-    ({ onChange, onBlur, name, ref } = register);
-
-    const originalOnChange = onChange;
-    onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (mask) {
-        const raw = e.target.value.replace(/\D/g, "");
-        const maskArray = Array.isArray(mask) ? mask : [mask];
-        e.target.value = remask(raw, maskArray);
-      }
-      originalOnChange(e);
-    };
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (mask) {
+      const raw = e.target.value.replace(/\D/g, "");
+      const maskPatternArray = Array.isArray(mask) ? mask : [mask];
+      e.target.value = remask(raw, maskPatternArray);
+    }
+    onChange(e);
+  };
 
   return (
     <>
@@ -71,10 +63,11 @@ function AppInput({
       <Input
         type={type}
         id={name}
-        onChange={onChange}
+        onChange={handleChange}
         onBlur={onBlur}
         name={name}
         ref={ref}
+        value={props.value}
         className={cn(
           className,
           "inline-block",
@@ -93,3 +86,6 @@ function AppInput({
 }
 
 export { AppInput };
+function setValue(val: string) {
+  throw new Error("Function not implemented.");
+}
