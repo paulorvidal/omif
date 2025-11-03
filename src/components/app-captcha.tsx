@@ -7,7 +7,7 @@ type AppCaptchaProps = {
   error?: string | null;
 };
 
-function AppCaptcha({ onVerify, theme = "auto", error }: AppCaptchaProps) {
+function AppCaptcha({ onVerify, theme = "light", error }: AppCaptchaProps) {
   const siteKey = import.meta.env.VITE_CLOUDFLARE_SITE_KEY;
 
   if (!siteKey) {

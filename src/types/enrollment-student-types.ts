@@ -1,7 +1,8 @@
 import type { StudentSummary } from "./student-types";
 import type { InstitutionSummary } from "./institution-types";
+import type { SpecialNeed } from "./special-need-types";
 
-export type CreateStudentRequest = {
+export type CreateEnrollmentStudent = {
   institutionId: string;
   name: string;
   socialName: string;
@@ -15,6 +16,7 @@ export type CreateStudentRequest = {
   completionElementarySchoolCategory: string;
   incomeRange: string;
   captchaToken: string;
+  specialNeeds: SpecialNeed[];
 };
 
 export type CreateStudentResponse = {
