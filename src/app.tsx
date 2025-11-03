@@ -9,9 +9,9 @@ import { PrivateRoute } from "./utils/private-route";
 import { MainLayout } from "./components/layout/main-layout";
 import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
-import { Login } from "./pages/login";
+import { LoginForm } from "./pages/login-form";
 
-import { EnrollmentStudentForm } from "./pages/enrrolmentstudent/enrollment-student-form";
+import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        element: <LoginForm />,
       },
       {
         path: "/form",
