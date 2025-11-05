@@ -23,7 +23,7 @@ const allOptions = [
 ];
 
 function Form() {
-  const { control, register, handleSubmit } = useForm();
+  const { control, register } = useForm();
   const [options, setOptions] = useState(allOptions);
   const [loading, setLoading] = useState(false);
 

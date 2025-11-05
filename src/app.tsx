@@ -5,11 +5,12 @@ import {
 } from "react-router-dom";
 import { Toaster } from "sonner";
 import { RootLayout } from "./components/layout/root-layout";
-import { PrivateRoute } from "./utils/private-route";
 import { MainLayout } from "./components/layout/main-layout";
 import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
+import { EducatorSignUpPage } from "./pages/educator/EducatorSignUpPage";
+
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/form",
         element: <Form />,
+      },
+      {
+        path: "/cadastrar",
+        element: <EducatorSignUpPage />,
       },
       {
         element: (

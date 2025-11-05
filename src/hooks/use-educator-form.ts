@@ -1,29 +1,23 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import type { CreateEducatorRequest } from "../types/educator-types";
+import { fetchInstitutions } from "../services/institution-service";
+import { useDebounce } from "./use-debounce";
 import { createEducator } from "../services/educator-service";
 import { scrollToTop } from "../utils/scroll-to-top";
 import { redirectTo, showToast } from "../utils/events";
 import { ApiError } from "../services/api-error";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CreateEducatorRequest } from "../types/educator-types";
-import { fetchInstitutions } from "../services/institution-service";
-import { useDebounce } from "./use-debounce";
-import type { Institution } from "../types/institution-types";
-import type { PageResponse } from "../types/default-types";
+import { formatBrazilianDateToISO } from "../utils/format-date";
 
-const EducatorFormSchema = z
+export const EducatorFormSchema = z
   .object({
-    name: z
-      .string()
-      .nonempty("O nome é obrigatório.")
-      .min(2, "O nome deve ter no mínimo 2 caracteres.")
-      .max(255, "O nome deve ter no máximo 255 caracteres."),
-    socialName: z
-      .string()
-      .max(255, "O nome social deve ter no máximo 255 caracteres.")
-      .optional(),
+    name: z.string().nonempty("O nome é obrigatório.").min(2).max(255),
+    socialName: z.string().max(255).optional(),
     email: z
       .string()
       .nonempty("O e-mail é obrigatório.")
@@ -42,20 +36,20 @@ const EducatorFormSchema = z
       .min(6, "A senha deve ter pelo menos 6 caracteres"),
     confirmPassword: z.string(),
     siape: z.string().nonempty("O SIAPE é obrigatório."),
+
     institution: z
       .object({
         label: z.string(),
         value: z.string().uuid("ID da instituição inválido"),
       })
       .nullable()
-      .superRefine((data, ctx) => {
-        if (data === null || data.value === "") {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "A instituição deve ser informada.",
-          });
-        }
+      .refine((data) => data !== null, {
+        message: "A instituição deve ser informada.",
+      })
+      .refine((data) => data?.value !== "", {
+        message: "A instituição deve ser informada.",
       }),
+
     phoneNumber: z
       .string()
       .nonempty("O telefone é obrigatório")
@@ -63,14 +57,23 @@ const EducatorFormSchema = z
         /^\(\d{2}\)\s?9?\d{4}-\d{4}$/,
         "O número deve estar no formato (XX)9XXXX-XXXX ou (XX)XXXX-XXXX.",
       ),
+
     dateOfBirth: z
       .string()
       .nonempty("A data de nascimento é obrigatória.")
-      .refine((v) => !isNaN(Date.parse(v)), "Data inválida.")
-      .refine(
-        (v) => new Date(v) <= new Date(),
-        "A data de nascimento não pode ser no futuro.",
-      ),
+      .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Formato de data inválido (DD/MM/AAAA)")
+      .refine((v) => {
+        const parts = v.split("/");
+        const date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        return date instanceof Date && !isNaN(date.getTime());
+      }, "Data inválida.")
+      .refine((v) => {
+        const parts = v.split("/");
+        const date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        return date <= new Date();
+      }, "A data de nascimento não pode ser no futuro."),
+
+    captchaToken: z.string().optional().or(z.literal("")),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
@@ -84,18 +87,15 @@ const EducatorFormSchema = z
 export type EducatorFormData = z.infer<typeof EducatorFormSchema>;
 
 export const useEducatorForm = () => {
-  const queryClient = useQueryClient();
-  const [institutionInput, setInstitutionInput] = useState("");
-  const debouncedInstitutionInput = useDebounce(institutionInput, 500);
-
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<EducatorFormData>({
-    resolver: zodResolver(EducatorFormSchema),
+    resolver: zodResolver(EducatorFormSchema) as any,
     defaultValues: {
       name: "",
       socialName: "",
@@ -108,8 +108,32 @@ export const useEducatorForm = () => {
       institution: null,
       phoneNumber: "",
       dateOfBirth: "",
-    },
+      captchaToken: undefined,
+    } as any,
   });
+
+  const [institutionInput, setInstitutionInput] = useState("");
+  const [debouncedInstitutionInput] = useDebounce(institutionInput, 500);
+
+  const { data: institutionsResponse, isLoading: isInstitutionsLoading } =
+    useQuery({
+      queryKey: ["institutions", debouncedInstitutionInput],
+      queryFn: () =>
+        fetchInstitutions({
+          q: debouncedInstitutionInput,
+          page: 0,
+          size: 20,
+        }),
+    });
+
+  const institutionOptions = useMemo(() => {
+    return (
+      institutionsResponse?.content.map((inst) => ({
+        label: inst.acronym ? `${inst.acronym} - ${inst.name}` : inst.name,
+        value: inst.id,
+      })) ?? []
+    );
+  }, [institutionsResponse]);
 
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
@@ -117,12 +141,15 @@ export const useEducatorForm = () => {
 
   const resetCaptcha = () => {
     setCaptchaToken(null);
+    setCaptchaError(null);
     setCaptchaResetKey((prevKey) => prevKey + 1);
+    setValue("captchaToken", undefined, { shouldValidate: true });
   };
 
   const handleVerifyCaptcha = (token: string) => {
     setCaptchaToken(token);
     if (token) {
+      setValue("captchaToken", token, { shouldValidate: true });
       setCaptchaError(null);
     }
   };
@@ -149,31 +176,20 @@ export const useEducatorForm = () => {
     },
   });
 
-  const { data: institutionOptions, isLoading: isInstitutionsLoading } =
-    useQuery({
-      queryKey: ["institutions", debouncedInstitutionInput],
-
-      queryFn: () =>
-        fetchInstitutions({
-          q: debouncedInstitutionInput,
-          page: 0,
-          size: 10,
-        }),
-
-      select: (data: PageResponse<Institution>) =>
-        data.content.map((institution) => ({
-          label: institution.name,
-          value: institution.id,
-        })),
-    });
-
-  const onSubmit = (data: Omit<EducatorFormData, "captchaToken">) => {
-    if (!captchaToken) {
+  const onSubmit: SubmitHandler<EducatorFormData> = (data) => {
+    if (!data.captchaToken) {
       setCaptchaError("Por favor, complete a verificação.");
       return;
     }
 
-    const { institution, ...formData } = data;
+    const {
+      institution,
+      confirmEmail,
+      confirmPassword,
+      captchaToken,
+      dateOfBirth,
+      ...formData
+    } = data;
 
     if (!institution) {
       return;
@@ -184,6 +200,10 @@ export const useEducatorForm = () => {
       socialName: formData.socialName || "",
       institutionId: institution.value,
       captchaToken,
+
+      dateOfBirth: formatBrazilianDateToISO(dateOfBirth),
+      siape: formData.siape.replace(/\D/g, ""),
+      phoneNumber: formData.phoneNumber.replace(" ", ""),
     };
 
     mutate(payload);
@@ -199,14 +219,15 @@ export const useEducatorForm = () => {
     register,
     control,
     errors,
-    handleSubmit: handleSubmit(onSubmit),
+    setValue,
+    handleSubmit: handleSubmit(onSubmit) as any,
     handleReset: onReset,
     isPending,
     setCaptchaToken: handleVerifyCaptcha,
     captchaToken,
     captchaResetKey,
     captchaError,
-    institutionOptions: institutionOptions ?? [],
+    institutionOptions,
     isInstitutionsLoading,
     setInstitutionInput,
   };

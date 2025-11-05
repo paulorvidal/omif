@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
@@ -24,7 +25,9 @@ type Option = {
   value: string | number;
 };
 
-type AppAsyncSelectProps<T extends FieldValues> = {
+type SelectValue<T extends FieldValues, P extends Path<T>> = T[P] extends Option | null ? T[P] : Option | null;
+
+type AsyncAppSelectProps<T extends FieldValues> = {
   name: Path<T>;
   label: string;
   control: Control<T>;
@@ -39,7 +42,7 @@ type AppAsyncSelectProps<T extends FieldValues> = {
   className?: string;
 } & React.ComponentProps<typeof Button>;
 
-function AppAsyncSelect<T extends FieldValues>({
+export function AppAsyncSelect<T extends FieldValues>({
   name,
   label,
   control,
@@ -53,10 +56,9 @@ function AppAsyncSelect<T extends FieldValues>({
   onInputChange,
   className,
   ...props
-}: AppAsyncSelectProps<T>) {
+}: AsyncAppSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [buttonWidth, setButtonWidth] = useState(0);
 
   useEffect(() => {
     if (onInputChange) {
@@ -65,8 +67,8 @@ function AppAsyncSelect<T extends FieldValues>({
   }, [inputValue, onInputChange]);
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="flex h-6 justify-start">
+    <div className={cn("flex flex-col space-y-1.5 w-full", className)}>
+      <div className="flex justify-start gap-1">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -76,7 +78,6 @@ function AppAsyncSelect<T extends FieldValues>({
                 variant="secondary"
                 size="icon"
                 className="bg-background h-6 w-6 rounded-full"
-                {...props}
               >
                 <Info />
               </Button>
@@ -91,18 +92,14 @@ function AppAsyncSelect<T extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => {
-          const selectedOption = options.find(
-            (opt) => opt.value === field.value,
-          );
-          const buttonRef = (el: HTMLButtonElement | null) => {
-            if (el) setButtonWidth(el.offsetWidth);
-          };
+          const currentFieldValue = field.value as SelectValue<T, typeof name>;
+          const selectedLabel = currentFieldValue ? currentFieldValue.label : placeholder;
+          const selectedValue = currentFieldValue?.value;
 
           return (
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  ref={buttonRef}
                   type="button"
                   variant="outline"
                   role="combobox"
@@ -113,17 +110,16 @@ function AppAsyncSelect<T extends FieldValues>({
                     className,
                     "w-full min-w-0 justify-between",
                     error &&
-                      "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
+                    "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
-                  {...props}
                 >
-                  {field.value ? selectedOption?.label : placeholder}
+                  {selectedLabel}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent style={{ width: buttonWidth }} className="p-0">
+              <PopoverContent className="w-full p-0">
                 <Command>
                   <CommandInput
                     placeholder="Pesquisar..."
@@ -142,12 +138,14 @@ function AppAsyncSelect<T extends FieldValues>({
                           key={opt.value}
                           value={String(opt.value)}
                           disabled={disabled}
-                          onSelect={(currentValue) => {
-                            const newValue =
-                              currentValue === String(field.value) &&
-                              isClearable
-                                ? ""
-                                : opt.value;
+                          // ⚠️ Correção essencial: passamos o objeto completo 'opt' ou 'null'.
+                          onSelect={() => {
+                            const isSelected = selectedValue === opt.value;
+
+                            // Se já estiver selecionado E for limpável, passa 'null' (valor esperado pelo Zod.nullable()).
+                            // Caso contrário, passa o objeto 'opt' completo.
+                            const newValue = isSelected && isClearable ? null : opt;
+
                             field.onChange(newValue);
                             setOpen(false);
                           }}
@@ -156,7 +154,8 @@ function AppAsyncSelect<T extends FieldValues>({
                           <Check
                             className={cn(
                               "ml-auto",
-                              field.value === opt.value
+                              // Comparamos o ID da opção atual com o ID do item selecionado.
+                              selectedValue === opt.value
                                 ? "opacity-100"
                                 : "opacity-0",
                             )}
@@ -173,12 +172,10 @@ function AppAsyncSelect<T extends FieldValues>({
       />
 
       {error && (
-        <FieldDescription className="text-destructive mt-1">
+        <FieldDescription className="text-destructive">
           {error}
         </FieldDescription>
       )}
     </div>
   );
 }
-
-export { AppAsyncSelect };

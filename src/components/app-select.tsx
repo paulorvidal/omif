@@ -51,11 +51,10 @@ function AppSelect<T extends FieldValues>({
   ...props
 }: AppSelectProps<T>) {
   const [open, setOpen] = useState(false);
-  const [buttonWidth, setButtonWidth] = useState(0);
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="flex h-6 justify-start">
+    <>
+      <div className="flex justify-start gap-1">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -82,15 +81,11 @@ function AppSelect<T extends FieldValues>({
           const selectedOption = options.find(
             (option) => option.value === field.value,
           );
-          const buttonRef = (el: HTMLButtonElement | null) => {
-            if (el) setButtonWidth(el.offsetWidth);
-          };
 
           return (
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  ref={buttonRef}
                   type="button"
                   variant="outline"
                   role="combobox"
@@ -101,7 +96,7 @@ function AppSelect<T extends FieldValues>({
                     className,
                     "w-full min-w-0 justify-between",
                     error &&
-                      "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
+                    "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
                   {...props}
@@ -111,7 +106,7 @@ function AppSelect<T extends FieldValues>({
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent style={{ width: buttonWidth }} className="p-0">
+              <PopoverContent className="w-full p-0">
                 <Command>
                   <CommandInput placeholder="Pesquisar..." className="h-9" />
                   <CommandList>
@@ -125,7 +120,7 @@ function AppSelect<T extends FieldValues>({
                           onSelect={(currentValue) => {
                             const newValue =
                               currentValue === String(field.value) &&
-                              isClearable
+                                isClearable
                                 ? ""
                                 : opt.value;
                             field.onChange(newValue);
@@ -153,11 +148,11 @@ function AppSelect<T extends FieldValues>({
       />
 
       {error && (
-        <FieldDescription className="text-destructive mt-1">
+        <FieldDescription className="text-destructive">
           {error}
         </FieldDescription>
       )}
-    </div>
+    </>
   );
 }
 

@@ -22,3 +22,9 @@ export const formatDateOnly = (raw: string): string => {
 
   return `${day}/${month}/${year}`;
 };
+
+export const formatBrazilianDateToISO = (dateString: string): string => {
+  if (!dateString || dateString.length !== 10) return "";
+  const [day, month, year] = dateString.split("/");
+  return `${year}-${month}-${day}`;
+};
