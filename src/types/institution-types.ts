@@ -1,7 +1,6 @@
 export type Institution = {
   id: string;
   name: string;
-  acronym: string;
 };
 
 export type FindAllInstitutionsResponse = {
@@ -39,6 +38,7 @@ export type FindInstitutionsResponse = {
   phoneNumber: string;
   coordinator?: { id: string; socialName: string };
 };
+
 
 export type InstitutionSummary = {
   id: string;

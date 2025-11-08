@@ -54,7 +54,7 @@ function AppSelect<T extends FieldValues>({
 
   return (
     <>
-      <div className="flex justify-start gap-1">
+      <div className="flex h-6 justify-start gap-1">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -96,7 +96,7 @@ function AppSelect<T extends FieldValues>({
                     className,
                     "w-full min-w-0 justify-between",
                     error &&
-                    "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
+                      "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
                   {...props}
@@ -120,7 +120,7 @@ function AppSelect<T extends FieldValues>({
                           onSelect={(currentValue) => {
                             const newValue =
                               currentValue === String(field.value) &&
-                                isClearable
+                              isClearable
                                 ? ""
                                 : opt.value;
                             field.onChange(newValue);

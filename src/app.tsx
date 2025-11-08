@@ -9,10 +9,9 @@ import { MainLayout } from "./components/layout/main-layout";
 import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
-import { EducatorSignUpPage } from "./pages/educator/EducatorSignUpPage";
-
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
+import * as educatorForm from "./pages/educator-form"
 
 const router = createBrowserRouter([
   {
@@ -31,10 +30,6 @@ const router = createBrowserRouter([
         element: <Form />,
       },
       {
-        path: "/cadastrar",
-        element: <EducatorSignUpPage />,
-      },
-      {
         element: (
           //<PrivateRoute>
           <MainLayout />
@@ -50,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/edicoes/:editionYear/estudantes-inscricao",
         element: <EnrollmentStudentForm />,
+      },
+      {
+        path: "/register",
+        element: <educatorForm.default />
       },
     ],
   },

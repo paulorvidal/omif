@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
@@ -25,9 +24,7 @@ type Option = {
   value: string | number;
 };
 
-type SelectValue<T extends FieldValues, P extends Path<T>> = T[P] extends Option | null ? T[P] : Option | null;
-
-type AsyncAppSelectProps<T extends FieldValues> = {
+type AppAsyncSelectProps<T extends FieldValues> = {
   name: Path<T>;
   label: string;
   control: Control<T>;
@@ -42,7 +39,7 @@ type AsyncAppSelectProps<T extends FieldValues> = {
   className?: string;
 } & React.ComponentProps<typeof Button>;
 
-export function AppAsyncSelect<T extends FieldValues>({
+function AppAsyncSelect<T extends FieldValues>({
   name,
   label,
   control,
@@ -56,7 +53,7 @@ export function AppAsyncSelect<T extends FieldValues>({
   onInputChange,
   className,
   ...props
-}: AsyncAppSelectProps<T>) {
+}: AppAsyncSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
@@ -67,8 +64,8 @@ export function AppAsyncSelect<T extends FieldValues>({
   }, [inputValue, onInputChange]);
 
   return (
-    <div className={cn("flex flex-col space-y-1.5 w-full", className)}>
-      <div className="flex justify-start gap-1">
+    <>
+      <div className="flex h-6 justify-start gap-1">
         <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
         {helpText && (
@@ -78,6 +75,7 @@ export function AppAsyncSelect<T extends FieldValues>({
                 variant="secondary"
                 size="icon"
                 className="bg-background h-6 w-6 rounded-full"
+                {...props}
               >
                 <Info />
               </Button>
@@ -92,9 +90,9 @@ export function AppAsyncSelect<T extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => {
-          const currentFieldValue = field.value as SelectValue<T, typeof name>;
-          const selectedLabel = currentFieldValue ? currentFieldValue.label : placeholder;
-          const selectedValue = currentFieldValue?.value;
+          const selectedOption = options.find(
+            (opt) => opt.value === field.value,
+          );
 
           return (
             <Popover open={open} onOpenChange={setOpen}>
@@ -110,11 +108,11 @@ export function AppAsyncSelect<T extends FieldValues>({
                     className,
                     "w-full min-w-0 justify-between",
                     error &&
-                    "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
+                      "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
                 >
-                  {selectedLabel}
+                  {field.value ? selectedOption?.label : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -138,14 +136,12 @@ export function AppAsyncSelect<T extends FieldValues>({
                           key={opt.value}
                           value={String(opt.value)}
                           disabled={disabled}
-                          // ⚠️ Correção essencial: passamos o objeto completo 'opt' ou 'null'.
-                          onSelect={() => {
-                            const isSelected = selectedValue === opt.value;
-
-                            // Se já estiver selecionado E for limpável, passa 'null' (valor esperado pelo Zod.nullable()).
-                            // Caso contrário, passa o objeto 'opt' completo.
-                            const newValue = isSelected && isClearable ? null : opt;
-
+                          onSelect={(currentValue) => {
+                            const newValue =
+                              currentValue === String(field.value) &&
+                              isClearable
+                                ? ""
+                                : opt.value;
                             field.onChange(newValue);
                             setOpen(false);
                           }}
@@ -154,8 +150,7 @@ export function AppAsyncSelect<T extends FieldValues>({
                           <Check
                             className={cn(
                               "ml-auto",
-                              // Comparamos o ID da opção atual com o ID do item selecionado.
-                              selectedValue === opt.value
+                              field.value === opt.value
                                 ? "opacity-100"
                                 : "opacity-0",
                             )}
@@ -176,6 +171,8 @@ export function AppAsyncSelect<T extends FieldValues>({
           {error}
         </FieldDescription>
       )}
-    </div>
+    </>
   );
 }
+
+export { AppAsyncSelect };
