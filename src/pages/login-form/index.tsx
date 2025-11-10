@@ -108,7 +108,7 @@ function LoginForm() {
                         Esqueci minha senha
                       </a>
                       <a
-                        onClick={() => redirectTo("/register")}
+                        onClick={() => redirectTo("/educador")}
                         className="cursor-pointer underline underline-offset-4"
                       >
                         Criar cadastro
