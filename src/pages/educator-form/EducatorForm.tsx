@@ -19,7 +19,7 @@ import {
 import { useEducatorForm } from "../../hooks/use-educator-form";
 import { Delete, Plus } from "lucide-react";
 
-function EducatorSignUpPage() {
+function EducatorForm() {
     const {
         control,
         register,
@@ -234,4 +234,4 @@ function EducatorSignUpPage() {
     );
 }
 
-export default EducatorSignUpPage;
+export default EducatorForm;
