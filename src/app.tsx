@@ -5,13 +5,13 @@ import {
 } from "react-router-dom";
 import { Toaster } from "sonner";
 import { RootLayout } from "./components/layout/root-layout";
-import { PrivateRoute } from "./utils/private-route";
 import { MainLayout } from "./components/layout/main-layout";
 import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
+import * as educatorForm from "./pages/educator-form"
 
 const router = createBrowserRouter([
   {
@@ -45,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/edicoes/:editionYear/estudantes-inscricao",
         element: <EnrollmentStudentForm />,
+      },
+      {
+        path: "/register",
+        element: <educatorForm.default />
       },
     ],
   },

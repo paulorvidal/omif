@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { createEducator } from "../services/educator-service";
-import { scrollToTop } from "../utils/scroll-to-top";
-import { redirectTo, showToast } from "../utils/events";
-import { ApiError } from "../services/api-error";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CreateEducatorRequest } from "../types/educator-types";
-import { fetchInstitutions } from "../services/institution-service";
-import { useDebounce } from "./use-debounce";
-import type { Institution } from "../types/institution-types";
-import type { PageResponse } from "../types/default-types";
+import { useState } from "react";
+import { createEducator } from "@/services/educator-service";
+import { scrollToTop } from "@/utils/scroll-to-top";
+import { redirectTo, showToast } from "@/utils/events";
+import { ApiError } from "@/services/api-error";
+import type { CreateEducatorRequest } from "@/types/educator-types";
+import { fetchInstitutions } from "@/services/institution-service";
+import { useDebounce } from "@/hooks/use-debounce";
+import type { Institution } from "@/types/institution-types";
+import type { PageResponse } from "@/types/default-types";
 
 const EducatorFormSchema = z
   .object({
@@ -43,24 +43,13 @@ const EducatorFormSchema = z
     confirmPassword: z.string(),
     siape: z.string().nonempty("O SIAPE é obrigatório."),
     institution: z
-      .object({
-        label: z.string(),
-        value: z.string().uuid("ID da instituição inválido"),
-      })
-      .nullable()
-      .superRefine((data, ctx) => {
-        if (data === null || data.value === "") {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "A instituição deve ser informada.",
-          });
-        }
-      }),
+      .string({ required_error: "A instituição deve ser informada." })
+      .uuid("ID da instituição inválido"),
     phoneNumber: z
       .string()
       .nonempty("O telefone é obrigatório")
       .regex(
-        /^\(\d{2}\)\s?9?\d{4}-\d{4}$/,
+        /^\(\d{2}\)(9\d{4}|\d{4})-\d{4}$/,
         "O número deve estar no formato (XX)9XXXX-XXXX ou (XX)XXXX-XXXX.",
       ),
     dateOfBirth: z
@@ -71,6 +60,7 @@ const EducatorFormSchema = z
         (v) => new Date(v) <= new Date(),
         "A data de nascimento não pode ser no futuro.",
       ),
+    captchaToken: z.string().nonempty("Por favor, valide o captcha."),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
@@ -84,7 +74,6 @@ const EducatorFormSchema = z
 export type EducatorFormData = z.infer<typeof EducatorFormSchema>;
 
 export const useEducatorForm = () => {
-  const queryClient = useQueryClient();
   const [institutionInput, setInstitutionInput] = useState("");
   const debouncedInstitutionInput = useDebounce(institutionInput, 500);
 
@@ -105,27 +94,12 @@ export const useEducatorForm = () => {
       password: "",
       confirmPassword: "",
       siape: "",
-      institution: null,
+      institution: "",
       phoneNumber: "",
       dateOfBirth: "",
+      captchaToken: "",
     },
   });
-
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaResetKey, setCaptchaResetKey] = useState(0);
-  const [captchaError, setCaptchaError] = useState<string | null>(null);
-
-  const resetCaptcha = () => {
-    setCaptchaToken(null);
-    setCaptchaResetKey((prevKey) => prevKey + 1);
-  };
-
-  const handleVerifyCaptcha = (token: string) => {
-    setCaptchaToken(token);
-    if (token) {
-      setCaptchaError(null);
-    }
-  };
 
   const { mutate, isPending } = useMutation({
     mutationFn: createEducator,
@@ -134,6 +108,8 @@ export const useEducatorForm = () => {
         response.message || "Educador cadastrado com sucesso!",
         "success",
       );
+      reset();
+      scrollToTop();
       redirectTo("/login");
     },
     onError: (error) => {
@@ -144,22 +120,17 @@ export const useEducatorForm = () => {
         showToast("Ocorreu um erro inesperado.", "error");
       }
     },
-    onSettled: () => {
-      resetCaptcha();
-    },
   });
 
   const { data: institutionOptions, isLoading: isInstitutionsLoading } =
     useQuery({
       queryKey: ["institutions", debouncedInstitutionInput],
-
       queryFn: () =>
         fetchInstitutions({
           q: debouncedInstitutionInput,
           page: 0,
           size: 10,
         }),
-
       select: (data: PageResponse<Institution>) =>
         data.content.map((institution) => ({
           label: institution.name,
@@ -167,32 +138,27 @@ export const useEducatorForm = () => {
         })),
     });
 
-  const onSubmit = (data: Omit<EducatorFormData, "captchaToken">) => {
-    if (!captchaToken) {
-      setCaptchaError("Por favor, complete a verificação.");
-      return;
-    }
-
-    const { institution, ...formData } = data;
-
-    if (!institution) {
-      return;
-    }
-
-    const payload: CreateEducatorRequest = {
-      ...formData,
-      socialName: formData.socialName || "",
-      institutionId: institution.value,
-      captchaToken,
-    };
-
-    mutate(payload);
-  };
-
   const onReset = () => {
     reset();
-    resetCaptcha();
     scrollToTop();
+  };
+
+  const onSubmit = (data: EducatorFormData) => {
+    const cleanValue = (value: string) => value.trim().replace(/\s+/g, " ");
+
+    const payload: CreateEducatorRequest = {
+      name: cleanValue(data.name),
+      socialName: data.socialName ? cleanValue(data.socialName) : "",
+      email: cleanValue(data.email).toLowerCase(),
+      cpf: data.cpf,
+      password: data.password,
+      siape: data.siape.replace(/\D/g, ""),
+      institutionId: data.institution,
+      phoneNumber: data.phoneNumber,
+      dateOfBirth: data.dateOfBirth,
+      captchaToken: data.captchaToken,
+    };
+    mutate(payload);
   };
 
   return {
@@ -202,10 +168,6 @@ export const useEducatorForm = () => {
     handleSubmit: handleSubmit(onSubmit),
     handleReset: onReset,
     isPending,
-    setCaptchaToken: handleVerifyCaptcha,
-    captchaToken,
-    captchaResetKey,
-    captchaError,
     institutionOptions: institutionOptions ?? [],
     isInstitutionsLoading,
     setInstitutionInput,
