@@ -10,8 +10,9 @@ import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 
-import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
-import EducatorForm from "./pages/educator-form/EducatorForm";
+import { EnrollmentStudentForm } from "./pages/enrollment-student-form"; 
+import { EducatorForm } from "./pages/educator-form";
+
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/educador",
-        element: <EducatorForm />
+        element: <EducatorForm />,
       },
     ],
   },
