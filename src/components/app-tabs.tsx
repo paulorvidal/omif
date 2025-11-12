@@ -31,7 +31,7 @@ function AppTabsTrigger({ children, count, ...props }: TabsTriggerProps) {
   return (
     <TabsTrigger {...props}>
       {children}
-      {count && <Badge>{formatCount(count)}</Badge>}
+      {count && count > 0 ? <Badge>{formatCount(count)}</Badge> : null}
     </TabsTrigger>
   );
 }

@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { useDebounce } from "./use-debounce";
 import type { PaginationState } from "@tanstack/react-table";
 import {
@@ -9,6 +8,7 @@ import {
   useQueryClient,
   keepPreviousData,
 } from "@tanstack/react-query";
+import { useForm } from "react-hook-form"; 
 
 import {
   deleteInstitution,
@@ -19,17 +19,30 @@ import { showToast } from "../utils/events";
 import { type FindAllInstitutionsResponse } from "../types/institution-types";
 import type { PageResponse } from "../types/default-types";
 
-type FilterFormValues = {
-  sort: string;
-  pageSize: number;
-};
-
 export type InstitutionCollumns = {
   id: string;
   name: string;
   inep: string;
   email: string;
   coordinatorName: string;
+};
+
+type FilterFormData = {
+  sort: string;
+  pageSize: number;
+};
+
+const useDebounceFallback = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
 };
 
 export const useInstitutionTable = () => {
@@ -41,7 +54,10 @@ export const useInstitutionTable = () => {
   const sort = searchParams.get("sort") || "name,asc";
   const globalFilter = searchParams.get("q") || "";
 
-  const debouncedFilter = useDebounce(globalFilter, 400);
+  const debouncedFilter =
+    typeof useDebounce === "function"
+      ? useDebounce(globalFilter, 400)
+      : useDebounceFallback(globalFilter, 400);
 
   const pagination: PaginationState = { pageIndex, pageSize };
 
@@ -49,9 +65,16 @@ export const useInstitutionTable = () => {
   const [institutionToDelete, setInstitutionToDelete] = useState<string | null>(
     null,
   );
-  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm<FilterFormValues>();
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  
+
+  const filterForm = useForm<FilterFormData>({
+    defaultValues: {
+      sort: sort,
+      pageSize: pageSize,
+    },
+  });
 
   const {
     data: pageResponse,
@@ -125,12 +148,18 @@ export const useInstitutionTable = () => {
           updatedParams.delete(key);
         }
       });
-      if (newParams.q !== undefined || newParams.sort || newParams.size) {
+      const qChanged = newParams.q !== undefined;
+      const sortChanged =
+        newParams.sort !== undefined && newParams.sort !== sort;
+      const sizeChanged =
+        newParams.size !== undefined && newParams.size !== pageSize;
+
+      if (qChanged || sortChanged || sizeChanged) {
         if (pageIndex !== 0) updatedParams.set("page", "0");
       }
       setSearchParams(updatedParams);
     },
-    [searchParams, setSearchParams, pageIndex],
+    [searchParams, setSearchParams, pageIndex, sort, pageSize],
   );
 
   const handleDeleteClick = (id: string) => {
@@ -139,11 +168,11 @@ export const useInstitutionTable = () => {
   };
 
   const handleOpenFilterDialog = () => {
-    reset({ sort, pageSize });
+    filterForm.reset({ sort: sort, pageSize: pageSize });
     setFilterDialogOpen(true);
   };
 
-  const handleApplyFilters = (data: FilterFormValues) => {
+  const handleApplyFilters = (data: FilterFormData) => {
     handleURLChange({ sort: data.sort, size: data.pageSize });
     setFilterDialogOpen(false);
   };
@@ -161,10 +190,10 @@ export const useInstitutionTable = () => {
       open: filterDialogOpen,
       onOpen: handleOpenFilterDialog,
       onClose: () => setFilterDialogOpen(false),
-      form: {
-        control,
-        onSubmit: handleSubmit(handleApplyFilters),
-      },
+      
+      onSubmit: filterForm.handleSubmit(handleApplyFilters),
+      formControl: filterForm.control,
+      formErrors: filterForm.formState.errors,
     },
     deleteDialog: {
       open: confirmOpen,
