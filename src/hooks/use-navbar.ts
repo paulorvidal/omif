@@ -18,56 +18,69 @@ const defaultOption = {
 };
 
 const EditionFormSchema = z.object({
-  edition: z
-    .object({
-      label: z.union([z.string(), z.number()]),
-      value: z.string().uuid("ID inválido").or(z.literal("all")),
-      isActive: z.boolean().optional(),
-    })
-    .nullable()
-    .refine((v) => v !== null, {
-      message: "O ano é obrigatório",
-    }),
+  edition: z.string().uuid("ID inválido").or(z.literal("all")).nullable(),
 });
 
 export const useNavbar = () => {
-  const storedEditionValue = localStorage.getItem("edition");
-
-  const getInitialEdition = async () => {
-    if (!storedEditionValue || storedEditionValue === "all") {
-      return defaultOption;
-    }
-
-    try {
-      const editions = await fetchEditions();
-      const foundEdition = editions.find(
-        (e) => e.label.toString() === storedEditionValue,
-      );
-      return foundEdition
-        ? { ...foundEdition, label: foundEdition.label }
-        : defaultOption;
-    } catch (error) {
-      console.error("Failed to fetch editions:", error);
-      return defaultOption;
-    }
-  };
-
-  const { control, watch, trigger, setValue } = useForm({
+  const { control, watch, trigger, setValue, getValues } = useForm({
     resolver: zodResolver(EditionFormSchema),
     defaultValues: {
       edition: null,
     },
   });
 
-  useEffect(() => {
-    const setInitialEdition = async () => {
-      const initialEdition = await getInitialEdition();
-      setValue("edition", initialEdition);
-    };
-    setInitialEdition();
-  }, []);
-
   const queryClient = useQueryClient();
+
+  const {
+    data: editionOptions = [],
+    isLoading: isEditionLoading,
+    isError: isEditionError,
+  } = useQuery({
+    queryKey: ["editions"],
+    queryFn: async () => {
+      try {
+        const editions = await queryClient.fetchQuery({
+          queryKey: ["editions-data"],
+          queryFn: () => fetchEditions(""),
+        });
+        return [defaultOption, ...(editions || [])];
+      } catch (error) {
+        showToast("Erro ao buscar as edições.", "error");
+        return [defaultOption];
+      }
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+
+  useEffect(() => {
+    if (editionOptions.length > 0 && !getValues("edition")) {
+      const storedEditionLabel = localStorage.getItem("edition");
+      let initialValueToSet = null;
+
+      if (storedEditionLabel && storedEditionLabel !== "all") {
+        const foundEdition = editionOptions.find(
+          (e) => e.label.toString() === storedEditionLabel,
+        );
+        if (foundEdition) {
+          initialValueToSet = foundEdition.value;
+        }
+      } else if (storedEditionLabel === "all") {
+        initialValueToSet = defaultOption.value;
+      }
+
+      if (!initialValueToSet) {
+        const numericEditions = editionOptions.filter((e) => e.value !== "all");
+        if (numericEditions.length > 0) {
+          numericEditions.sort((a, b) => Number(b.label) - Number(a.label));
+          initialValueToSet = numericEditions[0].value;
+        } else {
+          initialValueToSet = defaultOption.value;
+        }
+      }
+
+      setValue("edition", initialValueToSet);
+    }
+  }, [editionOptions, setValue, getValues]);
 
   const { data: userData, isLoading: isUserDataLoading } = useQuery({
     queryKey: ["myData"],
@@ -92,39 +105,32 @@ export const useNavbar = () => {
       enabled: isAllowedToEnroll,
     });
 
-  const loadOptions = async (inputValue: string) => {
-    try {
-      const editions = await queryClient.fetchQuery({
-        queryKey: ["editions", inputValue],
-        queryFn: () => fetchEditions(inputValue),
-      });
-      return [defaultOption, ...(editions || [])];
-    } catch (error) {
-      showToast("Erro ao buscar as edições.", "error");
-      return [defaultOption];
-    }
-  };
-
-  const selectedEdition = watch("edition");
+  const selectedEditionValue = watch("edition");
 
   useEffect(() => {
-    if (selectedEdition) {
+    if (selectedEditionValue && editionOptions.length > 0) {
       trigger("edition").then((isValid) => {
         if (isValid) {
+          const selectedObject = editionOptions.find(
+            (opt) => opt.value === selectedEditionValue,
+          );
+
+          if (!selectedObject) return;
+
           const valueToStore =
-            selectedEdition.value === "all"
+            selectedObject.value === "all"
               ? "all"
-              : selectedEdition.label.toString();
+              : selectedObject.label.toString();
           localStorage.setItem("edition", valueToStore);
           if (
-            selectedEdition.value === "all" ||
-            typeof selectedEdition.isActive === "undefined"
+            selectedObject.value === "all" ||
+            typeof selectedObject.isActive === "undefined"
           ) {
             localStorage.removeItem("editionIsActive");
           } else {
             localStorage.setItem(
               "editionIsActive",
-              String(selectedEdition.isActive),
+              String(selectedObject.isActive),
             );
           }
           window.dispatchEvent(new Event("editionChange"));
@@ -133,7 +139,7 @@ export const useNavbar = () => {
         }
       });
     }
-  }, [selectedEdition, trigger]);
+  }, [selectedEditionValue, trigger, editionOptions]);
 
   const classNames = {
     control: () =>
@@ -162,7 +168,8 @@ export const useNavbar = () => {
 
   return {
     control,
-    loadOptions,
+    editionOptions,
+    isEditionLoading,
     placeholder,
     classNames,
     userData,
