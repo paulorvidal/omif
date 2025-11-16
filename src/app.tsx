@@ -3,16 +3,19 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+
 import { Toaster } from "sonner";
 import { RootLayout } from "./components/layout/root-layout";
 import { MainLayout } from "./components/layout/main-layout";
+
 import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
-import EducatorForm from "./pages/educator-form/EducatorForm";
-import { InstitutionForm } from "./pages/institution-form/InstitutionForm";
+import EducatorForm from "./pages/educator-form";
+import { InstitutionForm } from "./pages/institution-form"
+
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -40,6 +43,10 @@ const router = createBrowserRouter([
             path: "/table",
             element: <Table />,
           },
+          {
+            path: "/instituicao",
+            element: <InstitutionForm />,
+          },
         ],
       },
       {
@@ -48,11 +55,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/educador",
-        element: <EducatorForm />
-      },
-      {
-        path: "/instituicao",
-        element: <InstitutionForm />,
+        element: <EducatorForm />,
       },
     ],
   },
