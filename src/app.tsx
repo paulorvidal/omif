@@ -15,6 +15,7 @@ import { InstitutionsPage } from "./pages/institution-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form"; 
 import { EducatorForm } from "./pages/educator-form";
+import { InstitutionForm } from "./pages/institution-form";
 
 const router = createBrowserRouter([
   {
