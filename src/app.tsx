@@ -3,9 +3,11 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+
 import { Toaster } from "sonner";
 import { RootLayout } from "./components/layout/root-layout";
 import { MainLayout } from "./components/layout/main-layout";
+
 import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
@@ -40,6 +42,10 @@ const router = createBrowserRouter([
           {
             path: "/table",
             element: <Table />,
+          },
+          {
+            path: "/instituicao",
+            element: <InstitutionForm />,
           },
         ],
       },

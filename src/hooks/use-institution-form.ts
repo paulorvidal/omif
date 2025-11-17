@@ -29,8 +29,8 @@ const InstitutionFormSchema = z.object({
     .string()
     .nonempty("O telefone é obrigatório")
     .regex(
-      /^\(\d{2}\)\d{4,5}-\d{4}$/,
-      "Formato inválido. Use (XX)XXXX-XXXX ou (XX)XXXXX-XXXX",
+      /^\(\d{2}\)\s?\d{4,5}-\d{4}$/,
+      "Formato inválido. Use (XX) XXXX-XXXX ou (XX) XXXXX-XXXX",
     ),
   coordinator: z
     .object({ label: z.string(), value: z.string() })

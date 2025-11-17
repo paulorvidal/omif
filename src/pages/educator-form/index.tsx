@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller } from "react-hook-form";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
