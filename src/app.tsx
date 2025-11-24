@@ -13,9 +13,11 @@ import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
 
-import { EnrollmentStudentForm } from "./pages/enrollment-student-form"; 
+import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
+import { PrivateRoute } from "./utils/private-route";
+import { ProfileForm } from "./pages/profile-form";
 
 const router = createBrowserRouter([
   {
@@ -35,9 +37,9 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          //<PrivateRoute>
-          <MainLayout />
-          //</PrivateRoute>
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
         ),
         children: [
           {
@@ -47,6 +49,10 @@ const router = createBrowserRouter([
           {
             path: "/instituicao",
             element: <InstitutionForm />,
+          },
+          {
+            path: "/perfil",
+            element: <ProfileForm />,
           },
         ],
       },
@@ -59,16 +65,14 @@ const router = createBrowserRouter([
         element: <EducatorForm />,
       },
       {
-        element: (
-          <MainLayout />
-        ),
+        element: <MainLayout />,
         children: [
           {
             path: "/instituicoes",
             element: <InstitutionsPage />,
           },
         ],
-      }
+      },
     ],
   },
 ]);

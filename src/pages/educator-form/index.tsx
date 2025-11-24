@@ -27,19 +27,14 @@ function EducatorForm() {
   } = useEducatorForm();
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center bg-gray-50 p-6 md:p-10">
-      <div className="w-full max-w-4xl">
-        <Card className="shadow-lg">
-          <CardHeader className="pb-2 text-center">
-            <CardTitle className="text-3xl font-bold text-gray-800">
-              Cadastre-se
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
+    <div className="flex min-h-svh w-full justify-center p-6 md:p-10">
+      <div className="w-full max-w-5xl">
+        <Card>
+          <CardContent>
             <form onSubmit={handleSubmit} noValidate>
               <FieldGroup>
                 <FieldSet>
-                  <FieldLegend>Dados Pessoais</FieldLegend>
+                  <FieldLegend className="mb-4">Cadastre-se</FieldLegend>
                   <FieldGroup>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
@@ -61,7 +56,6 @@ function EducatorForm() {
                         />
                       </Field>
                     </div>
-
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
                         <AppInput
