@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -164,9 +165,9 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
 
       const numericWage = Number(editionData.minimumWage);
 
-      const wageInCentsString = String(numericWage * 100);
-
-      const formattedMinimumWage = maskCurrency(wageInCentsString);
+      // CORRIGIDO: Removida a declaração duplicada e mantida a lógica correta
+      const rawCents = numericWage.toFixed(2).replace(/\D/g, "");
+      const formattedMinimumWage = maskCurrency(rawCents);
 
       reset({
         name: editionData.name,
@@ -220,6 +221,11 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     if (isEditMode && !isDirty) {
       return showToast("Nenhuma alteração para salvar", "info");
     }
+
+    const formatCurrencyForApi = (value: string | number) => {
+      return String(Number(value) / 100);
+    };
+
     if (isEditMode) {
       const updatedData: Partial<UpdateEditionRequest> = {
         editionId: editionId!,
@@ -230,7 +236,8 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
           const value = data[key as keyof FormData];
 
           if (key === "minimumWage") {
-            (updatedData as any)[key] = String(value);
+            // CORRIGIDO: Removida a linha duplicada antiga
+            (updatedData as any)[key] = formatCurrencyForApi(value as string);
           } else if (key.includes("Date")) {
             (updatedData as any)[key] = new Date(value as string).toISOString();
           } else {
@@ -242,7 +249,9 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     } else {
       const payload: CreateEditionRequest = {
         ...data,
-        minimumWage: String(data.minimumWage),
+        // CORRIGIDO: Removida a chave duplicada antiga
+        minimumWage: formatCurrencyForApi(data.minimumWage),
+
         startDate: new Date(data.startDate).toISOString(),
         endDate: new Date(data.endDate).toISOString(),
         institutionRegistrationStartDate: new Date(

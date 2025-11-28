@@ -13,9 +13,11 @@ import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
 
-import { EnrollmentStudentForm } from "./pages/enrollment-student-form"; 
+import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
+
+import { EditionForm } from "./pages/edition-form";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
           {
             path: "/instituicao",
             element: <InstitutionForm />,
+          },
+          {
+            path: "/edicao",
+            element: <EditionForm />,
+          },
+          {
+            path: "/edicao/:id",
+            element: <EditionForm />,
           },
         ],
       },
