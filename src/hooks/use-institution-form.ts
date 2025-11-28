@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -32,10 +33,7 @@ const InstitutionFormSchema = z.object({
       /^\(\d{2}\)\s?\d{4,5}-\d{4}$/,
       "Formato inválido. Use (XX) XXXX-XXXX ou (XX) XXXXX-XXXX",
     ),
-  coordinator: z
-    .object({ label: z.string(), value: z.string() })
-    .nullable()
-    .optional(),
+  coordinator: z.string().optional().nullable(),
 });
 
 type FormData = z.infer<typeof InstitutionFormSchema>;
@@ -48,6 +46,10 @@ export const useInstitutionForm = ({
   institutionId,
 }: UseInstitutionFormProps) => {
   const isEditMode = Boolean(institutionId);
+
+  const [educatorOptions, setEducatorOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const {
     register,
@@ -64,9 +66,23 @@ export const useInstitutionForm = ({
       email2: "",
       email3: "",
       phoneNumber: "",
-      coordinator: null,
+      coordinator: "",
     },
   });
+
+  useEffect(() => {
+    if (!isEditMode) return;
+
+    async function loadEducators() {
+      try {
+        const options = await fetchEducators("", institutionId || "");
+        setEducatorOptions(options);
+      } catch (error) {
+        console.error("Erro ao carregar educadores", error);
+      }
+    }
+    loadEducators();
+  }, [institutionId, isEditMode]);
 
   useEffect(() => {
     if (!isEditMode) return;
@@ -81,11 +97,8 @@ export const useInstitutionForm = ({
           email3: institution.email3 ?? "",
           phoneNumber: institution.phoneNumber,
           coordinator: institution.coordinator
-            ? {
-                label: institution.coordinator.socialName,
-                value: institution.coordinator.id,
-              }
-            : null,
+            ? institution.coordinator.id
+            : "",
         });
       } catch {
         showToast("Não foi possível carregar a instituição", "error");
@@ -112,7 +125,7 @@ export const useInstitutionForm = ({
       if (isEditMode) {
         await updateInstitution(institutionId!, {
           ...basePayload,
-          coordinatorId: data.coordinator?.value,
+          coordinatorId: data.coordinator || null,
         } as UpdateInstitutionRequest);
         showToast("Instituição atualizada com sucesso", "success");
       } else {
@@ -133,10 +146,6 @@ export const useInstitutionForm = ({
     scrollToTop();
   };
 
-  const loadEducatorOptions = (inputValue: string) => {
-    return fetchEducators(inputValue, institutionId!);
-  };
-
   return {
     control,
     errors,
@@ -145,6 +154,6 @@ export const useInstitutionForm = ({
     register,
     handleFormSubmit,
     handleReset,
-    loadEducatorOptions,
+    educatorOptions,
   };
 };

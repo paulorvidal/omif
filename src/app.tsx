@@ -14,7 +14,9 @@ import { LoginForm } from "./pages/login-form";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import EducatorForm from "./pages/educator-form";
-import { InstitutionForm } from "./pages/institution-form"
+import { InstitutionForm } from "./pages/institution-form";
+
+
 
 const router = createBrowserRouter([
   {
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
           },
           {
             path: "/instituicao",
+            element: <InstitutionForm />,
+          },
+          {
+            path: "/instituicao/:id",
             element: <InstitutionForm />,
           },
         ],

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Field,
@@ -8,19 +9,23 @@ import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
 import { Delete, Save, ChevronLeft } from "lucide-react";
 import { useInstitutionForm } from "../../hooks/use-institution-form";
-import { useNavigate } from "react-router";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { AppSelect } from "@/components/app-select";
 
 function InstitutionForm() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const {
         register,
         errors,
         handleFormSubmit,
         handleReset,
         isSubmitting,
-    } = useInstitutionForm({ institutionId: undefined });
-
-    const navigate = useNavigate();
+        control,
+        educatorOptions,
+        isEditMode,
+    } = useInstitutionForm({ institutionId: id });
 
     return (
         <>
@@ -34,7 +39,7 @@ function InstitutionForm() {
                     <ChevronLeft />
                 </AppButton>
                 <h1 className="text-3xl font-semibold">
-                    Cadastro da Instituição
+                    {isEditMode ? "Editar Instituição" : "Cadastro da Instituição"}
                 </h1>
             </div>
 
@@ -104,6 +109,19 @@ function InstitutionForm() {
                                             />
                                         </Field>
                                     </div>
+                                    {isEditMode && (
+                                        <Field className="md:col-span-2">
+                                            <AppSelect
+                                                control={control}
+                                                name="coordinator"
+                                                label="Coordenador da Instituição"
+                                                placeholder="Selecione um educador..."
+                                                options={educatorOptions}
+                                                error={errors.coordinator?.message}
+                                                isClearable
+                                            />
+                                        </Field>
+                                    )}
                                 </FieldGroup>
                             </FieldSet>
 
@@ -112,21 +130,24 @@ function InstitutionForm() {
                                 className="flex flex-col gap-4 md:flex-row md:justify-end"
                             >
                                 <div className="flex w-full justify-end gap-4">
-                                    <AppButton
-                                        type="button"
-                                        icon={<Delete />}
-                                        variant="secondary"
-                                        onClick={handleReset}
-                                        disabled={isSubmitting}
-                                    >
-                                        Limpar
-                                    </AppButton>
+                                    {!isEditMode && (
+                                        <AppButton
+                                            type="button"
+                                            icon={<Delete />}
+                                            variant="secondary"
+                                            onClick={handleReset}
+                                            disabled={isSubmitting}
+                                        >
+                                            Limpar
+                                        </AppButton>
+                                    )}
+
                                     <AppButton
                                         type="submit"
                                         icon={<Save />}
                                         isLoading={isSubmitting}
                                     >
-                                        Realizar Inscrição
+                                        {isEditMode ? "Salvar Alterações" : "Cadastrar Instituição"}
                                     </AppButton>
                                 </div>
                             </Field>
