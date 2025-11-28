@@ -12,6 +12,7 @@ import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
+import { EditionsPage } from "./pages/edition-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form"; 
 import { EducatorForm } from "./pages/educator-form";
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
           {
             path: "/instituicoes",
             element: <InstitutionsPage />,
+          },
+          {
+            path: "/edicoes",
+            element: <EditionsPage />,
           },
         ],
       }
