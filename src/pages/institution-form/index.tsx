@@ -1,30 +1,55 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-    Field,
-    FieldGroup,
-    FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
-import { Delete, Save, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { AppAsyncSelect } from "@/components/app-async-select";
 import { useInstitutionForm } from "../../hooks/use-institution-form";
-import { useNavigate } from "react-router";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { useWatch } from "react-hook-form";
 
 function InstitutionForm() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const {
         register,
         errors,
         handleFormSubmit,
-        handleReset,
         isSubmitting,
-    } = useInstitutionForm({ institutionId: undefined });
+        control,
+        loadEducatorOptions,
+        isEditMode,
+    } = useInstitutionForm({ institutionId: id });
 
-    const navigate = useNavigate();
+    const [localOptions, setLocalOptions] = useState<{ label: string; value: string | number }[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const currentCoordinator = useWatch({ control, name: "coordinator" });
+
+    useEffect(() => {
+        if (isEditMode && currentCoordinator && localOptions.length === 0) {
+            setLocalOptions([currentCoordinator as any]);
+        }
+    }, [currentCoordinator, localOptions.length, isEditMode]);
+
+    const handleSearch = async (query: string) => {
+        setIsLoading(true);
+        try {
+            const results = await loadEducatorOptions(query);
+            setLocalOptions(results);
+        } catch (error) {
+            console.error("Erro ao buscar", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 mb-6">
                 <AppButton
                     variant="secondary"
                     className="size-8"
@@ -34,7 +59,7 @@ function InstitutionForm() {
                     <ChevronLeft />
                 </AppButton>
                 <h1 className="text-3xl font-semibold">
-                    Cadastro da Instituição
+                    {isEditMode ? "Editar Instituição" : "Cadastro da Instituição"}
                 </h1>
             </div>
 
@@ -43,90 +68,97 @@ function InstitutionForm() {
                     <form onSubmit={handleFormSubmit} noValidate>
                         <FieldGroup>
                             <FieldSet>
-                                <FieldGroup className="md:grid md:grid-cols-2 md:gap-x-6 gap-y-4">
+                                <FieldGroup className="grid grid-cols-1 gap-y-4 md:grid-cols-12 md:gap-x-6">
 
-                                    <Field className="md:col-span-2">
+                                    <Field className="md:col-span-12">
                                         <AppInput
-                                            label="Nome da Instituição *"
-                                            placeholder="Ex: Escola Municipal de Ensino Fundamental"
+                                            label="Nome *"
+                                            placeholder="Ex: Nome da Escola"
                                             error={errors.name?.message}
                                             register={register("name")}
                                         />
                                     </Field>
 
-                                    <Field className="md:col-span-2">
+                                    <Field className="md:col-span-12">
                                         <AppInput
-                                            label="Código INEP (Opcional)"
-                                            placeholder="Ex: 12345678"
+                                            label="INEP"
+                                            placeholder="Ex: 35474885"
                                             error={errors.inep?.message}
                                             register={register("inep")}
                                         />
                                     </Field>
 
-                                    <Field className="md:col-span-2">
+
+                                    <Field className="md:col-span-12">
                                         <AppInput
-                                            label="Telefone Institucional *"
-                                            placeholder="(00)90000-0000"
+                                            label="Telefone *"
+                                            placeholder="(00)0000-0000"
                                             mask="(99)99999-9999"
                                             error={errors.phoneNumber?.message}
                                             register={register("phoneNumber")}
                                             className="bg-white"
                                         />
                                     </Field>
-
-                                    <Field className="md:col-span-2">
+                                    <Field className="md:col-span-12">
                                         <AppInput
-                                            label="E-mail Institucional Principal *"
+                                            label="E-mail *"
                                             type="email"
-                                            placeholder="exemplo@escola.edu.br"
+                                            placeholder="Ex: email@escola.com"
                                             error={errors.email1?.message}
                                             register={register("email1")}
                                         />
                                     </Field>
 
-                                    <div className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2 md:col-span-2">
-                                        <Field>
-                                            <AppInput
-                                                label="E-mail Secundário (Opcional)"
-                                                type="email"
-                                                placeholder="exemplo2@escola.edu.br"
-                                                error={errors.email2?.message}
-                                                register={register("email2")}
+
+                                    <Field className="md:col-span-6">
+                                        <AppInput
+                                            label="E-mail reserva"
+                                            placeholder="Ex: email@escola.com"
+                                            type="email"
+                                            error={errors.email2?.message}
+                                            register={register("email2")}
+                                        />
+                                    </Field>
+                                    <Field className="md:col-span-6">
+                                        <AppInput
+                                            label="E-mail reserva"
+                                            placeholder="Ex: email@escola.com"
+                                            type="email"
+                                            error={errors.email3?.message}
+                                            register={register("email3")}
+                                        />
+                                    </Field>
+
+                                    {isEditMode && (
+                                        <Field className="md:col-span-12">
+                                            <AppAsyncSelect
+                                                control={control}
+                                                name="coordinator"
+                                                label="Coordenador"
+                                                placeholder="Digite para buscar..."
+                                                options={localOptions}
+                                                onInputChange={handleSearch}
+                                                isLoading={isLoading}
+                                                error={errors.coordinator?.message}
+                                                isClearable
                                             />
                                         </Field>
-                                        <Field>
-                                            <AppInput
-                                                label="E-mail Terciário (Opcional)"
-                                                type="email"
-                                                placeholder="exemplo3@escola.edu.br"
-                                                error={errors.email3?.message}
-                                                register={register("email3")}
-                                            />
-                                        </Field>
-                                    </div>
+                                    )}
+
                                 </FieldGroup>
                             </FieldSet>
 
                             <Field
                                 orientation="horizontal"
-                                className="flex flex-col gap-4 md:flex-row md:justify-end"
+                                className="flex flex-col gap-4 mt-6 md:flex-row md:justify-end"
                             >
                                 <div className="flex w-full justify-end gap-4">
                                     <AppButton
-                                        type="button"
-                                        icon={<Delete />}
-                                        variant="secondary"
-                                        onClick={handleReset}
-                                        disabled={isSubmitting}
-                                    >
-                                        Limpar
-                                    </AppButton>
-                                    <AppButton
                                         type="submit"
-                                        icon={<Save />}
+                                        className="bg-green-600 hover:bg-green-700 text-white"
                                         isLoading={isSubmitting}
                                     >
-                                        Realizar Inscrição
+                                        {isEditMode ? "Salvar" : "Realizar Inscrição"}
                                     </AppButton>
                                 </div>
                             </Field>

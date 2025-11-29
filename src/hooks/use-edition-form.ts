@@ -165,7 +165,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
 
       const numericWage = Number(editionData.minimumWage);
 
-      // CORRIGIDO: Removida a declaração duplicada e mantida a lógica correta
       const rawCents = numericWage.toFixed(2).replace(/\D/g, "");
       const formattedMinimumWage = maskCurrency(rawCents);
 
@@ -236,7 +235,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
           const value = data[key as keyof FormData];
 
           if (key === "minimumWage") {
-            // CORRIGIDO: Removida a linha duplicada antiga
             (updatedData as any)[key] = formatCurrencyForApi(value as string);
           } else if (key.includes("Date")) {
             (updatedData as any)[key] = new Date(value as string).toISOString();
@@ -249,7 +247,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     } else {
       const payload: CreateEditionRequest = {
         ...data,
-        // CORRIGIDO: Removida a chave duplicada antiga
         minimumWage: formatCurrencyForApi(data.minimumWage),
 
         startDate: new Date(data.startDate).toISOString(),
