@@ -46,7 +46,7 @@ export const updateInstitution = async (
   id: string,
   data: CreateInstitutionRequest,
 ) => {
-  const resp = await api.put<CreateInstitutionResponse>(
+  const resp = await api.patch<CreateInstitutionResponse>(
     `/institutions/${id}`,
     data,
   );
