@@ -57,7 +57,6 @@ function InstitutionForm() {
                       mask="(99)99999-9999"
                       error={errors.phoneNumber?.message}
                       register={register("phoneNumber")}
-                      className="bg-white"
                     />
                   </Field>
 

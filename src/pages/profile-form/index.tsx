@@ -9,10 +9,51 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import { AtSign, Building2, ChevronLeft, KeyRound, Pencil } from "lucide-react";
+import { useProfile } from "@/hooks/use-profile";
+import {
+  AtSign,
+  Building2,
+  ChevronLeft,
+  Delete,
+  KeyRound,
+  Pencil,
+  Save,
+} from "lucide-react";
 import { useNavigate } from "react-router";
 
 function ProfileForm() {
+  const {
+    user,
+    isLoading,
+    isSavingPicture,
+    isDeletingPicture,
+    register,
+    errors,
+    handleProfileSubmit,
+    handleResetForm,
+    isEditDialogOpen,
+    openPictureEditDialog,
+    closePictureEditDialog,
+    handleSavePicture,
+    handleDeletePicture,
+    isPasswordDialogOpen,
+    openPasswordDialog,
+    closePasswordDialog,
+    handleChangePassword,
+    isChangingPassword,
+    isEmailDialogOpen,
+    closeEmailDialog,
+    handleChangeEmail,
+    isChangingEmail,
+    isInstitutionDialogOpen,
+    openInstitutionDialog,
+    closeInstitutionDialog,
+    handleChangeInstitution,
+    isChangingInstitution,
+    loadInstitutions,
+    handleEmailEditClick,
+  } = useProfile();
+
   const navigate = useNavigate();
 
   return (
@@ -93,49 +134,90 @@ function ProfileForm() {
           </CardContent>
         </Card>
         <Card className="flex-1">
-          <form onSubmit={() => {}} noValidate>
-            <FieldGroup>
-              <FieldSet>
-                <FieldLegend>Formulário de Inscrição</FieldLegend>
-                <FieldGroup>
-                  <Field>
-                    <AppInput
-                      label="Nome Completo"
-                      placeholder="Ex: Nome Completo"
-                    />
-                  </Field>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <CardContent>
+            <form onSubmit={() => {}} noValidate>
+              <FieldGroup>
+                <FieldSet>
+                  <FieldLegend>Informações Pessoais</FieldLegend>
+                  <FieldGroup>
                     <Field>
                       <AppInput
-                        label="Email"
-                        type="email"
-                        placeholder="Ex: exemplo@email.com"
+                        label="Nome"
+                        placeholder="Ex: Nome"
+                        register={register("name")}
+                        error={errors.name?.message}
                       />
                     </Field>
                     <Field>
                       <AppInput
-                        label="Nome Social (Opcional)"
-                        placeholder="Como prefere ser chamado(a)"
+                        label="Nome Social"
+                        placeholder="Ex: Nome Social"
+                        register={register("socialName")}
+                        error={errors.socialName?.message}
                       />
                     </Field>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field>
-                      <AppInput
-                        label="CPF"
-                        placeholder="000.000.000-00"
-                        mask="999.999.999-99"
-                        helpText="Use o formato com pontos e traço."
-                      />
-                    </Field>
-                    <Field>
-                      <AppInput label="Data de Nascimento" type="date" />
-                    </Field>
-                  </div>
-                </FieldGroup>
-              </FieldSet>
-            </FieldGroup>
-          </form>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <Field>
+                        <AppInput
+                          label="CPF"
+                          placeholder="000.000.000-00"
+                          mask="999.999.999-99"
+                          register={register("cpf")}
+                          error={errors.cpf?.message}
+                        />
+                      </Field>
+                      <Field>
+                        <AppInput
+                          label="Data de Nascimento"
+                          type="date"
+                          register={register("dateOfBirth")}
+                          error={errors.dateOfBirth?.message}
+                        />
+                      </Field>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <Field>
+                        <AppInput
+                          label="SIAPE"
+                          placeholder="Número do SIAPE"
+                          error={errors.siape?.message}
+                          register={register("siape")}
+                        />
+                      </Field>
+                      <Field>
+                        <AppInput
+                          label="Telefone"
+                          placeholder="(00)90000-0000"
+                          mask="(99)99999-9999"
+                          error={errors.phoneNumber?.message}
+                          register={register("phoneNumber")}
+                        />
+                      </Field>
+                    </div>
+                  </FieldGroup>
+                </FieldSet>
+
+                <div className="flex w-full justify-between gap-4">
+                  <AppButton
+                    type="button"
+                    icon={<Delete />}
+                    variant="secondary"
+                    onClick={handleResetForm}
+                  >
+                    Desfazer
+                  </AppButton>
+                  <AppButton
+                    type="submit"
+                    icon={<Save />}
+                    disabled={isLoading}
+                    isLoading={isLoading}
+                  >
+                    Salvar alterações
+                  </AppButton>
+                </div>
+              </FieldGroup>
+            </form>
+          </CardContent>
         </Card>
       </div>
     </>

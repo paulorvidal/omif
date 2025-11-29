@@ -3,7 +3,7 @@ import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
 import { AppAsyncSelect } from "@/components/app-async-select";
 import { AppCaptcha } from "@/components/app-captcha";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldGroup,
@@ -43,7 +43,6 @@ function EducatorForm() {
                           placeholder="Ex Nome Completo"
                           error={errors.name?.message}
                           register={register("name")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -52,7 +51,6 @@ function EducatorForm() {
                           placeholder="Ex Nome Social"
                           error={errors.socialName?.message}
                           register={register("socialName")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
@@ -64,7 +62,6 @@ function EducatorForm() {
                           mask="999.999.999-99"
                           error={errors.cpf?.message}
                           register={register("cpf")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -73,11 +70,9 @@ function EducatorForm() {
                           type="date"
                           error={errors.dateOfBirth?.message}
                           register={register("dateOfBirth")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
-
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
                         <AppInput
@@ -86,7 +81,6 @@ function EducatorForm() {
                           mask="(99)99999-9999"
                           error={errors.phoneNumber?.message}
                           register={register("phoneNumber")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -95,7 +89,6 @@ function EducatorForm() {
                           placeholder="Número do SIAPE"
                           error={errors.siape?.message}
                           register={register("siape")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>

@@ -15,9 +15,9 @@ import {
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/api-error";
 import { fetchInstitutions } from "../services/institution-service";
-import { type ChangePasswordFormData } from "../components/dialog/ChangePasswordDialog";
-import { type ChangeEmailFormData } from "../components/dialog/ChangeEmailDialog";
-import { type ChangeInstitutionFormData } from "../components/dialog/ChangeInstitutionDialog";
+//import { type ChangePasswordFormData } from "../components/dialog/ChangePasswordDialog";
+//import { type ChangeEmailFormData } from "../components/dialog/ChangeEmailDialog";
+//import { type ChangeInstitutionFormData } from "../components/dialog/ChangeInstitutionDialog";
 
 const profileValidationSchema = z.object({
   name: z.string().min(3, "O nome completo é obrigatório"),
@@ -117,71 +117,71 @@ export const useProfile = () => {
     },
   });
 
-  const passwordChangeMutation = useMutation({
-    mutationFn: (variables: { id: string; data: ChangePasswordFormData }) => {
-      const payload = {
-        password: variables.data.currentPassword,
-        newPassword: variables.data.newPassword,
-      };
-      return changePassword(variables.id, payload);
-    },
-    onSuccess: () => {
-      showToast("Senha alterada com sucesso!", "success");
-      setIsPasswordDialogOpen(false);
-    },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        showToast(error.message, "error");
-      } else {
-        showToast("Erro ao alterar a senha.", "error");
-      }
-    },
-  });
+  // const passwordChangeMutation = useMutation({
+  //   mutationFn: (variables: { id: string; data: ChangePasswordFormData }) => {
+  //     const payload = {
+  //       password: variables.data.currentPassword,
+  //       newPassword: variables.data.newPassword,
+  //     };
+  //     return changePassword(variables.id, payload);
+  //   },
+  //   onSuccess: () => {
+  //     showToast("Senha alterada com sucesso!", "success");
+  //     setIsPasswordDialogOpen(false);
+  //   },
+  //   onError: (error) => {
+  //     if (error instanceof ApiError) {
+  //       showToast(error.message, "error");
+  //     } else {
+  //       showToast("Erro ao alterar a senha.", "error");
+  //     }
+  //   },
+  // });
 
-  const emailChangeMutation = useMutation({
-    mutationFn: (variables: { id: string; data: ChangeEmailFormData }) =>
-      changeEmail(variables.id, variables.data),
-    onSuccess: () => {
-      showToast(
-        "Link de confirmação enviado! Verifique sua caixa de entrada.",
-        "success",
-      );
-      queryClient.invalidateQueries({ queryKey: ["myData"] });
-      setIsEmailDialogOpen(false);
-    },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        showToast(error.message, "error");
-      } else {
-        showToast("Erro ao solicitar a alteração de e-mail.", "error");
-      }
-    },
-  });
+  // const emailChangeMutation = useMutation({
+  //   mutationFn: (variables: { id: string; data: ChangeEmailFormData }) =>
+  //     changeEmail(variables.id, variables.data),
+  //   onSuccess: () => {
+  //     showToast(
+  //       "Link de confirmação enviado! Verifique sua caixa de entrada.",
+  //       "success",
+  //     );
+  //     queryClient.invalidateQueries({ queryKey: ["myData"] });
+  //     setIsEmailDialogOpen(false);
+  //   },
+  //   onError: (error) => {
+  //     if (error instanceof ApiError) {
+  //       showToast(error.message, "error");
+  //     } else {
+  //       showToast("Erro ao solicitar a alteração de e-mail.", "error");
+  //     }
+  //   },
+  // });
 
-  const institutionChangeMutation = useMutation({
-    mutationFn: (variables: {
-      userId: string;
-      formData: ChangeInstitutionFormData;
-    }) => {
-      const { userId, formData } = variables;
-      const payload = {
-        institutionId: formData.institution!.value,
-      };
-      return changeInstitution(userId, payload);
-    },
-    onSuccess: () => {
-      showToast("Instituição alterada com sucesso!", "success");
-      queryClient.invalidateQueries({ queryKey: ["myData"] });
-      setIsInstitutionDialogOpen(false);
-    },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        showToast(error.message, "error");
-      } else {
-        showToast("Erro ao alterar a instituição.", "error");
-      }
-    },
-  });
+  // const institutionChangeMutation = useMutation({
+  //   mutationFn: (variables: {
+  //     userId: string;
+  //     formData: ChangeInstitutionFormData;
+  //   }) => {
+  //     const { userId, formData } = variables;
+  //     const payload = {
+  //       institutionId: formData.institution!.value,
+  //     };
+  //     return changeInstitution(userId, payload);
+  //   },
+  //   onSuccess: () => {
+  //     showToast("Instituição alterada com sucesso!", "success");
+  //     queryClient.invalidateQueries({ queryKey: ["myData"] });
+  //     setIsInstitutionDialogOpen(false);
+  //   },
+  //   onError: (error) => {
+  //     if (error instanceof ApiError) {
+  //       showToast(error.message, "error");
+  //     } else {
+  //       showToast("Erro ao alterar a instituição.", "error");
+  //     }
+  //   },
+  // });
 
   const onSubmit = (data: ProfileFormData) => {
     if (!isDirty) {
@@ -239,33 +239,34 @@ export const useProfile = () => {
     }));
   };
 
-  const handleChangePassword = (data: ChangePasswordFormData) => {
-    if (user?.id) {
-      passwordChangeMutation.mutate({ id: user.id, data });
-    } else {
-      showToast("Erro: ID do usuário não encontrado.", "error");
-    }
-  };
-
-  const handleChangeEmail = (data: ChangeEmailFormData) => {
-    if (user?.id) {
-      emailChangeMutation.mutate({ id: user.id, data });
-    } else {
-      showToast("Erro: ID do usuário não encontrado.", "error");
-    }
-  };
-
   const handleEmailEditClick = () => {
     setIsEmailDialogOpen(true);
   };
 
-  const handleChangeInstitution = (data: ChangeInstitutionFormData) => {
-    if (user?.id) {
-      institutionChangeMutation.mutate({ userId: user.id, formData: data });
-    } else {
-      showToast("Erro: ID do usuário não encontrado.", "error");
-    }
-  };
+  // const handleChangePassword = (data: ChangePasswordFormData) => {
+  //   if (user?.id) {
+  //     passwordChangeMutation.mutate({ id: user.id, data });
+  //   } else {
+  //     showToast("Erro: ID do usuário não encontrado.", "error");
+  //   }
+  // };
+
+  // const handleChangeEmail = (data: ChangeEmailFormData) => {
+  //   if (user?.id) {
+  //     emailChangeMutation.mutate({ id: user.id, data });
+  //   } else {
+  //     showToast("Erro: ID do usuário não encontrado.", "error");
+  //   }
+  // };
+
+  // const handleChangeInstitution = (data: ChangeInstitutionFormData) => {
+  //   if (user?.id) {
+  //     institutionChangeMutation.mutate({ userId: user.id, formData: data });
+  //   } else {
+  //     showToast("Erro: ID do usuário não encontrado.", "error");
+  //   }
+  // };
+
 
   return {
     user,
@@ -287,18 +288,18 @@ export const useProfile = () => {
     isPasswordDialogOpen,
     openPasswordDialog: () => setIsPasswordDialogOpen(true),
     closePasswordDialog: () => setIsPasswordDialogOpen(false),
-    handleChangePassword,
-    isChangingPassword: passwordChangeMutation.isPending,
+    // handleChangePassword,
+    // isChangingPassword: passwordChangeMutation.isPending,
     isEmailDialogOpen,
     openEmailDialog: () => setIsEmailDialogOpen(true),
     closeEmailDialog: () => setIsEmailDialogOpen(false),
-    handleChangeEmail,
-    isChangingEmail: emailChangeMutation.isPending,
+    // handleChangeEmail,
+    // isChangingEmail: emailChangeMutation.isPending,
     isInstitutionDialogOpen,
     openInstitutionDialog: () => setIsInstitutionDialogOpen(true),
     closeInstitutionDialog: () => setIsInstitutionDialogOpen(false),
-    handleChangeInstitution,
-    isChangingInstitution: institutionChangeMutation.isPending,
+    // handleChangeInstitution,
+    // isChangingInstitution: institutionChangeMutation.isPending,
     handleEmailEditClick,
   };
 };
