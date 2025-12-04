@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-    Field,
-    FieldGroup,
-    FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
 import { Delete, Save, ChevronLeft } from "lucide-react";
 import { useInstitutionForm } from "../../hooks/use-institution-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { AppSelect } from "@/components/app-select";
+import { AppAsyncSelect } from "@/components/app-async-select";
+import { useWatch } from "react-hook-form";
 
 function InstitutionForm() {
     const { id } = useParams();
@@ -23,9 +21,60 @@ function InstitutionForm() {
         handleReset,
         isSubmitting,
         control,
-        educatorOptions,
+        loadEducatorOptions,
         isEditMode,
+        setValue,
     } = useInstitutionForm({ institutionId: id });
+
+    const [localOptions, setLocalOptions] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+
+    const currentCoordinator = useWatch({ control, name: "coordinator" });
+
+    useEffect(() => {
+        if (isEditMode && currentCoordinator) {
+            const coordObj = currentCoordinator as any;
+            if (coordObj.value && coordObj.label) {
+
+                setLocalOptions((prev) => {
+                    const exists = prev.some((op) => String(op.value) === String(coordObj.value));
+
+                    return exists ? prev : [{ label: coordObj.label, value: coordObj.value }, ...prev];
+                });
+                setValue("coordinator", coordObj.value, {
+                    shouldDirty: false,
+                    shouldValidate: true
+                });
+            }
+        }
+    }, [currentCoordinator, isEditMode, setValue]);
+
+    const handleSearch = async (query: string) => {
+        setIsLoading(true);
+        try {
+            const results = await loadEducatorOptions(query);
+
+            setLocalOptions((prevOptions) => {
+                const currentVal = (currentCoordinator as any)?.value || currentCoordinator;
+
+                const selectedOption = prevOptions.find(
+                    (op) => String(op.value) === String(currentVal)
+                );
+
+                if (selectedOption && !results.some((r: any) => String(r.value) === String(selectedOption.value))) {
+                    return [selectedOption, ...results];
+                }
+
+                return results;
+            });
+
+        } catch (error) {
+            console.error("Erro na busca", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <>
@@ -109,19 +158,23 @@ function InstitutionForm() {
                                             />
                                         </Field>
                                     </div>
+
                                     {isEditMode && (
                                         <Field className="md:col-span-2">
-                                            <AppSelect
+                                            <AppAsyncSelect
                                                 control={control}
                                                 name="coordinator"
                                                 label="Coordenador da Instituição"
-                                                placeholder="Selecione um educador..."
-                                                options={educatorOptions}
+                                                placeholder="Digite para buscar um educador..."
+                                                options={localOptions}
+                                                isLoading={isLoading}
+                                                onInputChange={handleSearch}
                                                 error={errors.coordinator?.message}
                                                 isClearable
                                             />
                                         </Field>
                                     )}
+
                                 </FieldGroup>
                             </FieldSet>
 
