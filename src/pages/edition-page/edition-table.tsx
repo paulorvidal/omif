@@ -79,8 +79,9 @@ const getColumns = (
           <StepCard
             variant="empty"
             editionId={row.original.id}
+            existingStepsCount={0}
             onEmptyClick={(editionId) => {
-              redirectTo(`edicao/${editionId}`);
+              redirectTo(`edicao/${editionId}/etapa`);
             }}
           />
         );
@@ -94,10 +95,20 @@ const getColumns = (
               step={step}
               editionId={row.original.id}
               onClick={(stepId, editionId) => {
-                 redirectTo(`edicao/${editionId}/etapa/${stepId}`);
+                redirectTo(`edicao/${editionId}/etapa/${stepId}`);
               }}
             />
           ))}
+          {steps.length < 2 && (
+            <StepCard
+              variant="empty"
+              editionId={row.original.id}
+              existingStepsCount={steps.length}
+              onEmptyClick={(editionId) => {
+                redirectTo(`edicao/${editionId}/etapa`);
+              }}
+            />
+          )}
         </div>
       );
     },
