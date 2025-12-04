@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { Check, ChevronsUpDown, Info } from "lucide-react";
+import { Calendar, Check, ChevronsUpDown, Info } from "lucide-react";
 import {
   Controller,
   type Control,
@@ -37,6 +37,7 @@ type AppAsyncSelectProps<T extends FieldValues> = {
   isLoading?: boolean;
   onInputChange?: (query: string) => void;
   className?: string;
+  isEditionYear?: boolean;
 } & React.ComponentProps<typeof Button>;
 
 function AppAsyncSelect<T extends FieldValues>({
@@ -52,6 +53,7 @@ function AppAsyncSelect<T extends FieldValues>({
   isLoading,
   onInputChange,
   className,
+  isEditionYear = false,
   ...props
 }: AppAsyncSelectProps<T>) {
   const [open, setOpen] = useState(false);
@@ -65,26 +67,30 @@ function AppAsyncSelect<T extends FieldValues>({
 
   return (
     <>
-      <div className="flex h-6 justify-start gap-1">
-        <FieldLabel htmlFor={name}>{label}</FieldLabel>
+      {!isEditionYear && (
+        <div className="flex h-6 justify-start gap-1">
+          <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
-        {helpText && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-background h-6 w-6 rounded-full"
-                {...props}
-              >
-                <Info />
-              </Button>
-            </PopoverTrigger>
+          {helpText && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="bg-background h-6 w-6 rounded-full"
+                  {...props}
+                >
+                  <Info />
+                </Button>
+              </PopoverTrigger>
 
-            <PopoverContent className="w-56 text-sm">{helpText}</PopoverContent>
-          </Popover>
-        )}
-      </div>
+              <PopoverContent className="w-56 text-sm">
+                {helpText}
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
+      )}
 
       <Controller
         name={name}
@@ -112,6 +118,7 @@ function AppAsyncSelect<T extends FieldValues>({
                   )}
                   aria-invalid={!!error}
                 >
+                  {isEditionYear && <Calendar />}
                   {field.value ? selectedOption?.label : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
