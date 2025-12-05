@@ -20,7 +20,6 @@ import { InstitutionForm } from "./pages/institution-form";
 import { PrivateRoute } from "./utils/private-route";
 import { ProfileForm } from "./pages/profile-form";
 
-
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
 
@@ -58,7 +57,7 @@ const router = createBrowserRouter([
           {
             path: "/perfil",
             element: <ProfileForm />,
-          }.
+          },
           {
             path: "/instituicao/:id",
             element: <InstitutionForm />,
@@ -79,19 +78,6 @@ const router = createBrowserRouter([
             path: "/edicao/:editionId/etapa/:stepId",
             element: <StepForm />,
           },
-        ],
-      },
-      {
-        path: "/edicoes/:editionYear/estudantes-inscricao",
-        element: <EnrollmentStudentForm />,
-      },
-      {
-        path: "/educador",
-        element: <EducatorForm />,
-      },
-      {
-        element: <MainLayout />,
-        children: [
           {
             path: "/instituicoes",
             element: <InstitutionsPage />,
@@ -101,6 +87,14 @@ const router = createBrowserRouter([
             element: <EditionsPage />,
           },
         ],
+      },
+      {
+        path: "/edicoes/:editionYear/estudantes-inscricao",
+        element: <EnrollmentStudentForm />,
+      },
+      {
+        path: "/educador",
+        element: <EducatorForm />,
       },
     ],
   },
