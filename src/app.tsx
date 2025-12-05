@@ -12,12 +12,15 @@ import { Form } from "./pages/preview/form";
 import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
+import { EditionsPage } from "./pages/edition-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
 
 
+import { EditionForm } from "./pages/edition-form";
+import { StepForm } from "./pages/step-form";
 
 const router = createBrowserRouter([
   {
@@ -37,9 +40,7 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          //<PrivateRoute>
           <MainLayout />
-          //</PrivateRoute>
         ),
         children: [
           {
@@ -53,6 +54,22 @@ const router = createBrowserRouter([
           {
             path: "/instituicao/:id",
             element: <InstitutionForm />,
+          },
+          {
+            path: "/edicao",
+            element: <EditionForm />,
+          },
+          {
+            path: "/edicao/:id",
+            element: <EditionForm />,
+          },
+          {
+            path: "/edicao/:editionId/etapa",
+            element: <StepForm />,
+          },
+          {
+            path: "/edicao/:editionId/etapa/:stepId",
+            element: <StepForm />,
           },
         ],
       },
@@ -72,6 +89,10 @@ const router = createBrowserRouter([
           {
             path: "/instituicoes",
             element: <InstitutionsPage />,
+          },
+          {
+            path: "/edicoes",
+            element: <EditionsPage />,
           },
         ],
       }

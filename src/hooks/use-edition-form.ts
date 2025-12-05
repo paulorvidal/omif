@@ -165,7 +165,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
 
       const numericWage = Number(editionData.minimumWage);
 
-      // Garante que o valor venha formatado corretamente do banco para a máscara
       const rawCents = numericWage.toFixed(2).replace(/\D/g, "");
       const formattedMinimumWage = maskCurrency(rawCents);
 
@@ -222,7 +221,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
       return showToast("Nenhuma alteração para salvar", "info");
     }
 
-    // Função auxiliar para converter "150000" (string limpa) em "1500.00"
     const formatCurrencyForApi = (value: string | number) => {
       return String(Number(value) / 100);
     };
@@ -237,7 +235,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
           const value = data[key as keyof FormData];
 
           if (key === "minimumWage") {
-            // CORREÇÃO: Divide por 100
             (updatedData as any)[key] = formatCurrencyForApi(value as string);
           } else if (key.includes("Date")) {
             (updatedData as any)[key] = new Date(value as string).toISOString();
@@ -250,7 +247,6 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
     } else {
       const payload: CreateEditionRequest = {
         ...data,
-        // CORREÇÃO: Divide por 100
         minimumWage: formatCurrencyForApi(data.minimumWage),
 
         startDate: new Date(data.startDate).toISOString(),
