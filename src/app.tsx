@@ -19,6 +19,7 @@ import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
 
 import { EditionForm } from "./pages/edition-form";
+import { StepForm } from "./pages/step-form";
 
 const router = createBrowserRouter([
   {
@@ -38,9 +39,7 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          //<PrivateRoute>
           <MainLayout />
-          //</PrivateRoute>
         ),
         children: [
           {
@@ -62,6 +61,14 @@ const router = createBrowserRouter([
           {
             path: "/edicao/:id",
             element: <EditionForm />,
+          },
+          {
+            path: "/edicao/:editionId/etapa",
+            element: <StepForm />,
+          },
+          {
+            path: "/edicao/:editionId/etapa/:stepId",
+            element: <StepForm />,
           },
         ],
       },
