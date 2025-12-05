@@ -3,6 +3,7 @@ import { AppButton } from "./app-button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { AppAsyncSelect } from "./app-async-select";
 import { NavLink } from "react-router-dom";
+import { getInitials } from "@/utils/formatters";
 
 function AppNavbar() {
   const {
@@ -39,10 +40,10 @@ function AppNavbar() {
         <NavLink to="/perfil">
           <AppButton variant="ghost">
             <Avatar>
-              <AvatarImage />
-              <AvatarFallback>N</AvatarFallback>
+              <AvatarImage src={userData?.profilePictureUrl} alt="Foto de Perfil" />
+              <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
             </Avatar>
-            Nome
+            {displayName}
           </AppButton>
         </NavLink>
       </div>

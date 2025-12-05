@@ -10,6 +10,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { useProfile } from "@/hooks/use-profile";
+import { getInitials } from "@/utils/formatters";
 import {
   AtSign,
   Building2,
@@ -20,6 +21,10 @@ import {
   Save,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { ProfilePictureEditDialog } from "./profile-picture-edit-dialog";
+import { ChangeEmailDialog } from "./change-email-dialog";
+import { ChangePasswordDialog } from "./change-password-dialog";
+import { ChangeInstitutionDialog } from "./change-institution-dialog";
 
 function ProfileForm() {
   const {
@@ -50,9 +55,13 @@ function ProfileForm() {
     closeInstitutionDialog,
     handleChangeInstitution,
     isChangingInstitution,
-    loadInstitutions,
     handleEmailEditClick,
+    institutionOptions,
+    isInstitutionsLoading,
+    setInstitutionInput,
   } = useProfile();
+
+  const displayName = user?.socialName || user?.name;
 
   const navigate = useNavigate();
 
@@ -75,27 +84,33 @@ function ProfileForm() {
           <CardContent className="flex flex-col items-center gap-4">
             <div className="relative">
               <Avatar className="size-32">
-                <AvatarImage />
-                <AvatarFallback className="text-3xl">N</AvatarFallback>
+                <AvatarImage
+                  src={user?.profilePictureUrl}
+                  alt="Foto de Perfil"
+                />
+                <AvatarFallback className="text-3xl">
+                  {getInitials(displayName)}
+                </AvatarFallback>
               </Avatar>
               <AppButton
                 className="absolute right-0 bottom-0 size-8 rounded-full"
                 variant="secondary"
+                onClick={openPictureEditDialog}
               >
                 <Pencil />
               </AppButton>
             </div>
 
-            <p className="text-xl font-semibold">Nome</p>
-            <Badge variant="outline">ADMINISTRADOR</Badge>
+            <p className="text-xl font-semibold">{displayName}</p>
+            <Badge variant="outline">{user?.role}</Badge>
 
-            <Card className="w-full py-4">
+            <Card className="w-full py-4" onClick={handleEmailEditClick}>
               <CardContent className="flex items-center justify-between gap-3 px-4">
                 <AtSign className="shrink-0 text-green-600" />
                 <div className="flex flex-1 flex-col">
                   <p className="text-muted-foreground text-sm">E-mail</p>
                   <p className="text-sm font-semibold break-all">
-                    nome@email.com
+                    {user?.email}
                   </p>
                 </div>
                 <AppButton className="size-8 rounded-full" variant="ghost">
@@ -104,12 +119,12 @@ function ProfileForm() {
               </CardContent>
             </Card>
 
-            <Card className="w-full py-4">
+            <Card className="w-full py-4" onClick={openPasswordDialog}>
               <CardContent className="flex items-center justify-between gap-3 px-4">
                 <KeyRound className="shrink-0 text-green-600" />
                 <div className="flex flex-1 flex-col">
                   <p className="text-muted-foreground text-sm">Senha</p>
-                  <p className="text-sm font-semibold break-all">***</p>
+                  <p className="text-sm font-semibold break-all">••••••••</p>
                 </div>
                 <AppButton className="size-8 rounded-full" variant="ghost">
                   <Pencil />
@@ -117,13 +132,13 @@ function ProfileForm() {
               </CardContent>
             </Card>
 
-            <Card className="w-full py-4">
+            <Card className="w-full py-4" onClick={openInstitutionDialog}>
               <CardContent className="flex items-center justify-between gap-3 px-4">
                 <Building2 className="shrink-0 text-green-600" />
                 <div className="flex flex-1 flex-col">
                   <p className="text-muted-foreground text-sm">Instituição</p>
                   <p className="text-sm font-semibold break-all">
-                    IFPR - CAMPUS JACAREZINHO
+                    {user?.institution?.name}
                   </p>
                 </div>
                 <AppButton className="size-8 rounded-full" variant="ghost">
@@ -135,7 +150,7 @@ function ProfileForm() {
         </Card>
         <Card className="flex-1">
           <CardContent>
-            <form onSubmit={() => {}} noValidate>
+            <form onSubmit={handleProfileSubmit} noValidate>
               <FieldGroup>
                 <FieldSet>
                   <FieldLegend>Informações Pessoais</FieldLegend>
@@ -220,6 +235,43 @@ function ProfileForm() {
           </CardContent>
         </Card>
       </div>
+
+      <ProfilePictureEditDialog
+        open={isEditDialogOpen}
+        onClose={closePictureEditDialog}
+        onSave={handleSavePicture}
+        onDelete={handleDeletePicture}
+        isSaving={isSavingPicture}
+        isDeleting={isDeletingPicture}
+        hasCurrentPicture={!!user?.profilePictureUrl}
+      />
+
+      <ChangeEmailDialog
+        open={isEmailDialogOpen}
+        onClose={closeEmailDialog}
+        onSave={handleChangeEmail}
+        isSaving={isChangingEmail}
+        currentEmail={user?.email}
+        initialValues={{ email: user?.pendingEmail || "" }}
+      />
+
+      <ChangePasswordDialog
+        open={isPasswordDialogOpen}
+        onClose={closePasswordDialog}
+        onSave={handleChangePassword}
+        isSaving={isChangingPassword}
+      />
+
+      <ChangeInstitutionDialog
+        open={isInstitutionDialogOpen}
+        onClose={closeInstitutionDialog}
+        onSave={handleChangeInstitution}
+        isSaving={isChangingInstitution}
+        currentInstitutionName={user?.institution?.name}
+        institutionOptions={institutionOptions}
+        isLoading={isInstitutionsLoading}
+        onInputChange={setInstitutionInput}
+      />
     </>
   );
 }
