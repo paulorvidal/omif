@@ -57,9 +57,7 @@ function InstitutionsPage() {
           <AppTabsTrigger value="all" count={tableProps.totalElements}>
             Todas
           </AppTabsTrigger>
-          <AppTabsTrigger value="enrollments">
-            Inscrições
-          </AppTabsTrigger>
+          <AppTabsTrigger value="enrollments">Inscrições</AppTabsTrigger>
           <AppTabsTrigger value="reports">Relatórios</AppTabsTrigger>
         </AppTabsList>
         <AppTabsContent value="all">

@@ -291,7 +291,12 @@ function Table() {
           <AppInput label={"Input"}></AppInput>
         </AppDialogContent>
         <AppDialogFooter>
-          <AppButton icon={<X />} variant="secondary" type="button" onClick={closeDialog}>
+          <AppButton
+            icon={<X />}
+            variant="secondary"
+            type="button"
+            onClick={closeDialog}
+          >
             Cancelar
           </AppButton>
           <AppButton icon={<Save />} type="submit">

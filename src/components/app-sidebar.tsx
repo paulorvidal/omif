@@ -5,6 +5,7 @@ import * as React from "react";
 import {
   Accessibility,
   BookOpenText,
+  Building2,
   FileSpreadsheet,
   GraduationCap,
   IdCard,
@@ -52,7 +53,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       title: "Instituições",
       link: "/instituicoes",
-      icon: GraduationCap,
+      icon: Building2,
       roles: ["ADMINISTRADOR"],
     },
     {
