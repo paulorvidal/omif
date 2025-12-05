@@ -4,21 +4,33 @@ import { useSearchParams } from "react-router-dom";
 import {
   useQueryClient,
   useQuery,
+  useMutation,
   keepPreviousData,
 } from "@tanstack/react-query";
 import type { PaginationState } from "@tanstack/react-table";
 import { useDebounce } from "./use-debounce";
-import { findAllEditions } from "../services/edition-service";
+import { findAllEditions, deleteEdition } from "../services/edition-service";
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/api-error";
 import type { PageResponse, Edition } from "../types/edition-types";
+import type { Step } from "../types/steps-types";
+
+export type EditionColumns = {
+  id: string;
+  name: string;
+  year: number;
+  startDate: string;
+  endDate: string;
+  minimumWage: string;
+  steps: Step[];
+};
 
 type FilterFormValues = {
   sort: string;
   pageSize: number;
 };
 
-export const useEditionsTable = () => {
+export const useEditionTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageIndex = parseInt(searchParams.get("page") || "0", 10);
@@ -29,9 +41,11 @@ export const useEditionsTable = () => {
 
   const pagination: PaginationState = { pageIndex, pageSize };
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [editionToDelete, setEditionToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data, isFetching, isError, error } = useQuery<PageResponse<Edition>>({
+  const { data: pageResponse, isLoading, isError, error } = useQuery<PageResponse<Edition>>({
     queryKey: ["editions", pageIndex, pageSize, debouncedFilter, sort],
     queryFn: () => findAllEditions(pageIndex, pageSize, debouncedFilter, sort),
     placeholderData: keepPreviousData,
@@ -47,7 +61,45 @@ export const useEditionsTable = () => {
     }
   }, [isError, error]);
 
-  const { control, handleSubmit, reset } = useForm<FilterFormValues>();
+  const data: EditionColumns[] =
+    pageResponse?.content.map((edition) => ({
+      id: edition.id,
+      name: edition.name,
+      year: edition.year,
+      startDate: edition.startDate,
+      endDate: edition.endDate,
+      minimumWage: edition.minimumWage,
+      steps: edition.steps || [],
+    })) ?? [];
+
+  const pageCount = pageResponse?.page.totalPages ?? 0;
+  const totalElements = pageResponse?.page.totalElements ?? 0;
+
+  const { mutate: performDelete, isPending: isDeleting } = useMutation({
+    mutationFn: (id: string) => deleteEdition(id),
+    onSuccess: () => {
+      showToast("Edição deletada com sucesso", "success");
+      queryClient.invalidateQueries({ queryKey: ["editions"] });
+    },
+    onError: (err) => {
+      showToast(
+        err instanceof Error ? err.message : "Erro ao deletar edição",
+        "error",
+      );
+    },
+    onSettled: () => {
+      setConfirmOpen(false);
+      setEditionToDelete(null);
+    },
+  });
+
+  const handleConfirmDelete = () => {
+    if (editionToDelete) {
+      performDelete(editionToDelete);
+    }
+  };
+
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<FilterFormValues>();
 
   const handleURLChange = useCallback(
     (newParams: Record<string, string | number>) => {
@@ -81,21 +133,33 @@ export const useEditionsTable = () => {
     setFilterDialogOpen(false);
   };
 
+  const handleDeleteClick = (id: string) => {
+    setEditionToDelete(id);
+    setConfirmOpen(true);
+  };
+
   return {
-    data: data?.content ?? [],
-    pageCount: data?.page.totalPages ?? 0,
-    isLoading: isFetching,
+    data,
+    pageCount,
     pagination,
+    isLoading,
+    isDeleting,
     globalFilter,
+    totalElements,
     handleURLChange,
     filterDialog: {
       open: filterDialogOpen,
       onOpen: handleOpenFilterDialog,
       onClose: () => setFilterDialogOpen(false),
-      form: {
-        control,
-        onSubmit: handleSubmit(handleApplyFilters),
-      },
+      onSubmit: handleSubmit(handleApplyFilters),
+      formControl: control,
+      formErrors: errors,
     },
+    deleteDialog: {
+      open: confirmOpen,
+      onConfirm: handleConfirmDelete,
+      onCancel: () => setConfirmOpen(false),
+    },
+    handleDeleteClick,
   };
 };

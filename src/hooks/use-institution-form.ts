@@ -33,7 +33,13 @@ const InstitutionFormSchema = z.object({
       "Formato inválido. Use (XX) XXXX-XXXX ou (XX) XXXXX-XXXX",
     ),
   coordinator: z
-    .object({ label: z.string(), value: z.string() })
+    .union([
+      z.string(),
+      z.object({
+        label: z.string(),
+        value: z.string(),
+      }),
+    ])
     .nullable()
     .optional(),
 });
@@ -53,6 +59,7 @@ export const useInstitutionForm = ({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting, isDirty },
     reset,
   } = useForm<FormData>({
@@ -108,11 +115,23 @@ export const useInstitutionForm = ({
       email3: data.email3 || undefined,
     };
 
+    let coordinatorId: string | undefined = undefined;
+    if (data.coordinator) {
+      if (typeof data.coordinator === "string") {
+        coordinatorId = data.coordinator;
+      } else if (
+        typeof data.coordinator === "object" &&
+        "value" in data.coordinator
+      ) {
+        coordinatorId = data.coordinator.value;
+      }
+    }
+
     try {
       if (isEditMode) {
         await updateInstitution(institutionId!, {
           ...basePayload,
-          coordinatorId: data.coordinator?.value,
+          coordinatorId,
         } as UpdateInstitutionRequest);
         showToast("Instituição atualizada com sucesso", "success");
       } else {
@@ -146,5 +165,6 @@ export const useInstitutionForm = ({
     handleFormSubmit,
     handleReset,
     loadEducatorOptions,
+    setValue,
   };
 };

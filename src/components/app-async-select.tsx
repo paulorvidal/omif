@@ -114,7 +114,7 @@ function AppAsyncSelect<T extends FieldValues>({
                     className,
                     "w-full min-w-0 justify-between",
                     error &&
-                      "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
+                    "border-destructive focus-visible:ring-destructive/50 focus-visible:border-destructive",
                   )}
                   aria-invalid={!!error}
                 >
@@ -146,7 +146,7 @@ function AppAsyncSelect<T extends FieldValues>({
                           onSelect={(currentValue) => {
                             const newValue =
                               currentValue === String(field.value) &&
-                              isClearable
+                                isClearable
                                 ? ""
                                 : opt.value;
                             field.onChange(newValue);

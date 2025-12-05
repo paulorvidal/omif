@@ -106,3 +106,7 @@ export const getCurrentInstitutionEnrollmentEdition =
     );
     return response.data;
   };
+
+export const deleteEdition = async (id: string): Promise<void> => {
+  await api.delete(`/editions/${id}`);
+};

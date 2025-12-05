@@ -4,6 +4,7 @@ import type {
   Institution,
   CreateInstitutionRequest,
   CreateInstitutionResponse,
+  UpdateInstitutionRequest,
   FindInstitutionsResponse,
   FindAllInstitutionsResponse,
 } from "../types/institution-types";
@@ -44,9 +45,9 @@ export const getInstitutionById = async (id: string) => {
 
 export const updateInstitution = async (
   id: string,
-  data: CreateInstitutionRequest,
+  data: UpdateInstitutionRequest,
 ) => {
-  const resp = await api.put<CreateInstitutionResponse>(
+  const resp = await api.patch<UpdateInstitutionRequest>(
     `/institutions/${id}`,
     data,
   );
