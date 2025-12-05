@@ -59,6 +59,7 @@ export const useInstitutionForm = ({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting, isDirty },
     reset,
   } = useForm<FormData>({
@@ -164,5 +165,6 @@ export const useInstitutionForm = ({
     handleFormSubmit,
     handleReset,
     loadEducatorOptions,
+    setValue,
   };
 };

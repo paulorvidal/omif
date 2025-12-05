@@ -22,26 +22,63 @@ function InstitutionForm() {
         control,
         loadEducatorOptions,
         isEditMode,
+        setValue,
     } = useInstitutionForm({ institutionId: id });
 
-    const [localOptions, setLocalOptions] = useState<{ label: string; value: string | number }[]>([]);
+    const [localOptions, setLocalOptions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const currentCoordinator = useWatch({ control, name: "coordinator" });
 
     useEffect(() => {
-        if (isEditMode && currentCoordinator && localOptions.length === 0) {
-            setLocalOptions([currentCoordinator as any]);
+        if (isEditMode && currentCoordinator) {
+            const coordObj = currentCoordinator as any;
+
+            if (coordObj.value && coordObj.label) {
+                setLocalOptions((prev) => {
+                    const exists = prev.some(
+                        (op) => String(op.value) === String(coordObj.value)
+                    );
+
+                    return exists
+                        ? prev
+                        : [{ label: coordObj.label, value: coordObj.value }, ...prev];
+                });
+
+                setValue("coordinator", coordObj.value, {
+                    shouldDirty: false,
+                    shouldValidate: true,
+                });
+            }
         }
-    }, [currentCoordinator, localOptions.length, isEditMode]);
+    }, [currentCoordinator, isEditMode, setValue]);
 
     const handleSearch = async (query: string) => {
         setIsLoading(true);
         try {
             const results = await loadEducatorOptions(query);
-            setLocalOptions(results);
+
+            setLocalOptions((prevOptions) => {
+                const currentVal =
+                    (currentCoordinator as any)?.value || currentCoordinator;
+
+                const selectedOption = prevOptions.find(
+                    (op) => String(op.value) === String(currentVal)
+                );
+
+                if (
+                    selectedOption &&
+                    !results.some(
+                        (r: any) => String(r.value) === String(selectedOption.value)
+                    )
+                ) {
+                    return [selectedOption, ...results];
+                }
+
+                return results;
+            });
         } catch (error) {
-            console.error("Erro ao buscar", error);
+            console.error("Erro na busca", error);
         } finally {
             setIsLoading(false);
         }
@@ -88,7 +125,6 @@ function InstitutionForm() {
                                         />
                                     </Field>
 
-
                                     <Field className="md:col-span-12">
                                         <AppInput
                                             label="Telefone *"
@@ -99,6 +135,7 @@ function InstitutionForm() {
                                             className="bg-white"
                                         />
                                     </Field>
+
                                     <Field className="md:col-span-12">
                                         <AppInput
                                             label="E-mail *"
@@ -109,21 +146,21 @@ function InstitutionForm() {
                                         />
                                     </Field>
 
-
                                     <Field className="md:col-span-6">
                                         <AppInput
                                             label="E-mail reserva"
-                                            placeholder="Ex: email@escola.com"
                                             type="email"
+                                            placeholder="Ex: email@escola.com"
                                             error={errors.email2?.message}
                                             register={register("email2")}
                                         />
                                     </Field>
+
                                     <Field className="md:col-span-6">
                                         <AppInput
                                             label="E-mail reserva"
-                                            placeholder="Ex: email@escola.com"
                                             type="email"
+                                            placeholder="Ex: email@escola.com"
                                             error={errors.email3?.message}
                                             register={register("email3")}
                                         />
@@ -134,17 +171,16 @@ function InstitutionForm() {
                                             <AppAsyncSelect
                                                 control={control}
                                                 name="coordinator"
-                                                label="Coordenador"
-                                                placeholder="Digite para buscar..."
+                                                label="Coordenador da Instituição"
+                                                placeholder="Digite para buscar um educador..."
                                                 options={localOptions}
-                                                onInputChange={handleSearch}
                                                 isLoading={isLoading}
+                                                onInputChange={handleSearch}
                                                 error={errors.coordinator?.message}
                                                 isClearable
                                             />
                                         </Field>
                                     )}
-
                                 </FieldGroup>
                             </FieldSet>
 
@@ -158,7 +194,7 @@ function InstitutionForm() {
                                         className="bg-green-600 hover:bg-green-700 text-white"
                                         isLoading={isSubmitting}
                                     >
-                                        {isEditMode ? "Salvar" : "Realizar Inscrição"}
+                                        {isEditMode ? "Salvar Alterações" : "Cadastrar Instituição"}
                                     </AppButton>
                                 </div>
                             </Field>
