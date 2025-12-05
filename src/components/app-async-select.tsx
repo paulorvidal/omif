@@ -14,7 +14,7 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
+  CommandInput, 
   CommandItem,
   CommandList,
 } from "./ui/command";
@@ -141,14 +141,12 @@ function AppAsyncSelect<T extends FieldValues>({
                       {options.map((opt) => (
                         <CommandItem
                           key={opt.value}
-                          value={String(opt.value)}
+                          value={opt.label}
                           disabled={disabled}
-                          onSelect={(currentValue) => {
+                          onSelect={() => {
+                            const isSameValue = field.value === opt.value;
                             const newValue =
-                              currentValue === String(field.value) &&
-                                isClearable
-                                ? ""
-                                : opt.value;
+                              isSameValue && isClearable ? "" : opt.value;
                             field.onChange(newValue);
                             setOpen(false);
                           }}

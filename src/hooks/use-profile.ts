@@ -81,7 +81,10 @@ export const useProfile = () => {
           label: institution.name,
           value: institution.id,
         })),
-      enabled: !!debouncedInstitutionInput || institutionInput.length > 0,
+      enabled:
+        isInstitutionDialogOpen ||
+        !!debouncedInstitutionInput ||
+        institutionInput.length > 0,
     });
 
   useEffect(() => {
