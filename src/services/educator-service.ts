@@ -156,9 +156,6 @@ export const changeEmail = async (
   id: string,
   data: ChangeEmailPayload,
 ): Promise<GetMyDataEducatorResponse> => {
-  const response = await api.post(
-    `/educators/${id}/email-change-request`,
-    data,
-  );
+  const response = await api.put(`/educators/${id}/change-email`, data);
   return response.data;
 };
