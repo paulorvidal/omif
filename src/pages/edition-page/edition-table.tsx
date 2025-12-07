@@ -1,4 +1,4 @@
-    import {
+import {
   type ColumnDef,
   type OnChangeFn,
   type PaginationState,
@@ -23,6 +23,7 @@ import { Field } from "@/components/ui/field";
 import { Filter, Loader2, Plus } from "lucide-react";
 import { redirectTo } from "@/utils/events";
 import { StepCard } from "./step-card";
+import { formatBrasiliaDateTime } from "@/utils/timezone";
 
 type EditionTableProps = ReturnType<typeof useEditionTable>;
 
@@ -44,16 +45,14 @@ const getColumns = (
     accessorKey: "startDate",
     header: "Data de Início",
     cell: ({ row }) => {
-      const date = new Date(row.original.startDate);
-      return date.toLocaleDateString("pt-BR");
+      return formatBrasiliaDateTime(row.original.startDate);
     },
   },
   {
     accessorKey: "endDate",
     header: "Data de Término",
     cell: ({ row }) => {
-      const date = new Date(row.original.endDate);
-      return date.toLocaleDateString("pt-BR");
+      return formatBrasiliaDateTime(row.original.endDate);
     },
   },
   {
@@ -88,7 +87,7 @@ const getColumns = (
       }
 
       return (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" >
           {steps.map((step) => (
             <StepCard
               key={step.id}

@@ -4,7 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { stepService } from "@/services/step-service";
 import { ApiError } from "@/services/api-error";
-import type { Step } from "@/types/step-types";
+import type { Step, UpdateStepDTO } from "@/types/step-types";
+import {
+  brasiliaDatetimeLocalToUtcIso,
+  compareBrasiliaDatetimes,
+  getCurrentBrasiliaDateOnly,
+  utcToBrasiliaDatetimeLocal,
+} from "@/utils/timezone";
 
 const stepFormSchema = z
   .object({
@@ -22,7 +28,7 @@ const stepFormSchema = z
       .max(100, "Nota de corte deve ser menor ou igual a 100")
       .optional(),
   })
-  .refine((data) => new Date(data.startDate) < new Date(data.endDate), {
+  .refine((data) => compareBrasiliaDatetimes(data.startDate, data.endDate) < 0, {
     message: "Data de início deve ser anterior à data de término",
     path: ["endDate"],
   })
@@ -30,7 +36,7 @@ const stepFormSchema = z
     (data) =>
       !data.endDateForReleaseOfNote ||
       data.endDateForReleaseOfNote === "" ||
-      new Date(data.endDate) < new Date(data.endDateForReleaseOfNote),
+      compareBrasiliaDatetimes(data.endDate, data.endDateForReleaseOfNote) < 0,
     {
       message: "Data de liberação deve ser posterior à data de término",
       path: ["endDateForReleaseOfNote"],
@@ -100,10 +106,10 @@ export function useStepForm({ editionId, step, existingSteps = [], onSuccess }: 
     if (step) {
       form.reset({
         number: step.number,
-        startDate: step.startDate.split("T")[0],
-        endDate: step.endDate.split("T")[0],
+        startDate: utcToBrasiliaDatetimeLocal(step.startDate),
+        endDate: utcToBrasiliaDatetimeLocal(step.endDate),
         endDateForReleaseOfNote: step.endDateForReleaseOfNote
-          ? step.endDateForReleaseOfNote.split("T")[0]
+          ? utcToBrasiliaDatetimeLocal(step.endDateForReleaseOfNote)
           : undefined,
         cutOffScore: step.cutOffScore ?? undefined,
       });
@@ -123,19 +129,84 @@ export function useStepForm({ editionId, step, existingSteps = [], onSuccess }: 
     setError(null);
 
     try {
-      const payload = {
-        number: data.number,
-        startDate: new Date(data.startDate).toISOString(),
-        endDate: new Date(data.endDate).toISOString(),
-        endDateForReleaseOfNote: data.endDateForReleaseOfNote
-          ? new Date(data.endDateForReleaseOfNote).toISOString()
-          : undefined,
-        cutOffScore: data.cutOffScore && !isNaN(data.cutOffScore) ? data.cutOffScore : undefined,
-      };
+      const dirtyFields = form.formState.dirtyFields as Partial<Record<keyof StepFormData, boolean>>;
+      const startDateIso = brasiliaDatetimeLocalToUtcIso(data.startDate)!;
+      const endDateIso = brasiliaDatetimeLocalToUtcIso(data.endDate)!;
+      const endDateForReleaseIso = data.endDateForReleaseOfNote
+        ? brasiliaDatetimeLocalToUtcIso(data.endDateForReleaseOfNote)
+        : undefined;
+      const cutOffScoreValue = data.cutOffScore && !isNaN(data.cutOffScore)
+        ? data.cutOffScore
+        : undefined;
 
       if (isEditing && step) {
-        await stepService.updateStep(editionId, step.id, payload);
+        const updatePayload: UpdateStepDTO = {};
+        const fieldChanged = (field: keyof StepFormData) => Boolean(dirtyFields?.[field]);
+        const todayBrasiliaDate = getCurrentBrasiliaDateOnly();
+
+        const isBeforeToday = (value: string) => {
+          const dateOnly = value?.split("T")[0] ?? "";
+          if (!dateOnly) return false;
+          return dateOnly < todayBrasiliaDate;
+        };
+
+        if (fieldChanged("startDate")) {
+          if (isBeforeToday(data.startDate)) {
+            form.setError("startDate", {
+              type: "manual",
+              message: "A data não pode ser anterior ao dia atual.",
+            });
+            setIsLoading(false);
+            return;
+          }
+
+          if (startDateIso !== step.startDate) {
+            updatePayload.startDate = startDateIso;
+          }
+        }
+
+        if (fieldChanged("endDate")) {
+          if (isBeforeToday(data.endDate)) {
+            form.setError("endDate", {
+              type: "manual",
+              message: "A data não pode ser anterior ao dia atual.",
+            });
+            setIsLoading(false);
+            return;
+          }
+
+          if (endDateIso !== step.endDate) {
+            updatePayload.endDate = endDateIso;
+          }
+        }
+
+        const currentRelease = step.endDateForReleaseOfNote ?? undefined;
+        if (
+          fieldChanged("endDateForReleaseOfNote") &&
+          endDateForReleaseIso !== currentRelease
+        ) {
+          updatePayload.endDateForReleaseOfNote = endDateForReleaseIso;
+        }
+
+        if (fieldChanged("cutOffScore") && cutOffScoreValue !== step.cutOffScore) {
+          updatePayload.cutOffScore = cutOffScoreValue;
+        }
+
+        if (Object.keys(updatePayload).length === 0) {
+          onSuccess?.();
+          return;
+        }
+
+        await stepService.updateStep(editionId, step.id, updatePayload);
       } else {
+        const payload = {
+          number: data.number,
+          startDate: startDateIso,
+          endDate: endDateIso,
+          endDateForReleaseOfNote: endDateForReleaseIso,
+          cutOffScore: cutOffScoreValue,
+        };
+
         await stepService.createStep(editionId, payload);
       }
 
