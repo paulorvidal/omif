@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { stepService } from "@/services/step-service";
 import type { Step } from "@/types/step-types";
+import { brasiliaTimezoneHelperText } from "@/utils/timezone";
 
 export function StepForm() {
   const { editionId, stepId } = useParams<{ editionId: string; stepId?: string }>();
@@ -104,21 +105,21 @@ export function StepForm() {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <Field>
                     <AppInput
-                      type="date"
+                      type="datetime-local"
                       label="Data de Início"
                       error={errors.startDate?.message}
                       register={register("startDate")}
-                      helpText="Data de início da etapa"
+                      helpText={brasiliaTimezoneHelperText}
                     />
                   </Field>
 
                   <Field>
                     <AppInput
-                      type="date"
+                      type="datetime-local"
                       label="Data de Término"
                       error={errors.endDate?.message}
                       register={register("endDate")}
-                      helpText="Data de término da etapa"
+                      helpText={brasiliaTimezoneHelperText}
                     />
                   </Field>
                 </div>
@@ -127,11 +128,11 @@ export function StepForm() {
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Field>
                       <AppInput
-                        type="date"
+                        type="datetime-local"
                         label="Data de Liberação da Nota"
                         error={errors.endDateForReleaseOfNote?.message}
                         register={register("endDateForReleaseOfNote")}
-                        helpText="Data em que as notas serão liberadas"
+                        helpText={brasiliaTimezoneHelperText}
                       />
                     </Field>
 
