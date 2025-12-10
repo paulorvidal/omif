@@ -173,12 +173,7 @@ export function EditionForm() {
                   Limpar
                 </AppButton>
 
-                <AppButton
-                  type="submit"
-                  icon={<Save />}
-                  isLoading={isPending}
-                  className="bg-green-600 text-white hover:bg-green-700"
-                >
+                <AppButton type="submit" icon={<Save />} isLoading={isPending}>
                   {isEditMode ? "Salvar Alterações" : "Cadastrar"}
                 </AppButton>
               </div>

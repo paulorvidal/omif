@@ -106,7 +106,6 @@ function EducatorForm() {
                           placeholder="exemplo@email.com"
                           error={errors.email?.message}
                           register={register("email")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -116,7 +115,6 @@ function EducatorForm() {
                           placeholder="exemplo@email.com"
                           error={errors.confirmEmail?.message}
                           register={register("confirmEmail")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
@@ -129,7 +127,6 @@ function EducatorForm() {
                           placeholder="Mínimo 6 caracteres"
                           error={errors.password?.message}
                           register={register("password")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -139,7 +136,6 @@ function EducatorForm() {
                           placeholder="Digite a senha novamente"
                           error={errors.confirmPassword?.message}
                           register={register("confirmPassword")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
@@ -159,7 +155,6 @@ function EducatorForm() {
                         error={errors.institution?.message}
                         placeholder="Digite para buscar sua instituição..."
                         helpText="Selecione a instituição onde você leciona"
-                        className="bg-white"
                       />
                     </Field>
                   </FieldGroup>

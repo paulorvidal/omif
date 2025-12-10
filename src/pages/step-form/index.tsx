@@ -7,7 +7,7 @@ import {
   AppDialogFooter,
   AppDialogTitle,
 } from "@/components/app-dialog";
-import { Save, ChevronLeft, Trash2, Loader2, Eraser } from "lucide-react";
+import { Save, ChevronLeft, Trash2, Loader2, Eraser, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStepForm } from "@/hooks/use-step-form";
 import { useEffect, useState } from "react";
@@ -187,12 +187,7 @@ export function StepForm() {
                   )}
                 </div>
 
-                <AppButton
-                  type="submit"
-                  icon={<Save />}
-                  isLoading={isLoading}
-                  className="bg-green-600 text-white hover:bg-green-700"
-                >
+                <AppButton type="submit" icon={<Save />} isLoading={isLoading}>
                   {isEditing ? "Salvar Alterações" : "Cadastrar"}
                 </AppButton>
               </div>
@@ -210,16 +205,17 @@ export function StepForm() {
             variant="secondary"
             type="button"
             onClick={() => setShowDeleteDialog(false)}
-            disabled={isDeleting}
+            isLoading={isDeleting}
+            icon={<X />}
           >
             Cancelar
           </AppButton>
           <AppButton
             variant="destructive"
             onClick={onDelete}
-            disabled={isDeleting}
+            isLoading={isDeleting}
+            icon={<Trash2 />}
           >
-            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Deletar
           </AppButton>
         </AppDialogFooter>

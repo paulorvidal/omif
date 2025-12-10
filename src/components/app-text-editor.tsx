@@ -80,7 +80,12 @@ function AppTextEditor({
   if (!editor) return null;
 
   return (
-    <div className={cn("overflow-hidden rounded-lg border", className)}>
+    <div
+      className={cn(
+        "bg-input/30 border-input overflow-hidden rounded-lg border",
+        className,
+      )}
+    >
       <div className="flex flex-wrap items-center gap-1 border-b p-2">
         <AppTextEditorItem
           editor={editor}

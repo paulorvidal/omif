@@ -86,6 +86,3 @@ function AppInput({
 }
 
 export { AppInput };
-function setValue(val: string) {
-  throw new Error("Function not implemented.");
-}

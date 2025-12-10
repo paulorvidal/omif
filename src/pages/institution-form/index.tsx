@@ -130,8 +130,7 @@ function InstitutionForm() {
                       placeholder="(00)0000-0000"
                       mask="(99)99999-9999"
                       error={errors.phoneNumber?.message}
-                      register={register("phoneNumber")}
-                      className="bg-white"
+                      register={register("phoneNumber")} 
                     />
                   </Field>
 
@@ -198,7 +197,6 @@ function InstitutionForm() {
                   type="submit"
                   icon={<Save />}
                   isLoading={isSubmitting}
-                  className="bg-green-600 text-white hover:bg-green-700"
                 >
                   {isEditMode ? "Salvar Alterações" : "Cadastrar"}
                 </AppButton>

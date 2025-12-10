@@ -6,6 +6,7 @@ import {
   type CreateNoticeRequest,
 } from "../services/notice-service";
 import { showToast } from "../utils/events";
+import { scrollToTop } from "@/utils/scroll-to-top";
 
 type UseNoticeFormParams = {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -79,6 +80,11 @@ export const useNoticeForm = ({ setIsLoading }: UseNoticeFormParams) => {
 
   const submitHandler = handleSubmit(onFormSubmit);
 
+  const handleReset = () => {
+    reset();
+    scrollToTop();
+  };
+
   return {
     control,
     errors,
@@ -86,6 +92,7 @@ export const useNoticeForm = ({ setIsLoading }: UseNoticeFormParams) => {
     setValue,
     watch,
     handleSubmit,
+    handleReset,
     register,
   };
 };
