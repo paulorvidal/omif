@@ -22,6 +22,8 @@ import { ProfileForm } from "./pages/profile-form";
 
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
+import { AppTextEditor } from "./components/app-text-editor";
+import { NoticeForm } from "./pages/notice-form";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +51,10 @@ const router = createBrowserRouter([
           {
             path: "/table",
             element: <Table />,
+          },
+          {
+            path: "/aviso",
+            element: <NoticeForm />,
           },
           {
             path: "/instituicao",

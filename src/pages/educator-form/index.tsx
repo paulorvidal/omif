@@ -11,7 +11,7 @@ import {
   FieldLegend,
 } from "@/components/ui/field";
 import { useEducatorForm } from "../../hooks/use-educator-form";
-import { Delete, Plus } from "lucide-react";
+import { Eraser, Save } from "lucide-react";
 
 function EducatorForm() {
   const {
@@ -190,7 +190,7 @@ function EducatorForm() {
                   <div className="flex w-full justify-end gap-4">
                     <AppButton
                       type="button"
-                      icon={<Delete />}
+                      icon={<Eraser />}
                       variant="secondary"
                       onClick={handleReset}
                       disabled={isPending}
@@ -199,7 +199,7 @@ function EducatorForm() {
                     </AppButton>
                     <AppButton
                       type="submit"
-                      icon={<Plus />}
+                      icon={<Save />}
                       isLoading={isPending}
                     >
                       Cadastrar
