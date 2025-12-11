@@ -45,3 +45,23 @@ export const refuseEnrollmentStudent = async (
     `/editions/${editionYear}/student-enrollments/${enrollmentId}/refuse`,
   );
 };
+
+export const approveEnrollmentStudentsBulk = async (
+  editionYear: string,
+  enrollmentIds: string[],
+): Promise<void> => {
+  await api.post(
+    `/editions/${editionYear}/student-enrollments/approve`,
+    enrollmentIds 
+  );
+};
+
+export const refuseEnrollmentStudentsBulk = async (
+  editionYear: string,
+  enrollmentIds: string[],
+): Promise<void> => {
+  await api.post(
+    `/editions/${editionYear}/student-enrollments/refuse`,
+    enrollmentIds 
+  );
+};
