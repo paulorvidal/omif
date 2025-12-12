@@ -18,11 +18,13 @@ import { StudentsPage } from "./pages/student-page";
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
-import { PrivateRoute } from "./utils/private-route";
-import { ProfileForm } from "./pages/profile-form";
+import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
 
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
+
+import { ProfileForm } from "./pages/profile-form";
+import { PrivateRoute } from "./components/private-route";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +72,10 @@ const router = createBrowserRouter([
           {
             path: "/edicao/:id",
             element: <EditionForm />,
+          },
+          {
+            path: "/edicoes/:editionId/instituicao-inscricao",
+            element: <EnrollmentInstitutionForm />,
           },
           {
             path: "/edicao/:editionId/etapa",

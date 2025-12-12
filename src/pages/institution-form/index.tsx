@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eraser } from "lucide-react";
 import { AppAsyncSelect } from "@/components/app-async-select";
 import { useInstitutionForm } from "../../hooks/use-institution-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,6 +18,7 @@ function InstitutionForm() {
         register,
         errors,
         handleFormSubmit,
+        handleReset, // Adicione esta função do hook
         isSubmitting,
         control,
         loadEducatorOptions,
@@ -189,6 +190,18 @@ function InstitutionForm() {
                                 className="flex flex-col gap-4 mt-6 md:flex-row md:justify-end"
                             >
                                 <div className="flex w-full justify-end gap-4">
+                                    {/* Botão Limpar/Restaurar */}
+                                    <AppButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={handleReset}
+                                        disabled={isSubmitting}
+                                        icon={<Eraser className="size-4" />}
+                                    >
+                                        {isEditMode ? "Restaurar Dados" : "Limpar Formulário"}
+                                    </AppButton>
+
+                                    {/* Botão Principal */}
                                     <AppButton
                                         type="submit"
                                         className="bg-green-600 hover:bg-green-700 text-white"
