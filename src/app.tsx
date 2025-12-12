@@ -13,16 +13,18 @@ import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
 import { EditionsPage } from "./pages/edition-page";
+import { StudentsPage } from "./pages/student-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
-
 import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
-
 
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
+
+import { ProfileForm } from "./pages/profile-form";
+import { PrivateRoute } from "./components/private-route";
 
 const router = createBrowserRouter([
   {
@@ -42,7 +44,9 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          <MainLayout />
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
         ),
         children: [
           {
@@ -52,6 +56,10 @@ const router = createBrowserRouter([
           {
             path: "/instituicao",
             element: <InstitutionForm />,
+          },
+          {
+            path: "/perfil",
+            element: <ProfileForm />,
           },
           {
             path: "/instituicao/:id",
@@ -77,6 +85,18 @@ const router = createBrowserRouter([
             path: "/edicao/:editionId/etapa/:stepId",
             element: <StepForm />,
           },
+          {
+            path: "/instituicoes",
+            element: <InstitutionsPage />,
+          },
+          {
+            path: "/estudantes",
+            element: <StudentsPage />,
+          },
+          {
+            path: "/edicoes",
+            element: <EditionsPage />,
+          },
         ],
       },
       {
@@ -87,21 +107,6 @@ const router = createBrowserRouter([
         path: "/educador",
         element: <EducatorForm />,
       },
-      {
-        element: (
-          <MainLayout />
-        ),
-        children: [
-          {
-            path: "/instituicoes",
-            element: <InstitutionsPage />,
-          },
-          {
-            path: "/edicoes",
-            element: <EditionsPage />,
-          },
-        ],
-      }
     ],
   },
 ]);

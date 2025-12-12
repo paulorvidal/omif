@@ -2,6 +2,8 @@ import { useNavbar } from "@/hooks/use-navbar";
 import { AppButton } from "./app-button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { AppAsyncSelect } from "./app-async-select";
+import { NavLink } from "react-router-dom";
+import { getInitials } from "@/utils/formatters";
 
 function AppNavbar() {
   const {
@@ -16,6 +18,7 @@ function AppNavbar() {
   } = useNavbar();
 
   const isAdmin = userData?.role === "ADMINISTRADOR";
+  const displayName = userData?.socialName || userData?.name;
 
   return (
     <header className="bg-background flex h-(--sidebar-width-icon) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--sidebar-width-icon)">
@@ -34,13 +37,15 @@ function AppNavbar() {
         ) : (
           <div />
         )}
-        <AppButton variant="ghost">
-          <Avatar>
-            <AvatarImage />
-            <AvatarFallback>N</AvatarFallback>
-          </Avatar>
-          Nome
-        </AppButton>
+        <NavLink to="/perfil">
+          <AppButton variant="ghost">
+            <Avatar>
+              <AvatarImage src={userData?.profilePictureUrl} alt="Foto de Perfil" />
+              <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
+            </Avatar>
+            {displayName}
+          </AppButton>
+        </NavLink>
       </div>
     </header>
   );
