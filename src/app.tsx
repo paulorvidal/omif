@@ -13,6 +13,7 @@ import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
 import { EditionsPage } from "./pages/edition-page";
+import { StudentsPage } from "./pages/student-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
           {
             path: "/instituicoes",
             element: <InstitutionsPage />,
+          },
+          {
+            path: "/estudantes",
+            element: <StudentsPage />,
           },
           {
             path: "/edicoes",

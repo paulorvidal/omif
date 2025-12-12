@@ -9,11 +9,13 @@ function AppCheckbox({
   isHeader = false,
   checked,
   onCheckedChange,
+  disabled,
 }: AppCheckboxProps) {
   return isHeader ? (
     <Checkbox
       checked={checked}
       onCheckedChange={onCheckedChange}
+      disabled={disabled}
       className="data-[state=checked]:border-background data-[state=checked]:text-primary"
       iconClassName="bg-background"
       aria-label="Selecionar todos"
@@ -22,6 +24,7 @@ function AppCheckbox({
     <Checkbox
       checked={checked}
       onCheckedChange={onCheckedChange}
+      disabled={disabled}
       className="border-ring data-[state=unchecked]:bg-muted/50"
       aria-label="Selecionar linha"
     />

@@ -11,7 +11,7 @@ import type { ComponentProps } from "react";
 
 type AppActionsDropdownMenuProps = {
   onEditClick: () => void;
-  onDeleteClick: () => void;
+  onDeleteClick?: () => void;
 } & ComponentProps<typeof DropdownMenu>;
 
 function AppActionsDropdownMenu({
@@ -32,11 +32,15 @@ function AppActionsDropdownMenu({
           <Pencil />
           Editar
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={onDeleteClick}>
-          <Trash2 />
-          Deletar
-        </DropdownMenuItem>
+        {onDeleteClick ? (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={onDeleteClick}>
+              <Trash2 />
+              Deletar
+            </DropdownMenuItem>
+          </>
+        ) : null}
       </DropdownMenuContent>
     </DropdownMenu>
   );

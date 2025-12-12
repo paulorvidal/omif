@@ -13,11 +13,20 @@ import {
   findAllEnrollments,
   approveEnrollmentStudent,
   refuseEnrollmentStudent,
+  approveEnrollmentStudentsBulk,
+  refuseEnrollmentStudentsBulk,
 } from "../services/enrollment-student-service";
 import { ApiError } from "../services/api-error";
 import { showToast } from "../utils/events";
 import type { EnrollmentStudent } from "../types/enrollment-student-types";
 import type { PageResponse } from "../types/default-types";
+
+export const ENROLLMENT_PARAM_KEYS = {
+  page: "enrollmentPage",
+  size: "enrollmentSize",
+  sort: "enrollmentSort",
+  q: "enrollmentQ",
+} as const;
 
 type FilterFormValues = {
   sort: string;
@@ -28,20 +37,41 @@ type EnrollmentDecisionPayload = {
   enrollmentId: string;
 };
 
+type EnrollmentBulkDecisionPayload = {
+  enrollmentIds: string[];
+};
+
 export const useEnrollmentStudentTable = (editionYear: string) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
-  const pageIndex = parseInt(searchParams.get("page") || "0", 10);
-  const pageSize = parseInt(searchParams.get("size") || "10", 10);
-  const sort = searchParams.get("sort") || "student.name,asc";
-  const globalFilter = searchParams.get("q") || "";
+  const pageIndex = parseInt(
+    searchParams.get(ENROLLMENT_PARAM_KEYS.page) || "0",
+    10,
+  );
+  const pageSize = parseInt(
+    searchParams.get(ENROLLMENT_PARAM_KEYS.size) || "10",
+    10,
+  );
+  const sort =
+    searchParams.get(ENROLLMENT_PARAM_KEYS.sort) || "enrollmentDate,desc";
+  const globalFilter = searchParams.get(ENROLLMENT_PARAM_KEYS.q) || "";
 
   const debouncedFilter = useDebounce(globalFilter, 400);
   const pagination: PaginationState = { pageIndex, pageSize };
 
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
-  const { control, handleSubmit, reset } = useForm<FilterFormValues>();
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FilterFormValues>({
+    defaultValues: {
+      sort,
+      pageSize,
+    },
+  });
 
   const queryKey = [
     "studentEnrollments",
@@ -93,6 +123,38 @@ export const useEnrollmentStudentTable = (editionYear: string) => {
     },
   );
 
+  const {
+    mutate: approveEnrollmentBulkMutate,
+    isPending: isBulkApproving,
+  } = useMutation({
+    mutationFn: ({ enrollmentIds }: EnrollmentBulkDecisionPayload) =>
+      approveEnrollmentStudentsBulk(editionYear, enrollmentIds),
+    onSuccess: () => {
+      showToast("Inscrições aprovadas com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey });
+    },
+    onError: (error: ApiError) =>
+      showToast(
+        error.message || "Erro ao aprovar inscrições em massa",
+        "error",
+      ),
+  });
+
+  const { mutate: refuseEnrollmentBulkMutate, isPending: isBulkRefusing } =
+    useMutation({
+      mutationFn: ({ enrollmentIds }: EnrollmentBulkDecisionPayload) =>
+        refuseEnrollmentStudentsBulk(editionYear, enrollmentIds),
+      onSuccess: () => {
+        showToast("Inscrições recusadas com sucesso.", "success");
+        queryClient.invalidateQueries({ queryKey });
+      },
+      onError: (error: ApiError) =>
+        showToast(
+          error.message || "Erro ao recusar inscrições em massa",
+          "error",
+        ),
+    });
+
   useEffect(() => {
     if (isError && error) {
       showToast(error.message || "Erro ao carregar inscrições", "error");
@@ -103,24 +165,38 @@ export const useEnrollmentStudentTable = (editionYear: string) => {
   const pageCount = pageResponse?.page.totalPages ?? 0;
   const totalElements = pageResponse?.page.totalElements ?? 0;
 
+  const mapKey = useCallback((key: string) => {
+    if (key in ENROLLMENT_PARAM_KEYS) {
+      return ENROLLMENT_PARAM_KEYS[key as keyof typeof ENROLLMENT_PARAM_KEYS];
+    }
+    return key;
+  }, []);
+
   const handleURLChange = useCallback(
     (newParams: Record<string, string | number>) => {
       const updatedParams = new URLSearchParams(searchParams);
-      Object.entries(newParams).forEach(([key, value]) => {
-        if (value !== undefined && value !== null)
+      let shouldResetPage = false;
+
+      Object.entries(newParams).forEach(([rawKey, value]) => {
+        const key = mapKey(rawKey);
+        if (value !== undefined && value !== null && value !== "") {
           updatedParams.set(key, String(value));
-        else updatedParams.delete(key);
+        } else {
+          updatedParams.delete(key);
+        }
+
+        if (rawKey === "q" || rawKey === "sort" || rawKey === "size") {
+          shouldResetPage = true;
+        }
       });
-      if (
-        newParams.q !== undefined ||
-        newParams.sort ||
-        (newParams.size && newParams.page === undefined)
-      ) {
-        updatedParams.set("page", "0");
+
+      if (shouldResetPage && newParams.page === undefined) {
+        updatedParams.set(ENROLLMENT_PARAM_KEYS.page, "0");
       }
+
       setSearchParams(updatedParams);
     },
-    [searchParams, setSearchParams],
+    [mapKey, searchParams, setSearchParams],
   );
 
   const handleOpenFilterDialog = () => {
@@ -145,12 +221,22 @@ export const useEnrollmentStudentTable = (editionYear: string) => {
       open: filterDialogOpen,
       onOpen: handleOpenFilterDialog,
       onClose: () => setFilterDialogOpen(false),
-      form: { control, onSubmit: handleSubmit(handleApplyFilters) },
+      onSubmit: handleSubmit(handleApplyFilters),
+      formControl: control,
+      formErrors: errors,
     },
     approveEnrollment: {
       mutate: approveEnrollmentMutate,
       isPending: isApproving,
     },
     refuseEnrollment: { mutate: refuseEnrollmentMutate, isPending: isRefusing },
+    bulkApproveEnrollment: {
+      mutate: approveEnrollmentBulkMutate,
+      isPending: isBulkApproving,
+    },
+    bulkRefuseEnrollment: {
+      mutate: refuseEnrollmentBulkMutate,
+      isPending: isBulkRefusing,
+    },
   };
 };
