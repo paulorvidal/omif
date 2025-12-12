@@ -2,7 +2,16 @@ import { AppButton } from "@/components/app-button";
 import { AppInput } from "@/components/app-input";
 import { AppTextEditor } from "@/components/app-text-editor";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+  FieldTitle,
+} from "@/components/ui/field";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNoticeForm } from "@/hooks/use-notice-form";
 import DOMPurify from "dompurify";
 import { ChevronLeft, Eraser, Save } from "lucide-react";
@@ -90,62 +99,50 @@ function NoticeForm() {
             <FieldGroup>
               <FieldSet>
                 <FieldGroup>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field>
-                      <AppInput
-                        label="Nome Completo"
-                        placeholder="Ex Nome Completo"
-                        error={errors.name?.message}
-                        register={register("name")}
-                      />
-                    </Field>
-                    <Field>
-                      <AppInput
-                        label="Nome Social (Opcional)"
-                        placeholder="Ex Nome Social"
-                        error={errors.socialName?.message}
-                        register={register("socialName")}
-                      />
-                    </Field>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field>
-                      <AppInput
-                        label="CPF"
-                        placeholder="000.000.000-00"
-                        mask="999.999.999-99"
-                        error={errors.cpf?.message}
-                        register={register("cpf")}
-                      />
-                    </Field>
-                    <Field>
-                      <AppInput
-                        label="Data de Nascimento"
-                        type="date"
-                        error={errors.dateOfBirth?.message}
-                        register={register("dateOfBirth")}
-                      />
-                    </Field>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field>
-                      <AppInput
-                        label="Telefone"
-                        placeholder="(00)90000-0000"
-                        mask="(99)99999-9999"
-                        error={errors.phoneNumber?.message}
-                        register={register("phoneNumber")}
-                      />
-                    </Field>
-                    <Field>
-                      <AppInput
-                        label="SIAPE"
-                        placeholder="Número do SIAPE"
-                        error={errors.siape?.message}
-                        register={register("siape")}
-                      />
-                    </Field>
-                  </div>
+                  <Field>
+                    <AppInput
+                      label="Título do Aviso"
+                      placeholder="Ex: Título do Aviso"
+                      error={errors.title?.message}
+                      register={register("title")}
+                    />
+                  </Field>
+                </FieldGroup>
+                <FieldGroup>
+                  <FieldSet>
+                    <FieldLabel htmlFor="compute-environment-p8w">
+                      Método de Envio
+                    </FieldLabel>
+                    <FieldDescription>
+                      Selecione o método de envio...
+                    </FieldDescription>
+                    <RadioGroup className="sm:flex" defaultValue="SYSTEM">
+                      <FieldLabel htmlFor="SYSTEM" className="bg-input/30">
+                        <Field orientation="horizontal">
+                          <FieldContent>
+                            <FieldTitle>Via Sistema</FieldTitle>
+                          </FieldContent>
+                          <RadioGroupItem value="SYSTEM" id="SYSTEM" />
+                        </Field>
+                      </FieldLabel>
+                      <FieldLabel htmlFor="EMAIL" className="bg-input/30">
+                        <Field orientation="horizontal">
+                          <FieldContent>
+                            <FieldTitle>Via Email</FieldTitle>
+                          </FieldContent>
+                          <RadioGroupItem value="EMAIL" id="EMAIL" />
+                        </Field>
+                      </FieldLabel>
+                      <FieldLabel htmlFor="ALL" className="bg-input/30">
+                        <Field orientation="horizontal">
+                          <FieldContent>
+                            <FieldTitle>Ambos</FieldTitle>
+                          </FieldContent>
+                          <RadioGroupItem value="ALL" id="ALL" />
+                        </Field>
+                      </FieldLabel>
+                    </RadioGroup>
+                  </FieldSet>
                 </FieldGroup>
                 <FieldGroup>
                   <Field>
