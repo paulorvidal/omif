@@ -18,6 +18,8 @@ import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
 
+import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
+
 
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
@@ -62,6 +64,10 @@ const router = createBrowserRouter([
           {
             path: "/edicao/:id",
             element: <EditionForm />,
+          },
+          {
+            path: "/edicoes/:editionId/instituicao-inscricao",
+            element: <EnrollmentInstitutionForm />,
           },
           {
             path: "/edicao/:editionId/etapa",
