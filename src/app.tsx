@@ -13,17 +13,20 @@ import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
 import { EditionsPage } from "./pages/edition-page";
+import { StudentsPage } from "./pages/student-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { InstitutionForm } from "./pages/institution-form";
-import { PrivateRoute } from "./utils/private-route";
-import { ProfileForm } from "./pages/profile-form";
+import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
 
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
 import { AppTextEditor } from "./components/app-text-editor";
 import { NoticeForm } from "./pages/notice-form";
+
+import { ProfileForm } from "./pages/profile-form";
+import { PrivateRoute } from "./utils/private-route";
 
 const router = createBrowserRouter([
   {
@@ -57,12 +60,12 @@ const router = createBrowserRouter([
             element: <NoticeForm />,
           },
           {
-            path: "/instituicao",
-            element: <InstitutionForm />,
-          },
-          {
             path: "/perfil",
             element: <ProfileForm />,
+          },
+          {
+            path: "/instituicao",
+            element: <InstitutionForm />,
           },
           {
             path: "/instituicao/:id",
@@ -77,6 +80,10 @@ const router = createBrowserRouter([
             element: <EditionForm />,
           },
           {
+            path: "/edicoes/:editionId/instituicao-inscricao",
+            element: <EnrollmentInstitutionForm />,
+          },
+          {
             path: "/edicao/:editionId/etapa",
             element: <StepForm />,
           },
@@ -87,6 +94,10 @@ const router = createBrowserRouter([
           {
             path: "/instituicoes",
             element: <InstitutionsPage />,
+          },
+          {
+            path: "/estudantes",
+            element: <StudentsPage />,
           },
           {
             path: "/edicoes",

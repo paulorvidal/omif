@@ -44,4 +44,7 @@ export type UpdateStudentPayload = Partial<Omit<Student, 'id'>>;
 export type StudentSummary = {
   id: string;
   name: string;
+  socialName: string;
+  email?: string;
+  cpf?: string;
 };

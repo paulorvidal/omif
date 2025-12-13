@@ -15,6 +15,8 @@ import { AppButton } from "./app-button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
+// ... (Tipos e AppTextEditorItem permanecem os mesmos)
+
 type AppTextEditorProps = {
   content?: string;
   onChange?: (content: string) => void;
@@ -29,114 +31,6 @@ type AppTextEditorItemProps = {
   attributes?: any;
   icon: React.ReactElement;
 };
-
-function AppTextEditor({
-  content = "",
-  onChange,
-  placeholder = "Comece a digitar...",
-  editable = true,
-  className,
-}: AppTextEditorProps) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-        link: false,
-      }),
-      Placeholder.configure({
-        placeholder: placeholder,
-      }),
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-        HTMLAttributes: {
-          class:
-            "text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer transition-colors",
-        },
-      }),
-    ],
-    content,
-    editable,
-    onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML());
-    },
-    editorProps: {
-      attributes: {
-        class: cn(
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2x l mx-auto focus:outline-none",
-          "min-h-[200px] p-4 border-0",
-
-          "[&>p]:text-sm",
-          "[&>h1]:text-xl [&>h1]:font-semibold",
-          "[&>h2]:text-lg [&>h2]:font-semibold",
-          "[&>h3]:text-base [&>h3]:font-semibold",
-        ),
-      },
-    },
-  });
-
-  if (!editor) return null;
-
-  return (
-    <div
-      className={cn(
-        "bg-input/30 border-input overflow-hidden rounded-lg border",
-        className,
-      )}
-    >
-      <div className="flex flex-wrap items-center gap-1 border-b p-2">
-        <AppTextEditorItem
-          editor={editor}
-          command="bold"
-          icon={<Bold className="h-4 w-4" />}
-        />
-
-        <AppTextEditorItem
-          editor={editor}
-          command="italic"
-          icon={<Italic className="h-4 w-4" />}
-        />
-
-        <AppTextEditorItem
-          editor={editor}
-          command="strike"
-          icon={<Strikethrough className="h-4 w-4" />}
-        />
-
-        <AppTextEditorItem
-          editor={editor}
-          command="code"
-          icon={<Code className="h-4 w-4" />}
-        />
-
-        <AppTextEditorItem
-          editor={editor}
-          command="heading"
-          attributes={{ level: 1 }}
-          icon={<Heading1 className="h-4 w-4" />}
-        />
-
-        <AppTextEditorItem
-          editor={editor}
-          command="heading"
-          attributes={{ level: 2 }}
-          icon={<Heading2 className="h-4 w-4" />}
-        />
-
-        <AppTextEditorItem
-          editor={editor}
-          command="heading"
-          attributes={{ level: 3 }}
-          icon={<Heading3 className="h-4 w-4" />}
-        />
-      </div>
-
-      <EditorContent editor={editor} placeholder={placeholder} />
-    </div>
-  );
-}
 
 function AppTextEditorItem({
   editor,
@@ -192,6 +86,114 @@ function AppTextEditorItem({
     >
       {icon}
     </AppButton>
+  );
+}
+
+function AppTextEditor({
+  content = "",
+  onChange,
+  placeholder = "Comece a digitar...",
+  editable = true,
+  className,
+}: AppTextEditorProps) {
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+        link: false,
+      }),
+      Placeholder.configure({
+        placeholder: placeholder,
+      }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        HTMLAttributes: {
+          class:
+            "text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer transition-colors",
+        },
+      }),
+    ],
+    content,
+    editable,
+    onUpdate: ({ editor }) => {
+      onChange?.(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: cn(
+          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2x l mx-auto focus:outline-none",
+          "min-h-[200px] p-4 border-0",
+
+          "[&>p]:text-sm",
+          "[&>h1]:text-xl [&>h1]:font-semibold",
+          "[&>h2]:text-lg [&>h2]:font-semibold",
+          "[&>h3]:text-base [&>h3]:font-semibold",
+        ),
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (!editor || editor.getHTML() === content) {
+      return;
+    }
+
+    editor.chain().setContent(content).run();
+  }, [editor, content]);
+
+  return (
+    <div
+      className={cn(
+        "bg-input/30 border-input overflow-hidden rounded-lg border",
+        className,
+      )}
+    >
+      <div className="flex flex-wrap items-center gap-1 border-b p-2">
+        <AppTextEditorItem
+          editor={editor}
+          command="bold"
+          icon={<Bold className="h-4 w-4" />}
+        />
+        <AppTextEditorItem
+          editor={editor}
+          command="italic"
+          icon={<Italic className="h-4 w-4" />}
+        />
+        <AppTextEditorItem
+          editor={editor}
+          command="strike"
+          icon={<Strikethrough className="h-4 w-4" />}
+        />
+        <AppTextEditorItem
+          editor={editor}
+          command="code"
+          icon={<Code className="h-4 w-4" />}
+        />
+        <AppTextEditorItem
+          editor={editor}
+          command="heading"
+          attributes={{ level: 1 }}
+          icon={<Heading1 className="h-4 w-4" />}
+        />
+        <AppTextEditorItem
+          editor={editor}
+          command="heading"
+          attributes={{ level: 2 }}
+          icon={<Heading2 className="h-4 w-4" />}
+        />
+        <AppTextEditorItem
+          editor={editor}
+          command="heading"
+          attributes={{ level: 3 }}
+          icon={<Heading3 className="h-4 w-4" />}
+        />
+      </div>
+
+      <EditorContent editor={editor} placeholder={placeholder} />
+    </div>
   );
 }
 

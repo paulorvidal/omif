@@ -48,7 +48,7 @@ export const useNoticeForm = ({ setIsLoading }: UseNoticeFormParams) => {
     resolver: zodResolver(avisoFormSchema),
     defaultValues: {
       content: "",
-      deliveryMethod: "ALL",
+      deliveryMethod: "SYSTEM",
       recipient: "EDUCATOR",
     },
   });
@@ -56,16 +56,27 @@ export const useNoticeForm = ({ setIsLoading }: UseNoticeFormParams) => {
   const onFormSubmit = async (data: AvisoFormSchema) => {
     setIsLoading(true);
     try {
-      reset();
+      let deliveryMethod = data.deliveryMethod;
+      let recipient = data.recipient;
+
+      if (data.deliveryMethod === "ALL_METHOD") {
+        deliveryMethod = "ALL";
+      }
+
+      if (data.recipient === "ALL_RECIPIENT") {
+        recipient = "ALL";
+      }
 
       const apiData: CreateNoticeRequest = {
         title: data.title,
         content: data.content,
-        deliveryMethod: data.deliveryMethod,
-        recipient: data.recipient,
+        deliveryMethod: deliveryMethod,
+        recipient: recipient,
       };
 
       const response = await createNotice(apiData);
+
+      reset();
 
       showToast(response.message, "success");
     } catch (error) {

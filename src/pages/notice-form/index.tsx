@@ -14,8 +14,16 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNoticeForm } from "@/hooks/use-notice-form";
 import DOMPurify from "dompurify";
-import { ChevronLeft, Eraser, Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  Bell,
+  ChevronLeft,
+  Eraser,
+  Eye,
+  Save,
+  SendHorizonal,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 function NoticeForm() {
@@ -29,73 +37,58 @@ function NoticeForm() {
     submitHandler,
     setValue,
     watch,
-    handleSubmit,
     handleReset,
     register,
   } = useNoticeForm({ setIsLoading });
 
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const deliveryMethod = watch("deliveryMethod");
+  const recipient = watch("recipient");
 
   const titleValue = watch("title");
   const contentValue = watch("content");
 
   const sanitizedContent = DOMPurify.sanitize(contentValue || "");
 
-  const deliveryMethodOptions = [
-    { value: "", label: "Selecione o método de envio..." },
-    { value: "SYSTEM", label: "Via Sistema" },
-    { value: "EMAIL", label: "Via Email" },
-    { value: "ALL", label: "Ambos" },
-  ];
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const allRecipientOptions = [
-    { value: "", label: "Selecione o destinatário..." },
-    { value: "ALL", label: "Para Todos" },
-    { value: "STUDENT", label: "Apenas Estudantes" },
-    { value: "EDUCATOR", label: "Apenas Educadores" },
-  ];
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const deliveryMethod = watch("deliveryMethod");
-
-  useEffect(() => {
-    if (deliveryMethod === "SYSTEM") {
-      setValue("recipient", "EDUCATOR");
+    if (deliveryMethod === "ALL_METHOD") {
+      setValue("deliveryMethod", "ALL");
     }
-  }, [deliveryMethod, setValue]);
 
-  const availableRecipientOptions =
-    deliveryMethod === "SYSTEM"
-      ? allRecipientOptions.filter(
-          (opt) => opt.value === "EDUCATOR" || opt.value === "",
-        )
-      : allRecipientOptions;
+    if (recipient === "ALL_RECIPIENT") {
+      setValue("recipient", "ALL");
+    }
 
-  const handleOpenConfirmDialog = () => {
-    setIsConfirmOpen(true);
-  };
-
-  const handleConfirmSubmit = () => {
     submitHandler();
-    setIsConfirmOpen(false);
   };
 
   return (
     <>
-      <div className="mb-6 flex items-center gap-4">
+      <div className="flex items-center gap-4">
         <AppButton
           variant="secondary"
           className="size-8"
           size="icon"
           onClick={() => navigate(-1)}
         >
-          <ChevronLeft />
+          <ChevronLeft className="size-4" />
         </AppButton>
-        <h1 className="text-3xl font-semibold">Cadastro de Aviso</h1>
+
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <Bell className="text-primary h-6 w-6" />
+            <h1 className="text-2xl font-bold tracking-tight">Novo Aviso</h1>
+          </div>
+        </div>
       </div>
+
       <Card>
         <CardContent>
-          <form onSubmit={submitHandler} noValidate>
+          <form onSubmit={handleSubmit} noValidate>
             <FieldGroup>
               <FieldSet>
                 <FieldGroup>
@@ -108,46 +101,131 @@ function NoticeForm() {
                     />
                   </Field>
                 </FieldGroup>
+
                 <FieldGroup>
                   <FieldSet>
-                    <FieldLabel htmlFor="compute-environment-p8w">
-                      Método de Envio
-                    </FieldLabel>
+                    <FieldLabel>Método de Envio</FieldLabel>
                     <FieldDescription>
-                      Selecione o método de envio...
+                      Selecione o método de envio
                     </FieldDescription>
-                    <RadioGroup className="sm:flex" defaultValue="SYSTEM">
-                      <FieldLabel htmlFor="SYSTEM" className="bg-input/30">
-                        <Field orientation="horizontal">
-                          <FieldContent>
-                            <FieldTitle>Via Sistema</FieldTitle>
-                          </FieldContent>
-                          <RadioGroupItem value="SYSTEM" id="SYSTEM" />
-                        </Field>
-                      </FieldLabel>
-                      <FieldLabel htmlFor="EMAIL" className="bg-input/30">
-                        <Field orientation="horizontal">
-                          <FieldContent>
-                            <FieldTitle>Via Email</FieldTitle>
-                          </FieldContent>
-                          <RadioGroupItem value="EMAIL" id="EMAIL" />
-                        </Field>
-                      </FieldLabel>
-                      <FieldLabel htmlFor="ALL" className="bg-input/30">
-                        <Field orientation="horizontal">
-                          <FieldContent>
-                            <FieldTitle>Ambos</FieldTitle>
-                          </FieldContent>
-                          <RadioGroupItem value="ALL" id="ALL" />
-                        </Field>
-                      </FieldLabel>
-                    </RadioGroup>
+
+                    <Controller
+                      name="deliveryMethod"
+                      control={control}
+                      render={({ field }) => (
+                        <RadioGroup
+                          className="sm:flex"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <FieldLabel htmlFor="SYSTEM" className="bg-input/30">
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Via Sistema</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem value="SYSTEM" id="SYSTEM" />
+                            </Field>
+                          </FieldLabel>
+
+                          <FieldLabel htmlFor="EMAIL" className="bg-input/30">
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Via Email</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem value="EMAIL" id="EMAIL" />
+                            </Field>
+                          </FieldLabel>
+
+                          <FieldLabel
+                            htmlFor="ALL_METHOD"
+                            className="bg-input/30"
+                          >
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Ambos</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem
+                                value="ALL_METHOD"
+                                id="ALL_METHOD"
+                              />
+                            </Field>
+                          </FieldLabel>
+                        </RadioGroup>
+                      )}
+                    />
                   </FieldSet>
                 </FieldGroup>
+
+                <FieldGroup>
+                  <FieldSet>
+                    <FieldLabel>Destinatário</FieldLabel>
+                    <FieldDescription>
+                      Selecione o destinatário
+                    </FieldDescription>
+
+                    <Controller
+                      name="recipient"
+                      control={control}
+                      render={({ field }) => (
+                        <RadioGroup
+                          className="sm:flex"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <FieldLabel
+                            htmlFor="EDUCATOR"
+                            className="bg-input/30"
+                          >
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Apenas Educadores</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem value="EDUCATOR" id="EDUCATOR" />
+                            </Field>
+                          </FieldLabel>
+
+                          <FieldLabel htmlFor="STUDENT" className="bg-input/30">
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Apenas Estudantes</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem value="STUDENT" id="STUDENT" />
+                            </Field>
+                          </FieldLabel>
+
+                          <FieldLabel
+                            htmlFor="ALL_RECIPIENT"
+                            className="bg-input/30"
+                          >
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Para Todos</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem
+                                value="ALL_RECIPIENT"
+                                id="ALL_RECIPIENT"
+                              />
+                            </Field>
+                          </FieldLabel>
+                        </RadioGroup>
+                      )}
+                    />
+                  </FieldSet>
+                </FieldGroup>
+
                 <FieldGroup>
                   <Field>
                     <FieldLabel>Conteúdo</FieldLabel>
-                    <AppTextEditor />
+                    <Controller
+                      name="content"
+                      control={control}
+                      render={({ field }) => (
+                        <AppTextEditor
+                          content={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
                   </Field>
                 </FieldGroup>
               </FieldSet>
@@ -163,9 +241,24 @@ function NoticeForm() {
                   Limpar
                 </AppButton>
 
-                <AppButton type="submit" isLoading={isLoading} icon={<Save />}>
-                  Cadastrar
-                </AppButton>
+                <div className="flex gap-3">
+                  <AppButton
+                    type="button"
+                    variant="secondary"
+                    isLoading={isLoading}
+                    icon={<Eye />}
+                  >
+                    Visualizar
+                  </AppButton>
+
+                  <AppButton
+                    type="submit"
+                    isLoading={isLoading}
+                    icon={<SendHorizonal />}
+                  >
+                    Publicar
+                  </AppButton>
+                </div>
               </div>
             </FieldGroup>
           </form>
