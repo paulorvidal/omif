@@ -16,6 +16,7 @@ import { EditionsPage } from "./pages/edition-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
+import { EducatorsPage } from "./pages/educator-page";
 import { InstitutionForm } from "./pages/institution-form";
 
 
@@ -71,16 +72,26 @@ const router = createBrowserRouter([
             path: "/edicao/:editionId/etapa/:stepId",
             element: <StepForm />,
           },
+          {
+            path: "/educadores",
+            element: <EducatorsPage />,
+          },
+          {
+            path: "/educador/:id",
+            element: <EducatorForm />,
+          },
         ],
       },
       {
         path: "/edicoes/:editionYear/estudantes-inscricao",
         element: <EnrollmentStudentForm />,
       },
+
       {
         path: "/educador",
         element: <EducatorForm />,
       },
+
       {
         element: (
           <MainLayout />
