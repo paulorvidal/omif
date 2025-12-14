@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ChevronLeft, Building2, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,10 +14,10 @@ import { Separator } from "@/components/ui/separator";
 import { useEnrollmentInstitutionForm } from "../../hooks/use-enrollment-institution-form";
 
 export function EnrollmentInstitutionForm() {
-    const { editionId } = useParams();
+    const { editionYear } = useParams();
     const navigate = useNavigate();
 
-    const editionIdStr = editionId || "";
+    const editionIdStr = editionYear || "";
     const isValidYear = /^\d{4}$/.test(editionIdStr);
     const hookEditionYear = isValidYear ? editionIdStr : "";
 
@@ -34,7 +33,6 @@ export function EnrollmentInstitutionForm() {
 
     const institutionEmail = enrollmentData?.institution?.email1;
     const hasRequiredInfo = !!institutionEmail && institutionEmail.trim() !== "";
-
     const isAlreadyEnrolled = !!enrollmentData?.isEnrolled;
 
     if (!isValidYear) {
@@ -100,18 +98,20 @@ export function EnrollmentInstitutionForm() {
                             </h1>
                         </div>
                         <p className="text-muted-foreground text-sm">
-                            Ano da Edição: {editionId}
+                            Ano da Edição: {editionYear}
                         </p>
                     </div>
                 </div>
 
                 {isAlreadyEnrolled && (
-                    <div className="mb-6">
-                        <AppCard
-                            title="Inscrição Realizada"
-                            description="Sua instituição já está registrada nesta edição."
-                            type="success"
-                        />
+                    <div className="mb-6 flex justify-center">
+                        <div className="w-full max-w-md">
+                            <AppCard
+                                title="Inscrição Realizada"
+                                description="Sua instituição já está registrada nesta edição."
+                                type="success"
+                            />
+                        </div>
                     </div>
                 )}
 
@@ -119,7 +119,7 @@ export function EnrollmentInstitutionForm() {
                     <div className="mb-6">
                         <AppCard
                             title="Dados Cadastrais Incompletos"
-                            description="Sua instituição não possui um e-mail principal cadastrado no sistema. Para realizar a inscrição na edição, é necessário que o cadastro da instituição esteja completo. Entre em contato com o suporte ou atualize o cadastro geral da instituição."
+                            description="Sua instituição não possui um e-mail principal cadastrado no sistema. Atualize o cadastro geral da instituição antes de se inscrever."
                             type="warning"
                         />
                     </div>
@@ -131,13 +131,12 @@ export function EnrollmentInstitutionForm() {
                             <FieldGroup>
 
                                 <FieldSet>
-                                    <FieldLegend>Dados da Instituição (Somente Leitura)</FieldLegend>
+                                    <FieldLegend>Dados da Instituição</FieldLegend>
 
                                     <Field>
                                         <AppInput
                                             label="Nome da Instituição"
                                             placeholder="Carregando..."
-
                                             error={errors.name?.message}
                                             register={register("name")}
                                             disabled={true}
@@ -215,6 +214,7 @@ export function EnrollmentInstitutionForm() {
                                     </div>
                                 </FieldSet>
 
+                                {/* Botão de ação simplificado: Apenas Registrar */}
                                 {!isAlreadyEnrolled && hasRequiredInfo && (
                                     <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t mt-4">
                                         <AppButton
@@ -223,7 +223,7 @@ export function EnrollmentInstitutionForm() {
                                             icon={<Save />}
                                             isLoading={isSubmitting}
                                         >
-                                            Registrar na Edição
+                                            Registrar
                                         </AppButton>
                                     </div>
                                 )}

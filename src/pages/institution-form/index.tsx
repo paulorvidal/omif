@@ -18,7 +18,7 @@ function InstitutionForm() {
         register,
         errors,
         handleFormSubmit,
-        handleReset, // Adicione esta função do hook
+        handleReset,
         isSubmitting,
         control,
         loadEducatorOptions,
@@ -190,7 +190,6 @@ function InstitutionForm() {
                                 className="flex flex-col gap-4 mt-6 md:flex-row md:justify-end"
                             >
                                 <div className="flex w-full justify-end gap-4">
-                                    {/* Botão Limpar/Restaurar */}
                                     <AppButton
                                         type="button"
                                         variant="secondary"
@@ -201,7 +200,6 @@ function InstitutionForm() {
                                         {isEditMode ? "Restaurar Dados" : "Limpar Formulário"}
                                     </AppButton>
 
-                                    {/* Botão Principal */}
                                     <AppButton
                                         type="submit"
                                         className="bg-green-600 hover:bg-green-700 text-white"
