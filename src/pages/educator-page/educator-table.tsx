@@ -58,7 +58,6 @@ const getColumns = (
             cell: ({ row }) => (
                 <div className="pl-4">
                     <AppCheckbox
-                        // Verifica se o ID desta linha está no nosso estado local
                         checked={!!rowSelection[row.original.id]}
                         onCheckedChange={(value) => onToggleRow(row.original.id, !!value)}
                     />

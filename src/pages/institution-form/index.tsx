@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";

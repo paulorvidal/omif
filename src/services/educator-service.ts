@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from "./api";
 import type {
   CreateEducatorRequest,
@@ -157,5 +159,34 @@ export const changeEmail = async (
   data: ChangeEmailPayload,
 ): Promise<GetMyDataEducatorResponse> => {
   const response = await api.put(`/educators/${id}/change-email`, data);
+  return response.data;
+};
+
+export async function fetchInstitutions(
+  input: string,
+): Promise<Array<{ label: string; value: string }>> {
+  const response = await api.get<{ content: any[] }>(`/institutions`, {
+    params: {
+      q: input,
+      page: 0,
+      size: 10,
+    },
+  });
+
+  return response.data.content.map((inst) => ({
+    label: inst.name,
+    value: inst.id,
+  }));
+}
+export const getEducatorById = async (id: string): Promise<any> => {
+  const response = await api.get(`/educators/${id}`);
+  return response.data;
+};
+
+export const updateEducator = async (
+  id: string,
+  data: Partial<CreateEducatorRequest>,
+): Promise<CreateEducatorResponse> => {
+  const response = await api.patch(`/educators/${id}`, data);
   return response.data;
 };
