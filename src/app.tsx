@@ -81,7 +81,7 @@ const router = createBrowserRouter([
             element: <EditionForm />,
           },
           {
-            path: "/edicoes/:editionId/instituicao-inscricao",
+            path: "/edicoes/:editionYear/instituicao-inscricao",
             element: <EnrollmentInstitutionForm />,
           },
           {

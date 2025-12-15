@@ -17,12 +17,12 @@ function InstitutionForm() {
     register,
     errors,
     handleFormSubmit,
+    handleReset,
     isSubmitting,
     control,
     loadEducatorOptions,
     isEditMode,
     setValue,
-    handleReset,
   } = useInstitutionForm({ institutionId: id });
 
   const [localOptions, setLocalOptions] = useState<any[]>([]);
@@ -101,7 +101,7 @@ function InstitutionForm() {
       </div>
 
       <Card>
-        <CardContent>
+        <CardContent className="pt-6">
           <form onSubmit={handleFormSubmit} noValidate>
             <FieldGroup>
               <FieldSet>
@@ -130,7 +130,8 @@ function InstitutionForm() {
                       placeholder="(00)0000-0000"
                       mask="(99)99999-9999"
                       error={errors.phoneNumber?.message}
-                      register={register("phoneNumber")} 
+                      register={register("phoneNumber")}
+                      className="bg-white"
                     />
                   </Field>
 
@@ -182,25 +183,31 @@ function InstitutionForm() {
                 </FieldGroup>
               </FieldSet>
 
-              <div className="flex justify-between pt-4">
-                <AppButton
-                  type="button"
-                  variant="secondary"
-                  onClick={handleReset}
-                  disabled={isSubmitting}
-                  icon={<Eraser />}
-                >
-                  Limpar
-                </AppButton>
+              <Field
+                orientation="horizontal"
+                className="mt-6 flex flex-col gap-4 md:flex-row md:justify-end"
+              >
+                <div className="flex w-full justify-end gap-4">
+                  <AppButton
+                    type="button"
+                    variant="secondary"
+                    onClick={handleReset}
+                    disabled={isSubmitting}
+                    icon={<Eraser className="size-4" />}
+                  >
+                    {isEditMode ? "Restaurar Dados" : "Limpar Formulário"}
+                  </AppButton>
 
-                <AppButton
-                  type="submit"
-                  icon={<Save />}
-                  isLoading={isSubmitting}
-                >
-                  {isEditMode ? "Salvar Alterações" : "Cadastrar"}
-                </AppButton>
-              </div>
+                  <AppButton
+                    type="submit"
+                    className="bg-green-600 text-white hover:bg-green-700"
+                    isLoading={isSubmitting}
+                    icon={<Save className="size-4" />}
+                  >
+                    {isEditMode ? "Salvar Alterações" : "Cadastrar Instituição"}
+                  </AppButton>
+                </div>
+              </Field>
             </FieldGroup>
           </form>
         </CardContent>
