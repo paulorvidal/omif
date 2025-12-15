@@ -27,6 +27,7 @@ import { NoticeForm } from "./pages/notice-form";
 
 import { ProfileForm } from "./pages/profile-form";
 import { PrivateRoute } from "./utils/private-route";
+import { NoticesPage } from "./pages/notice-page";
 
 const router = createBrowserRouter([
   {
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
           {
             path: "/edicoes",
             element: <EditionsPage />,
+          },
+          {
+            path: "/avisos",
+            element: <NoticesPage />,
           },
         ],
       },

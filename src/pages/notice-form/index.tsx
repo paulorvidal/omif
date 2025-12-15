@@ -14,17 +14,13 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNoticeForm } from "@/hooks/use-notice-form";
 import DOMPurify from "dompurify";
-import {
-  Bell,
-  ChevronLeft,
-  Eraser,
-  Eye,
-  Save,
-  SendHorizonal,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Bell, ChevronLeft, Eraser, Eye, SendHorizonal } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { PreviewDialog } from "./preview-dialog";
+import { ConfirmDialog } from "./confirm-dialog";
+import { redirectTo } from "@/utils/events";
 
 function NoticeForm() {
   const navigate = useNavigate();
@@ -37,12 +33,19 @@ function NoticeForm() {
     submitHandler,
     setValue,
     watch,
+    handleSubmit,
     handleReset,
     register,
   } = useNoticeForm({ setIsLoading });
 
   const deliveryMethod = watch("deliveryMethod");
   const recipient = watch("recipient");
+
+  useEffect(() => {
+    if (deliveryMethod === "SYSTEM") {
+      setValue("recipient", "EDUCATOR");
+    }
+  }, [deliveryMethod, setValue]);
 
   const titleValue = watch("title");
   const contentValue = watch("content");
@@ -52,18 +55,13 @@ function NoticeForm() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOpenConfirmDialog = () => {
+    setIsConfirmOpen(true);
+  };
 
-    if (deliveryMethod === "ALL_METHOD") {
-      setValue("deliveryMethod", "ALL");
-    }
-
-    if (recipient === "ALL_RECIPIENT") {
-      setValue("recipient", "ALL");
-    }
-
+  const handleConfirmSubmit = () => {
     submitHandler();
+    redirectTo("/avisos");
   };
 
   return (
@@ -88,7 +86,7 @@ function NoticeForm() {
 
       <Card>
         <CardContent>
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={submitHandler} noValidate>
             <FieldGroup>
               <FieldSet>
                 <FieldGroup>
@@ -118,21 +116,21 @@ function NoticeForm() {
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <FieldLabel htmlFor="SYSTEM" className="bg-input/30">
-                            <Field orientation="horizontal">
-                              <FieldContent>
-                                <FieldTitle>Via Sistema</FieldTitle>
-                              </FieldContent>
-                              <RadioGroupItem value="SYSTEM" id="SYSTEM" />
-                            </Field>
-                          </FieldLabel>
-
                           <FieldLabel htmlFor="EMAIL" className="bg-input/30">
                             <Field orientation="horizontal">
                               <FieldContent>
                                 <FieldTitle>Via Email</FieldTitle>
                               </FieldContent>
                               <RadioGroupItem value="EMAIL" id="EMAIL" />
+                            </Field>
+                          </FieldLabel>
+
+                          <FieldLabel htmlFor="SYSTEM" className="bg-input/30">
+                            <Field orientation="horizontal">
+                              <FieldContent>
+                                <FieldTitle>Via Sistema</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem value="SYSTEM" id="SYSTEM" />
                             </Field>
                           </FieldLabel>
 
@@ -184,29 +182,39 @@ function NoticeForm() {
                             </Field>
                           </FieldLabel>
 
-                          <FieldLabel htmlFor="STUDENT" className="bg-input/30">
-                            <Field orientation="horizontal">
-                              <FieldContent>
-                                <FieldTitle>Apenas Estudantes</FieldTitle>
-                              </FieldContent>
-                              <RadioGroupItem value="STUDENT" id="STUDENT" />
-                            </Field>
-                          </FieldLabel>
-
-                          <FieldLabel
-                            htmlFor="ALL_RECIPIENT"
-                            className="bg-input/30"
-                          >
-                            <Field orientation="horizontal">
-                              <FieldContent>
-                                <FieldTitle>Para Todos</FieldTitle>
-                              </FieldContent>
-                              <RadioGroupItem
-                                value="ALL_RECIPIENT"
-                                id="ALL_RECIPIENT"
-                              />
-                            </Field>
-                          </FieldLabel>
+                          {deliveryMethod != "SYSTEM" && (
+                            <>
+                              <FieldLabel
+                                htmlFor="STUDENT"
+                                className="bg-input/30"
+                              >
+                                <Field orientation="horizontal">
+                                  <FieldContent>
+                                    <FieldTitle>Apenas Estudantes</FieldTitle>
+                                  </FieldContent>
+                                  <RadioGroupItem
+                                    value="STUDENT"
+                                    id="STUDENT"
+                                    disabled={deliveryMethod == "SYSTEM"}
+                                  />
+                                </Field>
+                              </FieldLabel>
+                              <FieldLabel
+                                htmlFor="ALL_RECIPIENT"
+                                className="bg-input/30"
+                              >
+                                <Field orientation="horizontal">
+                                  <FieldContent>
+                                    <FieldTitle>Para Todos</FieldTitle>
+                                  </FieldContent>
+                                  <RadioGroupItem
+                                    value="ALL_RECIPIENT"
+                                    id="ALL_RECIPIENT"
+                                  />
+                                </Field>
+                              </FieldLabel>
+                            </>
+                          )}
                         </RadioGroup>
                       )}
                     />
@@ -223,6 +231,7 @@ function NoticeForm() {
                         <AppTextEditor
                           content={field.value}
                           onChange={field.onChange}
+                          error={errors.content?.message}
                         />
                       )}
                     />
@@ -246,14 +255,16 @@ function NoticeForm() {
                     type="button"
                     variant="secondary"
                     isLoading={isLoading}
+                    onClick={() => setIsPreviewOpen(true)}
                     icon={<Eye />}
                   >
                     Visualizar
                   </AppButton>
 
                   <AppButton
-                    type="submit"
+                    type="button"
                     isLoading={isLoading}
+                    onClick={handleSubmit(handleOpenConfirmDialog)}
                     icon={<SendHorizonal />}
                   >
                     Publicar
@@ -264,6 +275,19 @@ function NoticeForm() {
           </form>
         </CardContent>
       </Card>
+
+      <PreviewDialog
+        open={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title={`Preview ${titleValue}`}
+        htmlContent={sanitizedContent}
+      />
+
+      <ConfirmDialog
+        open={isConfirmOpen}
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmSubmit}
+      />
     </>
   );
 }

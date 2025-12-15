@@ -48,7 +48,7 @@ export const useNoticeForm = ({ setIsLoading }: UseNoticeFormParams) => {
     resolver: zodResolver(avisoFormSchema),
     defaultValues: {
       content: "",
-      deliveryMethod: "SYSTEM",
+      deliveryMethod: "EMAIL",
       recipient: "EDUCATOR",
     },
   });

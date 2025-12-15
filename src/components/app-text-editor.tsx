@@ -14,8 +14,7 @@ import {
 import { AppButton } from "./app-button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-
-// ... (Tipos e AppTextEditorItem permanecem os mesmos)
+import { FieldDescription } from "./ui/field";
 
 type AppTextEditorProps = {
   content?: string;
@@ -23,6 +22,7 @@ type AppTextEditorProps = {
   placeholder?: string;
   editable?: boolean;
   className?: string;
+  error?: string;
 };
 
 type AppTextEditorItemProps = {
@@ -95,6 +95,7 @@ function AppTextEditor({
   placeholder = "Comece a digitar...",
   editable = true,
   className,
+  error,
 }: AppTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -127,10 +128,9 @@ function AppTextEditor({
           "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2x l mx-auto focus:outline-none",
           "min-h-[200px] p-4 border-0",
 
-          "[&>p]:text-sm",
           "[&>h1]:text-xl [&>h1]:font-semibold",
           "[&>h2]:text-lg [&>h2]:font-semibold",
-          "[&>h3]:text-base [&>h3]:font-semibold",
+          "[&>h3]:text-lg [&>h3]:font-medium",
         ),
       },
     },
@@ -145,54 +145,62 @@ function AppTextEditor({
   }, [editor, content]);
 
   return (
-    <div
-      className={cn(
-        "bg-input/30 border-input overflow-hidden rounded-lg border",
-        className,
-      )}
-    >
-      <div className="flex flex-wrap items-center gap-1 border-b p-2">
-        <AppTextEditorItem
-          editor={editor}
-          command="bold"
-          icon={<Bold className="h-4 w-4" />}
-        />
-        <AppTextEditorItem
-          editor={editor}
-          command="italic"
-          icon={<Italic className="h-4 w-4" />}
-        />
-        <AppTextEditorItem
-          editor={editor}
-          command="strike"
-          icon={<Strikethrough className="h-4 w-4" />}
-        />
-        <AppTextEditorItem
-          editor={editor}
-          command="code"
-          icon={<Code className="h-4 w-4" />}
-        />
-        <AppTextEditorItem
-          editor={editor}
-          command="heading"
-          attributes={{ level: 1 }}
-          icon={<Heading1 className="h-4 w-4" />}
-        />
-        <AppTextEditorItem
-          editor={editor}
-          command="heading"
-          attributes={{ level: 2 }}
-          icon={<Heading2 className="h-4 w-4" />}
-        />
-        <AppTextEditorItem
-          editor={editor}
-          command="heading"
-          attributes={{ level: 3 }}
-          icon={<Heading3 className="h-4 w-4" />}
-        />
+    <div className="flex flex-col gap-3">
+      <div
+        className={cn(
+          "bg-input/30 border-input overflow-hidden rounded-lg border",
+          className,
+        )}
+      >
+        <div className="flex flex-wrap items-center gap-1 border-b p-2">
+          <AppTextEditorItem
+            editor={editor}
+            command="bold"
+            icon={<Bold className="h-4 w-4" />}
+          />
+          <AppTextEditorItem
+            editor={editor}
+            command="italic"
+            icon={<Italic className="h-4 w-4" />}
+          />
+          <AppTextEditorItem
+            editor={editor}
+            command="strike"
+            icon={<Strikethrough className="h-4 w-4" />}
+          />
+          <AppTextEditorItem
+            editor={editor}
+            command="code"
+            icon={<Code className="h-4 w-4" />}
+          />
+          <AppTextEditorItem
+            editor={editor}
+            command="heading"
+            attributes={{ level: 1 }}
+            icon={<Heading1 className="h-4 w-4" />}
+          />
+          <AppTextEditorItem
+            editor={editor}
+            command="heading"
+            attributes={{ level: 2 }}
+            icon={<Heading2 className="h-4 w-4" />}
+          />
+          <AppTextEditorItem
+            editor={editor}
+            command="heading"
+            attributes={{ level: 3 }}
+            icon={<Heading3 className="h-4 w-4" />}
+          />
+        </div>
+
+        <EditorContent editor={editor} placeholder={placeholder} />
       </div>
 
-      <EditorContent editor={editor} placeholder={placeholder} />
+      {error && (
+        <FieldDescription className="text-destructive">
+          {error}
+        </FieldDescription>
+      )}
     </div>
   );
 }

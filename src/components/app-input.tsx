@@ -77,7 +77,7 @@ function AppInput({
         {...props}
       />
       {error && (
-        <FieldDescription className="text-destructive">
+        <FieldDescription className="text-destructive py-1">
           {error}
         </FieldDescription>
       )}
