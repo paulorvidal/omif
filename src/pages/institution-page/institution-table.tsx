@@ -20,7 +20,7 @@ import { AppSearchInput } from "@/components/app-search-input";
 import { AppGenericTable } from "@/components/app-generic-table";
 import { AppSelect } from "@/components/app-select";
 import { Field } from "@/components/ui/field";
-import { Filter, Loader2, Plus } from "lucide-react";
+import { Filter, Loader2, Plus, Trash2, X } from "lucide-react";
 import { AppBadge } from "@/components/app-badge";
 import { redirectTo } from "@/utils/events";
 
@@ -165,6 +165,7 @@ function InstitutionTable({
             type="button"
             onClick={deleteDialog.onCancel}
             disabled={isDeleting}
+            icon={<X />}
           >
             Cancelar
           </AppButton>
@@ -172,8 +173,8 @@ function InstitutionTable({
             variant="destructive"
             onClick={deleteDialog.onConfirm}
             disabled={isDeleting}
+            icon={<Trash2 />}
           >
-            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Deletar
           </AppButton>
         </AppDialogFooter>

@@ -7,9 +7,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "./ui/dialog";
+import { cn } from "@/lib/utils";
 
 type AppDialogProps = {
   onSubmit?: React.FormEventHandler<HTMLFormElement>;
+  className?: string;
 } & ComponentProps<typeof Dialog>;
 
 type AppDialogTitleProps = { description?: ReactNode } & ComponentProps<
@@ -24,11 +26,16 @@ type AppDialogFooterProps = {
   children: React.ReactNode;
 };
 
-function AppDialog({ onSubmit, children, ...props }: AppDialogProps) {
+function AppDialog({
+  onSubmit,
+  children,
+  className,
+  ...props
+}: AppDialogProps) {
   if (onSubmit) {
     return (
       <Dialog {...props}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className={cn("sm:max-w-[425px]", className)}>
           <form onSubmit={onSubmit}>{children}</form>
         </DialogContent>
       </Dialog>
@@ -36,7 +43,9 @@ function AppDialog({ onSubmit, children, ...props }: AppDialogProps) {
   } else {
     return (
       <Dialog {...props}>
-        <DialogContent className="sm:max-w-[425px]">{children}</DialogContent>
+        <DialogContent className={cn("sm:max-w-[425px]", className)}>
+          {children}
+        </DialogContent>
       </Dialog>
     );
   }
