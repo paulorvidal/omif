@@ -13,15 +13,21 @@ import { Table } from "./pages/preview/table";
 import { LoginForm } from "./pages/login-form";
 import { InstitutionsPage } from "./pages/institution-page";
 import { EditionsPage } from "./pages/edition-page";
+import { StudentsPage } from "./pages/student-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
 import { EducatorsPage } from "./pages/educator-page";
 import { InstitutionForm } from "./pages/institution-form";
-
+import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
 
 import { EditionForm } from "./pages/edition-form";
-import { StepForm } from "./pages/step-form";
+import { StepForm } from "./pages/step-form"; 
+import { NoticeForm } from "./pages/notice-form";
+
+import { ProfileForm } from "./pages/profile-form";
+import { PrivateRoute } from "./utils/private-route";
+import { NoticesPage } from "./pages/notice-page";
 
 const router = createBrowserRouter([
   {
@@ -41,12 +47,22 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          <MainLayout />
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
         ),
         children: [
           {
             path: "/table",
             element: <Table />,
+          },
+          {
+            path: "/aviso",
+            element: <NoticeForm />,
+          },
+          {
+            path: "/perfil",
+            element: <ProfileForm />,
           },
           {
             path: "/instituicao",
@@ -65,6 +81,10 @@ const router = createBrowserRouter([
             element: <EditionForm />,
           },
           {
+            path: "/edicoes/:editionId/instituicao-inscricao",
+            element: <EnrollmentInstitutionForm />,
+          },
+          {
             path: "/edicao/:editionId/etapa",
             element: <StepForm />,
           },
@@ -80,6 +100,22 @@ const router = createBrowserRouter([
             path: "/educador/:id",
             element: <EducatorForm />,
           },
+          {
+            path: "/instituicoes",
+            element: <InstitutionsPage />,
+          },
+          {
+            path: "/estudantes",
+            element: <StudentsPage />,
+          },
+          {
+            path: "/edicoes",
+            element: <EditionsPage />,
+          },
+          {
+            path: "/avisos",
+            element: <NoticesPage />,
+          },
         ],
       },
       {
@@ -91,22 +127,6 @@ const router = createBrowserRouter([
         path: "/educador",
         element: <EducatorForm />,
       },
-
-      {
-        element: (
-          <MainLayout />
-        ),
-        children: [
-          {
-            path: "/instituicoes",
-            element: <InstitutionsPage />,
-          },
-          {
-            path: "/edicoes",
-            element: <EditionsPage />,
-          },
-        ],
-      }
     ],
   },
 ]);

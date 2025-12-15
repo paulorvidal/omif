@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Controller, useFieldArray } from "react-hook-form";
@@ -24,7 +23,15 @@ import {
 } from "@/components/ui/field";
 import { AppSelect } from "@/components/app-select";
 import { AppAsyncSelect } from "@/components/app-async-select";
-import { Delete, Plus, Edit, FileText, Loader2 } from "lucide-react";
+import {
+  Delete,
+  Plus,
+  Edit,
+  FileText,
+  Loader2,
+  Eraser,
+  Save,
+} from "lucide-react";
 import { AppCaptcha } from "@/components/app-captcha";
 
 import { AppCard } from "@/components/app-card";
@@ -498,7 +505,7 @@ function EnrollmentStudentForm() {
                     <div className="flex w-full justify-end gap-4">
                       <AppButton
                         type="button"
-                        icon={<Delete />}
+                        icon={<Eraser />}
                         variant="secondary"
                         onClick={handleReset}
                         disabled={isPending}
@@ -507,7 +514,7 @@ function EnrollmentStudentForm() {
                       </AppButton>
                       <AppButton
                         type="submit"
-                        icon={<Plus />}
+                        icon={<Save />}
                         isLoading={isPending}
                       >
                         Realizar Inscrição

@@ -12,7 +12,7 @@ export const findAllStudents = async (
 };
 
 export const deleteStudent = async (id: string) => {
-  console.log(id);
+  await api.delete(`/students/${id}`);
 };
 
 export const getStudentById = async (id: string) => {

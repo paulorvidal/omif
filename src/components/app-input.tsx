@@ -77,7 +77,7 @@ function AppInput({
         {...props}
       />
       {error && (
-        <FieldDescription className="text-destructive">
+        <FieldDescription className="text-destructive py-1">
           {error}
         </FieldDescription>
       )}
@@ -86,6 +86,3 @@ function AppInput({
 }
 
 export { AppInput };
-function setValue(val: string) {
-  throw new Error("Function not implemented.");
-}

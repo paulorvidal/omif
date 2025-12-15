@@ -5,9 +5,9 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 import {
-  useInstitutionTable,
-  type InstitutionCollumns,
-} from "@/hooks/use-institution-table";
+  useStudentTable,
+  type StudentColumns,
+} from "@/hooks/use-student-table";
 import {
   AppDialog,
   AppDialogContent,
@@ -20,15 +20,15 @@ import { AppSearchInput } from "@/components/app-search-input";
 import { AppGenericTable } from "@/components/app-generic-table";
 import { AppSelect } from "@/components/app-select";
 import { Field } from "@/components/ui/field";
-import { Filter, Loader2, Plus, Trash2, X } from "lucide-react";
 import { AppBadge } from "@/components/app-badge";
+import { Filter } from "lucide-react";
 import { redirectTo } from "@/utils/events";
 
-type InstitutionTableProps = ReturnType<typeof useInstitutionTable>;
+type StudentTableProps = ReturnType<typeof useStudentTable>;
 
 const getColumns = (
-  handleDeleteClick: (id: string) => void,
-): ColumnDef<InstitutionCollumns>[] => [
+  handleEditClick: (id: string) => void,
+): ColumnDef<StudentColumns>[] => [
   {
     accessorKey: "name",
     header: "Nome",
@@ -37,50 +37,50 @@ const getColumns = (
     ),
   },
   {
-    accessorKey: "inep",
-    header: "INEP",
+    accessorKey: "cpf",
+    header: "CPF",
+    cell: ({ row }) => (
+      <div className="w-36 truncate font-mono tracking-wide">
+        {row.original.cpf}
+      </div>
+    ),
   },
   {
     accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => (
-      <div className="w-40 truncate">
-        {row.original.email || (
-          <AppBadge type="warning">Não informado</AppBadge>
-        )}
-      </div>
-    ),
+    header: "E-mail",
+    cell: ({ row }) =>
+      row.original.email ? (
+        <div className="w-48 truncate">{row.original.email}</div>
+      ) : (
+        <AppBadge type="warning">Não informado</AppBadge>
+      ),
   },
   {
-    accessorKey: "coordinatorName",
-    header: "Coordenador",
-    cell: ({ row }) => (
-      <div className="w-40 truncate">
-        {row.original.coordinatorName || (
-          <AppBadge type="warning">Não informado</AppBadge>
-        )}
-      </div>
-    ),
+    accessorKey: "institutionName",
+    header: "Instituição",
+    cell: ({ row }) =>
+      row.original.institutionName ? (
+        <div className="w-48 truncate">{row.original.institutionName}</div>
+      ) : (
+        <AppBadge type="warning">Não informado</AppBadge>
+      ),
   },
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      return (
-        <AppActionsDropdownMenu
-          onEditClick={() => redirectTo("instituicao/" + row.original.id)}
-          onDeleteClick={() => handleDeleteClick(row.original.id)}
-        />
-      );
-    },
+    cell: ({ row }) => (
+      <AppActionsDropdownMenu
+        onEditClick={() => handleEditClick(row.original.id)}
+      />
+    ),
   },
 ];
 
 const sortOptions = [
   { value: "name,asc", label: "Nome (A-Z)" },
   { value: "name,desc", label: "Nome (Z-A)" },
-  { value: "inep,asc", label: "INEP (Crescente)" },
-  { value: "inep,desc", label: "INEP (Decrescente)" },
+  { value: "cpf,asc", label: "CPF (Crescente)" },
+  { value: "cpf,desc", label: "CPF (Decrescente)" },
 ];
 
 const sizeOptions = [
@@ -90,18 +90,15 @@ const sizeOptions = [
   { value: 100, label: "100" },
 ];
 
-function InstitutionTable({
+function StudentTable({
   data,
   pageCount,
   pagination,
   isLoading,
-  isDeleting,
   globalFilter,
   handleURLChange,
   filterDialog,
-  deleteDialog,
-  handleDeleteClick,
-}: InstitutionTableProps) {
+}: StudentTableProps) {
   const onPaginationChange: OnChangeFn<PaginationState> = (updater) => {
     const newState =
       typeof updater === "function" ? updater(pagination) : updater;
@@ -112,9 +109,13 @@ function InstitutionTable({
     });
   };
 
+  const handleEditClick = React.useCallback((studentId: string) => {
+    redirectTo(`estudante/${studentId}`);
+  }, []);
+
   const columns = React.useMemo(
-    () => getColumns(handleDeleteClick),
-    [handleDeleteClick],
+    () => getColumns(handleEditClick),
+    [handleEditClick],
   );
 
   return (
@@ -136,13 +137,6 @@ function InstitutionTable({
         >
           Filtros
         </AppButton>
-        <AppButton
-          icon={<Plus />}
-          type="button"
-          onClick={() => redirectTo("instituicao")}
-        >
-          Cadastrar
-        </AppButton>
       </div>
 
       <AppGenericTable
@@ -154,31 +148,6 @@ function InstitutionTable({
         onPaginationChange={onPaginationChange}
         getRowId={(row) => row.id}
       />
-
-      <AppDialog open={deleteDialog.open} onOpenChange={deleteDialog.onCancel}>
-        <AppDialogTitle description="Essa ação não pode ser desfeita. Isso irá deletar permanentemente a instituição.">
-          Você tem certeza?
-        </AppDialogTitle>
-        <AppDialogFooter>
-          <AppButton
-            variant="secondary"
-            type="button"
-            onClick={deleteDialog.onCancel}
-            disabled={isDeleting}
-            icon={<X />}
-          >
-            Cancelar
-          </AppButton>
-          <AppButton
-            variant="destructive"
-            onClick={deleteDialog.onConfirm}
-            disabled={isDeleting}
-            icon={<Trash2 />}
-          >
-            Deletar
-          </AppButton>
-        </AppDialogFooter>
-      </AppDialog>
 
       <AppDialog
         open={filterDialog.open}
@@ -222,4 +191,4 @@ function InstitutionTable({
   );
 }
 
-export { InstitutionTable };
+export { StudentTable };

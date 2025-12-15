@@ -15,9 +15,12 @@ import {
 import { showToast } from "../utils/events";
 import { ApiError } from "../services/api-error";
 import { fetchInstitutions } from "../services/institution-service";
-import { type ChangePasswordFormData } from "../components/dialog/ChangePasswordDialog";
-import { type ChangeEmailFormData } from "../components/dialog/ChangeEmailDialog";
-import { type ChangeInstitutionFormData } from "../components/dialog/ChangeInstitutionDialog";
+import { useDebounce } from "@/hooks/use-debounce";
+import type { Institution } from "@/types/institution-types";
+import type { PageResponse } from "@/types/default-types";
+import type { ChangeEmailFormData } from "@/pages/profile-form/change-email-dialog";
+import type { ChangePasswordFormData } from "@/pages/profile-form/change-password-dialog";
+import type { ChangeInstitutionFormData } from "@/pages/profile-form/change-institution-dialog";
 
 const profileValidationSchema = z.object({
   name: z.string().min(3, "O nome completo é obrigatório"),
@@ -46,6 +49,8 @@ export const useProfile = () => {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
   const [isInstitutionDialogOpen, setIsInstitutionDialogOpen] = useState(false);
+  const [institutionInput, setInstitutionInput] = useState("");
+  const debouncedInstitutionInput = useDebounce(institutionInput, 500);
 
   const {
     register,
@@ -61,6 +66,26 @@ export const useProfile = () => {
     queryKey: ["myData"],
     queryFn: getMyData,
   });
+
+  const { data: institutionOptions, isLoading: isInstitutionsLoading } =
+    useQuery({
+      queryKey: ["institutions", debouncedInstitutionInput],
+      queryFn: () =>
+        fetchInstitutions({
+          q: debouncedInstitutionInput,
+          page: 0,
+          size: 10,
+        }),
+      select: (data: PageResponse<Institution>) =>
+        data.content.map((institution) => ({
+          label: institution.name,
+          value: institution.id,
+        })),
+      enabled:
+        isInstitutionDialogOpen ||
+        !!debouncedInstitutionInput ||
+        institutionInput.length > 0,
+    });
 
   useEffect(() => {
     if (user) {
@@ -165,7 +190,7 @@ export const useProfile = () => {
     }) => {
       const { userId, formData } = variables;
       const payload = {
-        institutionId: formData.institution!.value,
+        institutionId: formData.institution,
       };
       return changeInstitution(userId, payload);
     },
@@ -227,16 +252,8 @@ export const useProfile = () => {
     }
   };
 
-  const loadInstitutions = async (inputValue: string) => {
-    const data = await queryClient.fetchQuery({
-      queryKey: ["institutions", inputValue],
-      queryFn: () => fetchInstitutions({ page: 0, size: 20, q: inputValue }),
-      staleTime: 1000 * 60 * 5,
-    });
-    return data.content.map((institution) => ({
-      value: institution.id,
-      label: institution.name,
-    }));
+  const handleEmailEditClick = () => {
+    setIsEmailDialogOpen(true);
   };
 
   const handleChangePassword = (data: ChangePasswordFormData) => {
@@ -253,10 +270,6 @@ export const useProfile = () => {
     } else {
       showToast("Erro: ID do usuário não encontrado.", "error");
     }
-  };
-
-  const handleEmailEditClick = () => {
-    setIsEmailDialogOpen(true);
   };
 
   const handleChangeInstitution = (data: ChangeInstitutionFormData) => {
@@ -282,7 +295,6 @@ export const useProfile = () => {
     closePictureEditDialog: () => setIsEditDialogOpen(false),
     handleSavePicture,
     handleDeletePicture,
-    loadInstitutions,
     isDirty,
     isPasswordDialogOpen,
     openPasswordDialog: () => setIsPasswordDialogOpen(true),
@@ -300,5 +312,8 @@ export const useProfile = () => {
     handleChangeInstitution,
     isChangingInstitution: institutionChangeMutation.isPending,
     handleEmailEditClick,
+    institutionOptions: institutionOptions ?? [],
+    isInstitutionsLoading,
+    setInstitutionInput,
   };
 };

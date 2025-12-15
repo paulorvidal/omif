@@ -3,7 +3,7 @@ import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
 import { AppAsyncSelect } from "@/components/app-async-select";
 import { AppCaptcha } from "@/components/app-captcha";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldGroup,
@@ -11,7 +11,7 @@ import {
   FieldLegend,
 } from "@/components/ui/field";
 import { useEducatorForm } from "../../hooks/use-educator-form";
-import { Delete, Plus } from "lucide-react";
+import { Eraser, Save } from "lucide-react";
 
 function EducatorForm() {
   const {
@@ -27,19 +27,14 @@ function EducatorForm() {
   } = useEducatorForm();
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center bg-gray-50 p-6 md:p-10">
-      <div className="w-full max-w-4xl">
-        <Card className="shadow-lg">
-          <CardHeader className="pb-2 text-center">
-            <CardTitle className="text-3xl font-bold text-gray-800">
-              Cadastre-se
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
+    <div className="flex min-h-svh w-full justify-center p-6 md:p-10">
+      <div className="w-full max-w-5xl">
+        <Card>
+          <CardContent>
             <form onSubmit={handleSubmit} noValidate>
               <FieldGroup>
                 <FieldSet>
-                  <FieldLegend>Dados Pessoais</FieldLegend>
+                  <FieldLegend className="mb-4">Cadastre-se</FieldLegend>
                   <FieldGroup>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
@@ -48,7 +43,6 @@ function EducatorForm() {
                           placeholder="Ex Nome Completo"
                           error={errors.name?.message}
                           register={register("name")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -57,11 +51,9 @@ function EducatorForm() {
                           placeholder="Ex Nome Social"
                           error={errors.socialName?.message}
                           register={register("socialName")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
-
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
                         <AppInput
@@ -70,7 +62,6 @@ function EducatorForm() {
                           mask="999.999.999-99"
                           error={errors.cpf?.message}
                           register={register("cpf")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -79,11 +70,9 @@ function EducatorForm() {
                           type="date"
                           error={errors.dateOfBirth?.message}
                           register={register("dateOfBirth")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
-
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
                         <AppInput
@@ -92,7 +81,6 @@ function EducatorForm() {
                           mask="(99)99999-9999"
                           error={errors.phoneNumber?.message}
                           register={register("phoneNumber")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -101,7 +89,6 @@ function EducatorForm() {
                           placeholder="Número do SIAPE"
                           error={errors.siape?.message}
                           register={register("siape")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
@@ -119,7 +106,6 @@ function EducatorForm() {
                           placeholder="exemplo@email.com"
                           error={errors.email?.message}
                           register={register("email")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -129,7 +115,6 @@ function EducatorForm() {
                           placeholder="exemplo@email.com"
                           error={errors.confirmEmail?.message}
                           register={register("confirmEmail")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
@@ -142,7 +127,6 @@ function EducatorForm() {
                           placeholder="Mínimo 6 caracteres"
                           error={errors.password?.message}
                           register={register("password")}
-                          className="bg-white"
                         />
                       </Field>
                       <Field>
@@ -152,7 +136,6 @@ function EducatorForm() {
                           placeholder="Digite a senha novamente"
                           error={errors.confirmPassword?.message}
                           register={register("confirmPassword")}
-                          className="bg-white"
                         />
                       </Field>
                     </div>
@@ -172,7 +155,6 @@ function EducatorForm() {
                         error={errors.institution?.message}
                         placeholder="Digite para buscar sua instituição..."
                         helpText="Selecione a instituição onde você leciona"
-                        className="bg-white"
                       />
                     </Field>
                   </FieldGroup>
@@ -203,7 +185,7 @@ function EducatorForm() {
                   <div className="flex w-full justify-end gap-4">
                     <AppButton
                       type="button"
-                      icon={<Delete />}
+                      icon={<Eraser />}
                       variant="secondary"
                       onClick={handleReset}
                       disabled={isPending}
@@ -212,7 +194,7 @@ function EducatorForm() {
                     </AppButton>
                     <AppButton
                       type="submit"
-                      icon={<Plus />}
+                      icon={<Save />}
                       isLoading={isPending}
                     >
                       Cadastrar

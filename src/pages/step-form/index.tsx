@@ -7,16 +7,20 @@ import {
   AppDialogFooter,
   AppDialogTitle,
 } from "@/components/app-dialog";
-import { Save, ChevronLeft, Delete, Trash2, Loader2 } from "lucide-react";
+import { Save, ChevronLeft, Trash2, Loader2, Eraser, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStepForm } from "@/hooks/use-step-form";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { stepService } from "@/services/step-service";
 import type { Step } from "@/types/step-types";
+import { brasiliaTimezoneHelperText } from "@/utils/timezone";
 
 export function StepForm() {
-  const { editionId, stepId } = useParams<{ editionId: string; stepId?: string }>();
+  const { editionId, stepId } = useParams<{
+    editionId: string;
+    stepId?: string;
+  }>();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step | undefined>();
   const [isLoadingStep, setIsLoadingStep] = useState(false);
@@ -37,7 +41,7 @@ export function StepForm() {
       try {
         const allSteps = await stepService.getAllSteps(editionId);
         setExistingSteps(allSteps);
-        
+
         if (stepId) {
           const foundStep = await stepService.getStepById(editionId, stepId);
           setStep(foundStep);
@@ -53,14 +57,15 @@ export function StepForm() {
     fetchStep();
   }, [editionId, stepId]);
 
-  const { form, isLoading, isDeleting, error, isEditing, onSubmit, onDelete } = useStepForm({
-    editionId,
-    step,
-    existingSteps,
-    onSuccess: () => {
-      navigate(`/edicoes`);
-    },
-  });
+  const { form, isLoading, isDeleting, error, isEditing, onSubmit, onDelete } =
+    useStepForm({
+      editionId,
+      step,
+      existingSteps,
+      onSuccess: () => {
+        navigate(`/edicoes`);
+      },
+    });
 
   useEffect(() => {
     if (error) {
@@ -82,7 +87,7 @@ export function StepForm() {
 
   return (
     <>
-      <div className="flex items-center gap-4 mb-6">
+      <div className="mb-6 flex items-center gap-4">
         <AppButton
           variant="secondary"
           className="size-8"
@@ -92,33 +97,35 @@ export function StepForm() {
           <ChevronLeft className="size-4" />
         </AppButton>
         <h1 className="text-3xl font-semibold">
-          {isEditing ? `Editar Etapa ${currentStepNumber}` : `Nova Etapa ${currentStepNumber}`}
+          {isEditing
+            ? `Editar Etapa ${currentStepNumber}`
+            : `Nova Etapa ${currentStepNumber}`}
         </h1>
       </div>
 
       <Card>
-        <CardContent className="pt-6">
+        <CardContent>
           <form onSubmit={onSubmit} noValidate>
             <FieldGroup>
               <FieldSet>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <Field>
                     <AppInput
-                      type="date"
+                      type="datetime-local"
                       label="Data de Início"
                       error={errors.startDate?.message}
                       register={register("startDate")}
-                      helpText="Data de início da etapa"
+                      helpText={brasiliaTimezoneHelperText}
                     />
                   </Field>
 
                   <Field>
                     <AppInput
-                      type="date"
+                      type="datetime-local"
                       label="Data de Término"
                       error={errors.endDate?.message}
                       register={register("endDate")}
-                      helpText="Data de término da etapa"
+                      helpText={brasiliaTimezoneHelperText}
                     />
                   </Field>
                 </div>
@@ -127,11 +134,11 @@ export function StepForm() {
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Field>
                       <AppInput
-                        type="date"
+                        type="datetime-local"
                         label="Data de Liberação da Nota"
                         error={errors.endDateForReleaseOfNote?.message}
                         register={register("endDateForReleaseOfNote")}
-                        helpText="Data em que as notas serão liberadas"
+                        helpText={brasiliaTimezoneHelperText}
                       />
                     </Field>
 
@@ -142,7 +149,8 @@ export function StepForm() {
                         placeholder="0.0"
                         error={errors.cutOffScore?.message}
                         register={register("cutOffScore", {
-                          setValueAs: (value) => value === "" ? undefined : parseFloat(value),
+                          setValueAs: (value) =>
+                            value === "" ? undefined : parseFloat(value),
                         })}
                         step="0.1"
                         min="0"
@@ -161,11 +169,11 @@ export function StepForm() {
                     variant="secondary"
                     onClick={() => reset()}
                     disabled={isLoading}
-                    icon={<Delete />}
+                    icon={<Eraser />}
                   >
                     Limpar
                   </AppButton>
-                  
+
                   {isEditing && (
                     <AppButton
                       type="button"
@@ -179,12 +187,7 @@ export function StepForm() {
                   )}
                 </div>
 
-                <AppButton
-                  type="submit"
-                  icon={<Save />}
-                  isLoading={isLoading}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
+                <AppButton type="submit" icon={<Save />} isLoading={isLoading}>
                   {isEditing ? "Salvar Alterações" : "Cadastrar"}
                 </AppButton>
               </div>
@@ -193,10 +196,7 @@ export function StepForm() {
         </CardContent>
       </Card>
 
-      <AppDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-      >
+      <AppDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AppDialogTitle description="Essa ação não pode ser desfeita. Isso irá deletar permanentemente a etapa.">
           Você tem certeza?
         </AppDialogTitle>
@@ -205,16 +205,17 @@ export function StepForm() {
             variant="secondary"
             type="button"
             onClick={() => setShowDeleteDialog(false)}
-            disabled={isDeleting}
+            isLoading={isDeleting}
+            icon={<X />}
           >
             Cancelar
           </AppButton>
           <AppButton
             variant="destructive"
             onClick={onDelete}
-            disabled={isDeleting}
+            isLoading={isDeleting}
+            icon={<Trash2 />}
           >
-            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Deletar
           </AppButton>
         </AppDialogFooter>

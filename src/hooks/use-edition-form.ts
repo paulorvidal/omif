@@ -160,8 +160,16 @@ export const useEditionForm = ({ editionId }: UseEditionFormProps) => {
 
   useEffect(() => {
     if (editionData) {
-      const formatDateForInput = (dateString: string) =>
-        dateString ? new Date(dateString).toISOString().slice(0, 16) : "";
+      const formatDateForInput = (dateString: string) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+
+        const offset = date.getTimezoneOffset();
+
+        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+
+        return localDate.toISOString().slice(0, 16);
+      };
 
       const numericWage = Number(editionData.minimumWage);
 
