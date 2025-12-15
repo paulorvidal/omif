@@ -17,12 +17,12 @@ import { StudentsPage } from "./pages/student-page";
 
 import { EnrollmentStudentForm } from "./pages/enrollment-student-form";
 import { EducatorForm } from "./pages/educator-form";
+import { EducatorsPage } from "./pages/educator-page";
 import { InstitutionForm } from "./pages/institution-form";
 import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
 
 import { EditionForm } from "./pages/edition-form";
-import { StepForm } from "./pages/step-form";
-import { AppTextEditor } from "./components/app-text-editor";
+import { StepForm } from "./pages/step-form"; 
 import { NoticeForm } from "./pages/notice-form";
 
 import { ProfileForm } from "./pages/profile-form";
@@ -93,6 +93,14 @@ const router = createBrowserRouter([
             element: <StepForm />,
           },
           {
+            path: "/educadores",
+            element: <EducatorsPage />,
+          },
+          {
+            path: "/educador/:id",
+            element: <EducatorForm />,
+          },
+          {
             path: "/instituicoes",
             element: <InstitutionsPage />,
           },
@@ -114,6 +122,7 @@ const router = createBrowserRouter([
         path: "/edicoes/:editionYear/estudantes-inscricao",
         element: <EnrollmentStudentForm />,
       },
+
       {
         path: "/educador",
         element: <EducatorForm />,
