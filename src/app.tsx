@@ -24,8 +24,7 @@ import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
 
 import { ProfileForm } from "./pages/profile-form";
-import { PrivateRoute } from "./components/private-route";
-
+import { PrivateRoute } from "./utils/private-route";
 const router = createBrowserRouter([
   {
     element: <RootLayout />,

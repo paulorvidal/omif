@@ -5,7 +5,7 @@ import {
     Field,
     FieldGroup,
     FieldSet,
-    FieldLegend
+    FieldLegend,
 } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
@@ -79,7 +79,6 @@ export function EnrollmentInstitutionForm() {
     return (
         <div className="flex min-h-svh w-full justify-center p-6 md:p-10">
             <div className="w-full max-w-5xl">
-
                 <div className="flex items-center gap-4 mb-6">
                     <AppButton
                         variant="secondary"
@@ -119,7 +118,7 @@ export function EnrollmentInstitutionForm() {
                     <div className="mb-6">
                         <AppCard
                             title="Dados Cadastrais Incompletos"
-                            description="Sua instituição não possui um e-mail principal cadastrado no sistema. Atualize o cadastro geral da instituição antes de se inscrever."
+                            description="Alguns dados obrigatórios (como e-mail) não foram encontrados. Por favor, preencha os campos abaixo para realizar a inscrição."
                             type="warning"
                         />
                     </div>
@@ -129,7 +128,6 @@ export function EnrollmentInstitutionForm() {
                     <CardContent className="pt-6">
                         <form onSubmit={handleFormSubmit} noValidate>
                             <FieldGroup>
-
                                 <FieldSet>
                                     <FieldLegend>Dados da Instituição</FieldLegend>
 
@@ -139,7 +137,7 @@ export function EnrollmentInstitutionForm() {
                                             placeholder="Carregando..."
                                             error={errors.name?.message}
                                             register={register("name")}
-                                            disabled={true}
+                                            disabled={isAlreadyEnrolled}
                                         />
                                     </Field>
 
@@ -150,7 +148,7 @@ export function EnrollmentInstitutionForm() {
                                                 placeholder="-"
                                                 error={errors.inep?.message}
                                                 register={register("inep")}
-                                                disabled={true}
+                                                disabled={isAlreadyEnrolled}
                                             />
                                         </Field>
 
@@ -161,7 +159,7 @@ export function EnrollmentInstitutionForm() {
                                                 mask="(99)99999-9999"
                                                 error={errors.phoneNumber?.message}
                                                 register={register("phoneNumber")}
-                                                disabled={true}
+                                                disabled={isAlreadyEnrolled}
                                             />
                                         </Field>
                                     </div>
@@ -177,14 +175,16 @@ export function EnrollmentInstitutionForm() {
                                             type="email"
                                             label="E-mail Principal"
                                             placeholder="-"
-                                            className={!hasRequiredInfo ? "border-destructive opacity-100" : ""}
+                                            className={
+                                                !hasRequiredInfo ? "border-destructive opacity-100" : ""
+                                            }
                                             error={errors.email1?.message}
                                             register={register("email1")}
-                                            disabled={true}
+                                            disabled={isAlreadyEnrolled}
                                         />
                                         {!hasRequiredInfo && (
                                             <p className="text-sm font-medium text-destructive mt-1">
-                                                * E-mail obrigatório não encontrado no cadastro.
+                                                * Obrigatório. Preencha para prosseguir.
                                             </p>
                                         )}
                                     </Field>
@@ -194,10 +194,10 @@ export function EnrollmentInstitutionForm() {
                                             <AppInput
                                                 type="email"
                                                 label="E-mail Secundário"
-                                                placeholder="-"
+                                                placeholder="Ex: email@escola.com"
                                                 error={errors.email2?.message}
                                                 register={register("email2")}
-                                                disabled={true}
+                                                disabled={isAlreadyEnrolled}
                                             />
                                         </Field>
 
@@ -205,17 +205,17 @@ export function EnrollmentInstitutionForm() {
                                             <AppInput
                                                 type="email"
                                                 label="E-mail Adicional"
-                                                placeholder="-"
+                                                placeholder="Ex: email@escola.com"
                                                 error={errors.email3?.message}
                                                 register={register("email3")}
-                                                disabled={true}
+                                                disabled={isAlreadyEnrolled}
                                             />
                                         </Field>
                                     </div>
                                 </FieldSet>
 
-                                {/* Botão de ação simplificado: Apenas Registrar */}
-                                {!isAlreadyEnrolled && hasRequiredInfo && (
+
+                                {!isAlreadyEnrolled && (
                                     <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t mt-4">
                                         <AppButton
                                             type="submit"
@@ -227,7 +227,6 @@ export function EnrollmentInstitutionForm() {
                                         </AppButton>
                                     </div>
                                 )}
-
                             </FieldGroup>
                         </form>
                     </CardContent>
