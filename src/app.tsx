@@ -22,9 +22,12 @@ import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
 
 import { EditionForm } from "./pages/edition-form";
 import { StepForm } from "./pages/step-form";
+import { AppTextEditor } from "./components/app-text-editor";
+import { NoticeForm } from "./pages/notice-form";
 
 import { ProfileForm } from "./pages/profile-form";
 import { PrivateRoute } from "./utils/private-route";
+import { NoticesPage } from "./pages/notice-page";
 
 const router = createBrowserRouter([
   {
@@ -54,12 +57,16 @@ const router = createBrowserRouter([
             element: <Table />,
           },
           {
-            path: "/instituicao",
-            element: <InstitutionForm />,
+            path: "/aviso",
+            element: <NoticeForm />,
           },
           {
             path: "/perfil",
             element: <ProfileForm />,
+          },
+          {
+            path: "/instituicao",
+            element: <InstitutionForm />,
           },
           {
             path: "/instituicao/:id",
@@ -96,6 +103,10 @@ const router = createBrowserRouter([
           {
             path: "/edicoes",
             element: <EditionsPage />,
+          },
+          {
+            path: "/avisos",
+            element: <NoticesPage />,
           },
         ],
       },
