@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
-import { Save, ChevronLeft, Eraser } from "lucide-react";
+import { Save, ChevronLeft, Eraser, BookOpenText } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEditionForm } from "../../hooks/use-edition-form";
 import { maskCurrency } from "../../utils/formatters";
@@ -46,9 +46,14 @@ export function EditionForm() {
         >
           <ChevronLeft className="size-4" />
         </AppButton>
-        <h1 className="text-3xl font-semibold">
-          {isEditMode ? "Editar Edição" : "Nova Edição"}
-        </h1>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <BookOpenText className="text-primary h-6 w-6" />
+            <h1 className="text-2xl font-bold tracking-tight">
+              {isEditMode ? "Editar Edição" : "Nova Edição"}
+            </h1>
+          </div>
+        </div>
       </div>
 
       <Card>

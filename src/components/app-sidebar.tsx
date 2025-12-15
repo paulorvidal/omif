@@ -7,7 +7,6 @@ import {
   BookOpenText,
   Building2,
   FileSpreadsheet,
-  GraduationCap,
   IdCard,
   LogOut,
   Settings,
