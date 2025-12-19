@@ -38,7 +38,7 @@ export function EnrollmentInstitutionForm() {
     if (!isValidYear) {
         return (
             <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-                <div className="max-w-md w-full">
+                <div className="max-w-md w-full mx-auto">
                     <AppCard
                         title="URL Incorreta"
                         description={`Por favor, acesse usando o ANO da edição (ex: /edicoes/2024/...).`}
@@ -51,27 +51,6 @@ export function EnrollmentInstitutionForm() {
                         </AppButton>
                     </div>
                 </div>
-            </div>
-        );
-    }
-
-    if (isLoadingStatus) {
-        return (
-            <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 gap-2">
-                <Loader2 className="text-primary size-8 animate-spin" />
-                <span className="text-muted-foreground">Carregando dados...</span>
-            </div>
-        );
-    }
-
-    if (isError) {
-        return (
-            <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-                <AppCard
-                    title="Erro ao carregar"
-                    description="Não foi possível encontrar os dados. Verifique sua conexão ou se a edição existe."
-                    type="error"
-                />
             </div>
         );
     }
@@ -102,30 +81,47 @@ export function EnrollmentInstitutionForm() {
                     </div>
                 </div>
 
-                {isAlreadyEnrolled && (
-                    <div className="mb-6 flex justify-center">
-                        <div className="w-full max-w-md">
+                <div className="flex flex-col items-center gap-4 mb-6 w-full">
+
+                    {isError && (
+                        <div className="w-full max-w-md text-center mx-auto">
+                            <AppCard
+                                title="Erro ao carregar"
+                                description="Não foi possível encontrar os dados. Verifique sua conexão ou se a edição existe."
+                                type="error"
+                            />
+                        </div>
+                    )}
+
+                    {isAlreadyEnrolled && (
+                        <div className="w-full max-w-md text-center mx-auto">
                             <AppCard
                                 title="Inscrição Realizada"
                                 description="Sua instituição já está registrada nesta edição."
                                 type="success"
                             />
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {!isAlreadyEnrolled && !hasRequiredInfo && (
-                    <div className="mb-6">
-                        <AppCard
-                            title="Dados Cadastrais Incompletos"
-                            description="Alguns dados obrigatórios (como e-mail) não foram encontrados. Por favor, preencha os campos abaixo para realizar a inscrição."
-                            type="warning"
-                        />
-                    </div>
-                )}
+                    {!isAlreadyEnrolled && !hasRequiredInfo && !isLoadingStatus && !isError && (
+                        <div className="w-full max-w-2xl text-center mx-auto">
+                            <AppCard
+                                title="Dados Cadastrais Incompletos"
+                                description="Alguns dados obrigatórios (como e-mail) não foram encontrados. Por favor, preencha os campos abaixo para realizar a inscrição."
+                                type="warning"
+                            />
+                        </div>
+                    )}
+                </div>
 
                 <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-6 relative">
+                        {isLoadingStatus && (
+                            <div className="absolute top-4 right-4">
+                                <Loader2 className="size-5 animate-spin text-primary/60" />
+                            </div>
+                        )}
+
                         <form onSubmit={handleFormSubmit} noValidate>
                             <FieldGroup>
                                 <FieldSet>
@@ -134,10 +130,10 @@ export function EnrollmentInstitutionForm() {
                                     <Field>
                                         <AppInput
                                             label="Nome da Instituição"
-                                            placeholder="Carregando..."
+                                            placeholder={isLoadingStatus ? "Carregando..." : "Nome da escola"}
                                             error={errors.name?.message}
                                             register={register("name")}
-                                            disabled={isAlreadyEnrolled}
+                                            disabled={isAlreadyEnrolled || isLoadingStatus}
                                         />
                                     </Field>
 
@@ -148,7 +144,7 @@ export function EnrollmentInstitutionForm() {
                                                 placeholder="-"
                                                 error={errors.inep?.message}
                                                 register={register("inep")}
-                                                disabled={isAlreadyEnrolled}
+                                                disabled={isAlreadyEnrolled || isLoadingStatus}
                                             />
                                         </Field>
 
@@ -159,7 +155,7 @@ export function EnrollmentInstitutionForm() {
                                                 mask="(99)99999-9999"
                                                 error={errors.phoneNumber?.message}
                                                 register={register("phoneNumber")}
-                                                disabled={isAlreadyEnrolled}
+                                                disabled={isAlreadyEnrolled || isLoadingStatus}
                                             />
                                         </Field>
                                     </div>
@@ -176,13 +172,13 @@ export function EnrollmentInstitutionForm() {
                                             label="E-mail Principal"
                                             placeholder="-"
                                             className={
-                                                !hasRequiredInfo ? "border-destructive opacity-100" : ""
+                                                !hasRequiredInfo && !isLoadingStatus ? "border-destructive opacity-100" : ""
                                             }
                                             error={errors.email1?.message}
                                             register={register("email1")}
-                                            disabled={isAlreadyEnrolled}
+                                            disabled={isAlreadyEnrolled || isLoadingStatus}
                                         />
-                                        {!hasRequiredInfo && (
+                                        {!hasRequiredInfo && !isLoadingStatus && (
                                             <p className="text-sm font-medium text-destructive mt-1">
                                                 * Obrigatório. Preencha para prosseguir.
                                             </p>
@@ -197,7 +193,7 @@ export function EnrollmentInstitutionForm() {
                                                 placeholder="Ex: email@escola.com"
                                                 error={errors.email2?.message}
                                                 register={register("email2")}
-                                                disabled={isAlreadyEnrolled}
+                                                disabled={isAlreadyEnrolled || isLoadingStatus}
                                             />
                                         </Field>
 
@@ -208,12 +204,11 @@ export function EnrollmentInstitutionForm() {
                                                 placeholder="Ex: email@escola.com"
                                                 error={errors.email3?.message}
                                                 register={register("email3")}
-                                                disabled={isAlreadyEnrolled}
+                                                disabled={isAlreadyEnrolled || isLoadingStatus}
                                             />
                                         </Field>
                                     </div>
                                 </FieldSet>
-
 
                                 {!isAlreadyEnrolled && (
                                     <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t mt-4">
@@ -222,6 +217,7 @@ export function EnrollmentInstitutionForm() {
                                             className="bg-primary hover:bg-primary/90 text-primary-foreground"
                                             icon={<Save />}
                                             isLoading={isSubmitting}
+                                            disabled={isLoadingStatus}
                                         >
                                             Registrar
                                         </AppButton>
