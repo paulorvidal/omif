@@ -8,7 +8,7 @@ import { AppCaptcha } from "@/components/app-captcha";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldSet, FieldLegend } from "@/components/ui/field";
 import { useEducatorForm } from "../../hooks/use-educator-form";
-import { Eraser, Save, Loader2, ChevronLeft } from "lucide-react";
+import { Eraser, Save, Loader2, ChevronLeft, GraduationCap } from "lucide-react";
 
 function EducatorForm() {
   const navigate = useNavigate();
@@ -41,17 +41,23 @@ function EducatorForm() {
       <div className="mb-6 flex w-full max-w-5xl items-center gap-4">
         <AppButton
           variant="secondary"
-          className="size-10"
+          className="size-8"
           size="icon"
           onClick={() => navigate(-1)}
           title="Voltar"
           type="button"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className="h-4 w-4" />
         </AppButton>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {isEditMode ? "Editar Educador" : "Cadastro de Educador"}
-        </h1>
+
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <GraduationCap className="text-primary h-6 w-6" />
+            <h1 className="text-2xl font-bold tracking-tight">
+              {isEditMode ? "Editar Educador" : "Cadastro de Educador"}
+            </h1>
+          </div>
+        </div>
       </div>
 
       <div className="w-full max-w-5xl">
