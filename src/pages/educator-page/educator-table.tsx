@@ -13,11 +13,10 @@ import {
     AppDialogFooter,
     AppDialogTitle,
 } from "@/components/app-dialog";
-import { AppActionsDropdownMenu } from "@/components/app-actions-dropdown-menu";
 import { AppGenericTable } from "@/components/app-generic-table";
 import { AppSelect } from "@/components/app-select";
 import { Field } from "@/components/ui/field";
-import { Filter, CheckCircle, XCircle, ChevronDown, Settings2 } from "lucide-react";
+import { Filter, Check, X, Edit } from "lucide-react";
 import { AppBadge } from "@/components/app-badge";
 import { redirectTo } from "@/utils/events";
 import { useEducatorTable } from "@/hooks/use-educator-table";
@@ -25,13 +24,6 @@ import type { FindAllEducatorsResponse } from "@/types/educator-types";
 import { AppSearchInput } from "@/components/app-search-input";
 import { AppButton } from "@/components/app-button";
 import { AppCheckbox } from "@/components/app-checkbox";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type EducatorTableProps = ReturnType<typeof useEducatorTable>;
 
@@ -47,53 +39,60 @@ const getColumns = (
         {
             id: "select",
             header: () => (
-                <div className="pl-4">
-                    <AppCheckbox
-                        isHeader
-                        checked={allSelected || (indeterminate && "indeterminate")}
-                        onCheckedChange={(value) => onToggleAll(!!value)}
-                    />
-                </div>
+                <AppCheckbox
+                    isHeader
+                    checked={allSelected || (indeterminate && "indeterminate")}
+                    onCheckedChange={(value) => onToggleAll(!!value)}
+                />
             ),
             cell: ({ row }) => (
-                <div className="pl-4">
-                    <AppCheckbox
-                        // Verifica se o ID desta linha está no nosso estado local
-                        checked={!!rowSelection[row.original.id]}
-                        onCheckedChange={(value) => onToggleRow(row.original.id, !!value)}
-                    />
-                </div>
+                <AppCheckbox
+                    checked={!!rowSelection[row.original.id]}
+                    onCheckedChange={(value) => onToggleRow(row.original.id, !!value)}
+                />
             ),
             enableSorting: false,
             enableHiding: false,
-            size: 50,
+            size: 48,
         },
         {
             accessorKey: "socialName",
             header: "Nome Social",
             cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <span className="truncate font-medium">{row.original.socialName}</span>
-                    <span className="text-xs text-muted-foreground">{row.original.role}</span>
+                    <span className="w-48 truncate font-medium">
+                        {row.original.socialName}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                        {row.original.role}
+                    </span>
                 </div>
             ),
         },
         {
             accessorKey: "email",
             header: "Email",
-            cell: ({ row }) => <div className="truncate max-w-[200px]">{row.original.email}</div>,
+            cell: ({ row }) => (
+                <div className="w-48 truncate">{row.original.email}</div>
+            ),
         },
         {
             accessorKey: "institutionName",
             header: "Instituição",
             cell: ({ row }) => (
-                <div className="truncate max-w-[200px]">{row.original.institutionName || "-"}</div>
+                <div className="w-48 truncate">
+                    {row.original.institutionName || "-"}
+                </div>
             ),
         },
         {
             accessorKey: "siape",
             header: "SIAPE",
-            cell: ({ row }) => <span>{row.original.siape || "-"}</span>,
+            cell: ({ row }) => (
+                <div className="w-36 truncate font-mono tracking-wide">
+                    {row.original.siape || "-"}
+                </div>
+            ),
         },
         {
             accessorKey: "validated",
@@ -112,29 +111,41 @@ const getColumns = (
             enableHiding: false,
             cell: ({ row }) => {
                 const educator = row.original;
+                const isValid = educator.validated;
+
                 return (
-                    <AppActionsDropdownMenu
-                        onEditClick={() => redirectTo("educador/" + educator.id)}
-                        onDeleteClick={() => { }}
-                    >
-                        {!educator.validated ? (
-                            <div
-                                onClick={() => onValidate(educator.id)}
-                                className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                            >
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                <span>Validar Acesso</span>
-                            </div>
-                        ) : (
-                            <div
-                                onClick={() => onInvalidate(educator.id)}
-                                className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                            >
-                                <XCircle className="mr-2 h-4 w-4" />
-                                <span>Invalidar Acesso</span>
-                            </div>
-                        )}
-                    </AppActionsDropdownMenu>
+                    <div className="ml-auto flex w-full items-center justify-end gap-2">
+                        <AppButton
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => redirectTo("educador/" + educator.id)}
+                            title="Editar"
+                        >
+                            <Edit className="size-4" />
+                        </AppButton>
+
+                        <AppButton
+                            variant="secondary"
+                            size="sm"
+                            type="button"
+                            onClick={() => onInvalidate(educator.id)}
+                            title="Invalidar Acesso"
+                            disabled={!isValid}
+                        >
+                            Invalidar
+                        </AppButton>
+
+                        <AppButton
+                            size="sm"
+                            type="button"
+                            onClick={() => onValidate(educator.id)}
+                            title="Validar Acesso"
+                            disabled={isValid}
+                        >
+                            Validar
+                        </AppButton>
+                    </div>
                 );
             },
         },
@@ -166,14 +177,19 @@ function EducatorTable({
     bulkUnvalidate,
 }: EducatorTableProps) {
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+    const [confirmAction, setConfirmAction] = useState<
+        "validate" | "invalidate" | null
+    >(null);
+    const [isActionLoading, setIsActionLoading] = useState(false);
 
     const onPaginationChange: OnChangeFn<PaginationState> = (updater) => {
-        const newState = typeof updater === "function" ? updater(pagination) : updater;
+        const newState =
+            typeof updater === "function" ? updater(pagination) : updater;
         handleURLChange({ page: newState.pageIndex, size: newState.pageSize });
     };
 
     const handleToggleRow = (id: string, checked: boolean) => {
-        setRowSelection(prev => {
+        setRowSelection((prev) => {
             const next = { ...prev };
             if (checked) {
                 next[id] = true;
@@ -187,7 +203,7 @@ function EducatorTable({
     const handleToggleAll = (checked: boolean) => {
         if (checked) {
             const newSelection: RowSelectionState = {};
-            data.forEach(row => {
+            data.forEach((row: FindAllEducatorsResponse) => {
                 newSelection[row.id] = true;
             });
             setRowSelection(newSelection);
@@ -203,32 +219,49 @@ function EducatorTable({
     const handleValidateSingle = (id: string) => validateEducators([id]);
     const handleInvalidateSingle = (id: string) => bulkUnvalidate([id]);
 
-    const handleBulkInvalidate = () => {
+    const handleBulkInvalidateClick = () => setConfirmAction("invalidate");
+    const handleBulkValidateClick = () => setConfirmAction("validate");
+    const handleCancelBulk = () => setConfirmAction(null);
+
+    const handleConfirmBulk = async () => {
         const ids = Object.keys(rowSelection);
-        if (ids.length > 0) {
-            bulkUnvalidate(ids);
+        if (ids.length === 0) return;
+
+        setIsActionLoading(true);
+        try {
+            if (confirmAction === "validate") {
+                await validateEducators(ids);
+            } else {
+                await bulkUnvalidate(ids);
+            }
             setRowSelection({});
+            setConfirmAction(null);
+        } finally {
+            setIsActionLoading(false);
         }
     };
 
-    const handleBulkValidate = () => {
-        const ids = Object.keys(rowSelection);
-        if (ids.length > 0) {
-            validateEducators(ids);
-            setRowSelection({});
-        }
-    };
+    const confirmDialogTitle =
+        confirmAction === "validate"
+            ? "Confirmar validação em massa"
+            : "Confirmar invalidação em massa";
+
+    const confirmButtonLabel = confirmAction === "validate" ? "Validar" : "Invalidar";
+
+    const confirmVariant =
+        confirmAction === "validate" ? "default" : "destructive";
 
     const columns = React.useMemo(
-        () => getColumns(
-            handleValidateSingle,
-            handleInvalidateSingle,
-            rowSelection,
-            handleToggleRow,
-            handleToggleAll,
-            allSelected,
-            indeterminate
-        ),
+        () =>
+            getColumns(
+                handleValidateSingle,
+                handleInvalidateSingle,
+                rowSelection,
+                handleToggleRow,
+                handleToggleAll,
+                allSelected,
+                indeterminate
+            ),
         [validateEducators, bulkUnvalidate, rowSelection, data]
     );
 
@@ -253,48 +286,84 @@ function EducatorTable({
                     >
                         Filtros
                     </AppButton>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <AppButton
-                                variant="outline"
-                                className="gap-2 min-w-[140px]"
-                                disabled={selectedCount === 0}
-                            >
-                                <Settings2 className="h-4 w-4" />
-                                {selectedCount > 0 ? `Gerenciar (${selectedCount})` : "Gerenciar"}
-                                <ChevronDown className="h-4 w-4 opacity-50" />
-                            </AppButton>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
-                            <DropdownMenuItem
-                                onClick={handleBulkValidate}
-                                className="cursor-pointer text-green-600 focus:text-green-700 focus:bg-green-50"
-                            >
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Validar Selecionados
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={handleBulkInvalidate}
-                                className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-                            >
-                                <XCircle className="mr-2 h-4 w-4" />
-                                Invalidar Selecionados
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
             </div>
 
-            <AppGenericTable
-                data={data}
-                columns={columns}
-                pageCount={pageCount}
-                pagination={pagination}
-                isLoading={isLoading}
-                onPaginationChange={onPaginationChange}
-                getRowId={(row) => row.id}
-            />
+            <AppDialog
+                open={confirmAction !== null}
+                onOpenChange={(isOpen) => {
+                    if (!isOpen) handleCancelBulk();
+                }}
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    handleConfirmBulk();
+                }}
+            >
+                <AppDialogTitle>{confirmDialogTitle}</AppDialogTitle>
+                <AppDialogContent>
+                    <p>
+                        Tem certeza de que deseja{" "}
+                        {confirmAction === "validate" ? "validar" : "invalidar"}{" "}
+                        <span className="font-semibold">{selectedCount}</span> educador(es)?
+                    </p>
+                </AppDialogContent>
+                <AppDialogFooter>
+                    <AppButton
+                        variant="secondary"
+                        type="button"
+                        onClick={handleCancelBulk}
+                        disabled={isActionLoading}
+                    >
+                        Cancelar
+                    </AppButton>
+                    <AppButton
+                        type="submit"
+                        variant={confirmVariant}
+                        isLoading={isActionLoading}
+                    >
+                        {confirmButtonLabel} selecionados
+                    </AppButton>
+                </AppDialogFooter>
+            </AppDialog>
+
+            <div className={`relative ${selectedCount > 0 ? "pt-20" : ""}`}>
+                {selectedCount > 0 && (
+                    <div className="absolute inset-x-0 top-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed border-muted-foreground/40 bg-background px-4 py-3 text-sm">
+                        <p className="font-medium text-foreground">
+                            {selectedCount} selecionado(s)
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            <AppButton
+                                variant="outline"
+                                type="button"
+                                icon={<X className="size-4" />}
+                                onClick={handleBulkInvalidateClick}
+                                disabled={isActionLoading}
+                            >
+                                Invalidar selecionados
+                            </AppButton>
+                            <AppButton
+                                type="button"
+                                icon={<Check className="size-4" />}
+                                onClick={handleBulkValidateClick}
+                                disabled={isActionLoading}
+                            >
+                                Validar selecionados
+                            </AppButton>
+                        </div>
+                    </div>
+                )}
+
+                <AppGenericTable
+                    data={data}
+                    columns={columns}
+                    pageCount={pageCount}
+                    pagination={pagination}
+                    isLoading={isLoading}
+                    onPaginationChange={onPaginationChange}
+                    getRowId={(row) => row.id}
+                />
+            </div>
 
             <AppDialog
                 open={filterDialog.open}
@@ -321,7 +390,11 @@ function EducatorTable({
                     </Field>
                 </AppDialogContent>
                 <AppDialogFooter>
-                    <AppButton variant="secondary" type="button" onClick={filterDialog.onClose}>
+                    <AppButton
+                        variant="secondary"
+                        type="button"
+                        onClick={filterDialog.onClose}
+                    >
                         Cancelar
                     </AppButton>
                     <AppButton type="submit">Aplicar</AppButton>
