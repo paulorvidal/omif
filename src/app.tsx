@@ -22,7 +22,7 @@ import { InstitutionForm } from "./pages/institution-form";
 import { EnrollmentInstitutionForm } from "./pages/enrollment-institution-form";
 
 import { EditionForm } from "./pages/edition-form";
-import { StepForm } from "./pages/step-form"; 
+import { StepForm } from "./pages/step-form";
 import { NoticeForm } from "./pages/notice-form";
 
 import { ProfileForm } from "./pages/profile-form";

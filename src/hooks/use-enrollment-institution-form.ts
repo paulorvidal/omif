@@ -45,7 +45,7 @@ export const useEnrollmentInstitutionForm = ({
     register,
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors },
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(EnrollmentFormSchema),
@@ -58,9 +58,9 @@ export const useEnrollmentInstitutionForm = ({
   } = useQuery({
     queryKey: ["enrollmentStatus", editionYear],
     queryFn: () => getEnrollmentStatus(editionYear!),
-
     enabled: !!editionYear,
   });
+
   useEffect(() => {
     if (enrollmentStatus?.institution) {
       const { institution } = enrollmentStatus;
@@ -78,9 +78,9 @@ export const useEnrollmentInstitutionForm = ({
   const { mutate: submitEnrollment, isPending: isSubmitting } = useMutation({
     mutationFn: (payload: EnrollmentPayload) =>
       enrollInEdition(editionYear, payload),
-    onSuccess: () => {
+    onSuccess: async () => {
       showToast("Inscrição realizada com sucesso!", "success");
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["enrollmentStatus", editionYear],
       });
     },
@@ -94,27 +94,14 @@ export const useEnrollmentInstitutionForm = ({
   });
 
   const handleFormSubmit = handleSubmit((data: FormData) => {
-    let payload: EnrollmentPayload;
-
-    if (isDirty) {
-      payload = {
-        name: data.name,
-        inep: data.inep || null,
-        phoneNumber: data.phoneNumber,
-        email1: data.email1,
-        email2: data.email2 || null,
-        email3: data.email3 || null,
-      };
-    } else {
-      payload = {
-        name: null,
-        inep: null,
-        phoneNumber: null,
-        email1: null,
-        email2: null,
-        email3: null,
-      };
-    }
+    const payload: EnrollmentPayload = {
+      name: data.name,
+      inep: data.inep || null,
+      phoneNumber: data.phoneNumber,
+      email1: data.email1,
+      email2: data.email2 || null,
+      email3: data.email3 || null,
+    };
 
     submitEnrollment(payload);
   });
