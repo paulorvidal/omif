@@ -32,18 +32,6 @@ export const usePasswordRecovery = (token: string) => {
     resolver: zodResolver(passwordRecoverySchema),
   });
 
-  const {
-    isLoading: isValidationLoading,
-    isError: isValidationError,
-    error: validationError,
-  } = useQuery({
-    queryKey: ["validatePasswordToken", token],
-    queryFn: () => validateRecoveryToken(token),
-    enabled: !!token,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-
   const { mutate, isPending: isSubmitting } = useMutation({
     mutationFn: (data: PasswordRecoverRequest) => recoverPassword(data),
     onSuccess: () => {
@@ -74,11 +62,5 @@ export const usePasswordRecovery = (token: string) => {
     handleSubmit,
     errors,
     isSubmitting,
-    isValidationLoading,
-    isValidationError,
-    validationErrorMessage:
-      validationError instanceof ApiError
-        ? validationError.message
-        : "Link inválido ou expirado.",
   };
 };

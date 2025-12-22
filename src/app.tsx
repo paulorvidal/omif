@@ -29,6 +29,7 @@ import { ProfileForm } from "./pages/profile-form";
 import { PrivateRoute } from "./utils/private-route";
 import { NoticesPage } from "./pages/notice-page";
 import { PasswordRecoveryForm } from "./pages/password-recovery-form";
+import { VerifyEmailForm } from "./pages/verify-email-form";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/form",
         element: <Form />,
+      },
+      {
+        path: "/verify-email/:token",
+        element: <VerifyEmailForm />,
       },
       {
         path: "/password-recovery/:token",
