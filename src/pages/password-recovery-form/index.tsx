@@ -3,9 +3,7 @@ import { AppInput } from "@/components/app-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { usePasswordRecovery } from "@/hooks/use-password-recovery";
-import { redirectTo, showToast } from "@/utils/events";
 import { ChevronLeft, KeyRound, Save } from "lucide-react";
-import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 function PasswordRecoveryForm() {
@@ -19,22 +17,9 @@ function PasswordRecoveryForm() {
     );
   }
 
-  const {
-    isValidationLoading,
-    isValidationError,
-    validationErrorMessage,
-    register,
-    handleSubmit,
-    errors,
-    isSubmitting,
-  } = usePasswordRecovery(token || "");
-
-  useEffect(() => {
-    if (isValidationError) {
-      showToast(validationErrorMessage, "error");
-      redirectTo("/login");
-    }
-  }, [isValidationError, validationErrorMessage]);
+  const { register, handleSubmit, errors, isSubmitting } = usePasswordRecovery(
+    token || "",
+  );
 
   return (
     <div className="flex min-h-svh w-full flex-col items-center p-6 md:p-10">
@@ -94,7 +79,7 @@ function PasswordRecoveryForm() {
                 <div className="flex justify-end">
                   <AppButton
                     type="submit"
-                    isLoading={isSubmitting || isValidationLoading}
+                    isLoading={isSubmitting}
                     icon={<Save />}
                   >
                     Alterar Senha
