@@ -35,6 +35,8 @@ export function EnrollmentInstitutionForm() {
     const hasRequiredInfo = !!institutionEmail && institutionEmail.trim() !== "";
     const isAlreadyEnrolled = !!enrollmentData?.isEnrolled;
 
+    const enrollmentStatus = enrollmentData?.status;
+
     if (!isValidYear) {
         return (
             <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -95,14 +97,40 @@ export function EnrollmentInstitutionForm() {
 
                     {isAlreadyEnrolled && (
                         <div className="w-full max-w-md text-center mx-auto">
-                            <AppCard
-                                title="Inscrição Realizada"
-                                description="Sua instituição já está registrada nesta edição."
-                                type="success"
-                            />
+
+                            {enrollmentStatus === 'PENDING' && (
+                                <AppCard
+                                    title="Solicitação em Análise"
+                                    description="Sua solicitação foi enviada com sucesso! Aguarde a aprovação da coordenação para confirmar a participação da sua instituição."
+                                    type="warning"
+                                />
+                            )}
+
+                            {enrollmentStatus === 'APPROVED' && (
+                                <AppCard
+                                    title="Inscrição Confirmada"
+                                    description="Parabéns! Sua instituição está oficialmente inscrita e aprovada nesta edição."
+                                    type="success"
+                                />
+                            )}
+
+                            {enrollmentStatus === 'REFUSED' && (
+                                <AppCard
+                                    title="Inscrição Recusada"
+                                    description="Sua inscrição não foi aceita. Entre em contato com a organização para mais detalhes."
+                                    type="error"
+                                />
+                            )}
+
+                            {!enrollmentStatus && (
+                                <AppCard
+                                    title="Inscrição Recebida"
+                                    description="Sua instituição já possui um registro nesta edição."
+                                    type="info"
+                                />
+                            )}
                         </div>
                     )}
-
                     {!isAlreadyEnrolled && !hasRequiredInfo && !isLoadingStatus && !isError && (
                         <div className="w-full max-w-2xl text-center mx-auto">
                             <AppCard
