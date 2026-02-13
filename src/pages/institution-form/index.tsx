@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { AppInput } from "@/components/app-input";
 import { AppButton } from "@/components/app-button";
-import { ChevronLeft, Eraser, Save } from "lucide-react";
+import { ChevronLeft, Eraser, Save, Building2 } from "lucide-react";
 import { AppAsyncSelect } from "@/components/app-async-select";
 import { useInstitutionForm } from "../../hooks/use-institution-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -96,9 +96,12 @@ function InstitutionForm() {
         >
           <ChevronLeft />
         </AppButton>
-        <h1 className="text-3xl font-semibold">
-          {isEditMode ? "Editar Instituição" : "Cadastro da Instituição"}
-        </h1>
+        <div className="flex items-center gap-2">
+          <Building2 className="text-primary size-8" />
+          <h1 className="text-3xl font-semibold">
+            {isEditMode ? "Editar Instituição" : "Cadastro da Instituição"}
+          </h1>
+        </div>
       </div>
 
       <Card>

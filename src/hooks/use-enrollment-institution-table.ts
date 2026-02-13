@@ -30,9 +30,39 @@ type EnrollmentDecisionPayload = {
   confirmChange: boolean;
 };
 
-export const useEnrollmentInstitutionTable = (editionYear: string) => {
+// 1. Removi o argumento 'editionYear' pois vamos pegá-lo internamente
+export const useEnrollmentInstitutionTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+
+  // --- LÓGICA NOVA: ESCUTAR O HEADER ---
+
+  // Função auxiliar para ler o localStorage
+  const getStoredEdition = useCallback(() => {
+    const stored = localStorage.getItem("edition");
+    // Se for "all" ou nulo, retorna string vazia ou trata conforme sua API espera
+    return stored && stored !== "all" ? stored : "";
+  }, []);
+
+  // Estado local para guardar o ano
+  const [editionYear, setEditionYear] = useState<string>(getStoredEdition());
+
+  useEffect(() => {
+    // Função que atualiza o estado quando o evento dispara
+    const handleEditionChange = () => {
+      setEditionYear(getStoredEdition());
+    };
+
+    // Adiciona o ouvinte para o evento que o seu useNavbar já dispara
+    window.addEventListener("editionChange", handleEditionChange);
+
+    // Limpeza ao desmontar
+    return () => {
+      window.removeEventListener("editionChange", handleEditionChange);
+    };
+  }, [getStoredEdition]);
+
+  // -------------------------------------
 
   const pageIndex = parseInt(searchParams.get("page") || "0", 10);
   const pageSize = parseInt(searchParams.get("size") || "10", 10);
@@ -48,7 +78,7 @@ export const useEnrollmentInstitutionTable = (editionYear: string) => {
 
   const queryKey = [
     "institutionEnrollments",
-    editionYear,
+    editionYear, // 2. O React Query vai reagir a mudança desse estado
     { pageIndex, pageSize, filter: debouncedFilter, sort },
   ];
 
@@ -61,49 +91,49 @@ export const useEnrollmentInstitutionTable = (editionYear: string) => {
     queryKey,
     queryFn: () =>
       findAllInstitutionEnrollments(
-        editionYear!,
+        editionYear, // Passa o estado atualizado
         pageIndex,
         pageSize,
         debouncedFilter,
         sort,
       ),
     placeholderData: keepPreviousData,
+    // 3. Só busca se tiver um ano selecionado (evita erro 404 se a rota exigir ID)
     enabled: !!editionYear,
     refetchOnMount: true,
   });
 
-  const { mutate: approveEnrollmentMutate, isPending: isApproving } =
-    useMutation({
-      mutationFn: ({
-        enrollmentId,
-        confirmChange,
-      }: EnrollmentDecisionPayload) =>
-        approveEnrollment(editionYear, enrollmentId, confirmChange),
-      onSuccess: () => {
-        showToast("Inscrição aprovada com sucesso!", "success");
-        queryClient.invalidateQueries({ queryKey });
-      },
-      onError: (error: ApiError) => {
-        showToast(error.message || "Erro ao aprovar inscrição", "error");
-      },
-    });
-
-  const { mutate: refuseEnrollmentMutate, isPending: isRefusing } = useMutation(
-    {
-      mutationFn: ({
-        enrollmentId,
-        confirmChange,
-      }: EnrollmentDecisionPayload) =>
-        refuseEnrollment(editionYear, enrollmentId, confirmChange),
-      onSuccess: () => {
-        showToast("Inscrição recusada com sucesso.", "success");
-        queryClient.invalidateQueries({ queryKey });
-      },
-      onError: (error: ApiError) => {
-        showToast(error.message || "Erro ao recusar inscrição", "error");
-      },
+  const {
+    mutate: approveEnrollmentMutate,
+    mutateAsync: approveEnrollmentMutateAsync,
+    isPending: isApproving,
+  } = useMutation({
+    mutationFn: ({ enrollmentId, confirmChange }: EnrollmentDecisionPayload) =>
+      approveEnrollment(editionYear, enrollmentId, confirmChange),
+    onSuccess: () => {
+      showToast("Inscrição aprovada com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey });
     },
-  );
+    onError: (error: ApiError) => {
+      showToast(error.message || "Erro ao aprovar inscrição", "error");
+    },
+  });
+
+  const {
+    mutate: refuseEnrollmentMutate,
+    mutateAsync: refuseEnrollmentMutateAsync,
+    isPending: isRefusing,
+  } = useMutation({
+    mutationFn: ({ enrollmentId, confirmChange }: EnrollmentDecisionPayload) =>
+      refuseEnrollment(editionYear, enrollmentId, confirmChange),
+    onSuccess: () => {
+      showToast("Inscrição recusada com sucesso.", "success");
+      queryClient.invalidateQueries({ queryKey });
+    },
+    onError: (error: ApiError) => {
+      showToast(error.message || "Erro ao recusar inscrição", "error");
+    },
+  });
 
   useEffect(() => {
     if (isError && error) {
@@ -166,10 +196,12 @@ export const useEnrollmentInstitutionTable = (editionYear: string) => {
     },
     approveEnrollment: {
       mutate: approveEnrollmentMutate,
+      mutateAsync: approveEnrollmentMutateAsync,
       isPending: isApproving,
     },
     refuseEnrollment: {
       mutate: refuseEnrollmentMutate,
+      mutateAsync: refuseEnrollmentMutateAsync,
       isPending: isRefusing,
     },
   };

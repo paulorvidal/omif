@@ -29,52 +29,52 @@ type InstitutionTableProps = ReturnType<typeof useInstitutionTable>;
 const getColumns = (
   handleDeleteClick: (id: string) => void,
 ): ColumnDef<InstitutionCollumns>[] => [
-  {
-    accessorKey: "name",
-    header: "Nome",
-    cell: ({ row }) => (
-      <div className="w-48 truncate font-medium">{row.original.name}</div>
-    ),
-  },
-  {
-    accessorKey: "inep",
-    header: "INEP",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => (
-      <div className="w-40 truncate">
-        {row.original.email || (
-          <AppBadge type="warning">Não informado</AppBadge>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "coordinatorName",
-    header: "Coordenador",
-    cell: ({ row }) => (
-      <div className="w-40 truncate">
-        {row.original.coordinatorName || (
-          <AppBadge type="warning">Não informado</AppBadge>
-        )}
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      return (
-        <AppActionsDropdownMenu
-          onEditClick={() => redirectTo("instituicao/" + row.original.id)}
-          onDeleteClick={() => handleDeleteClick(row.original.id)}
-        />
-      );
+    {
+      accessorKey: "name",
+      header: "Nome",
+      cell: ({ row }) => (
+        <div className="w-48 truncate font-medium">{row.original.name}</div>
+      ),
     },
-  },
-];
+    {
+      accessorKey: "inep",
+      header: "INEP",
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => (
+        <div className="w-40 truncate">
+          {row.original.email || (
+            <AppBadge type="warning">Não informado</AppBadge>
+          )}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "coordinatorName",
+      header: "Coordenador",
+      cell: ({ row }) => (
+        <div className="w-40 truncate">
+          {row.original.coordinatorName || (
+            <AppBadge type="warning">Não informado</AppBadge>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        return (
+          <AppActionsDropdownMenu
+            onEditClick={() => redirectTo("instituicao/" + row.original.id)}
+            onDeleteClick={() => handleDeleteClick(row.original.id)}
+          />
+        );
+      },
+    },
+  ];
 
 const sortOptions = [
   { value: "name,asc", label: "Nome (A-Z)" },
