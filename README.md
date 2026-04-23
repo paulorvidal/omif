@@ -15,3 +15,4 @@ Bem-vindo à documentação técnica do frontend do projeto **OMIF**, uma aplica
 ## 📌 Observações
 
 Esse projeto foi estruturado com foco em escalabilidade, performance e organização de código, utilizando as melhores práticas de desenvolvimento web.
+# omif
